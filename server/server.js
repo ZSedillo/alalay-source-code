@@ -1,20 +1,24 @@
-const Temp = require('./models/TempModel'); // import the model
+const connectDB = require('./config/db');
+const { getAllTempDocuments } = require('./controllers/tempController');
 
 const startServer = async () => {
+    console.log("🚀 Starting server...");
     try {
         await connectDB();
         console.log('✅ MongoDB Connected');
 
-        // Insert test document
-        await Temp.create({ username: 'TestUser', age: 25 });
-        console.log('🆕 Test document added.');
+        const documents = await getAllTempDocuments();
+        console.log("📄 Documents fetched:", documents);
 
-        // Fetch and print all
-        const documents = await Temp.find();
-        console.log("📄 Fetched Documents:");
-        documents.forEach(doc => console.log(doc));
+        if (!documents.length) {
+            console.log("⚠️ No documents found in the 'temps' collection.");
+        } else {
+            documents.forEach(doc => console.log(doc));
+        }
 
     } catch (err) {
         console.error("❌ Error:", err.message);
     }
 };
+
+startServer();
