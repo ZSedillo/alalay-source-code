@@ -1,4 +1,4 @@
-const connectDB = require('../config/db');
+const connectDB = require('../config/db.js');
 
 async function getAllTempDocuments() {
     const db = await connectDB();

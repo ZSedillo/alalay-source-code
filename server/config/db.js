@@ -1,26 +1,18 @@
-const { MongoClient } = require('mongodb');
-require('dotenv').config({ path: __dirname + '/config.env' });
+const mongoose = require('mongoose');
+require('dotenv').config({ path: './config.env' }); // Adjust path if needed
 
-const uri = process.env.ATLAS_URI;
-
-if (!uri) {
-    console.error("❌ MongoDB URI is missing! Check your config.env path and variable.");
-    process.exit(1);
-}
-
-console.log("✅ MongoDB URI loaded!");
-
-const client = new MongoClient(uri);
-
-async function connectDB() {
+const connectDB = async () => {
     try {
-        await client.connect();
-        const db = client.db("AlalayApp");
-        return db;
-    } catch (err) {
-        console.error("MongoDB Connection Error:", err);
-        throw err;
+        const conn = await mongoose.connect(process.env.ATLAS_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+
+        console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    } catch (error) {
+        console.error("❌ MongoDB connection error:", error.message);
+        process.exit(1);
     }
-}
+};
 
 module.exports = connectDB;
