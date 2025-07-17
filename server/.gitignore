@@ -1,2 +1,12 @@
-config.env
+# Ignore environment variables
 *.env
+config.env
+
+# Node.js dependencies
+node_modules/
+
+# Logs
+*.log
+
+# System files
+.DS_Store
