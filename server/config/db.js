@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
-require('dotenv').config({ path: './config.env' }); // Adjust path if needed
 
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(process.env.ATLAS_URI, {
+        const uri = 'mongodb+srv://root:1234@alalay.yt6coul.mongodb.net/';
+        
+        const conn = await mongoose.connect(uri, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
