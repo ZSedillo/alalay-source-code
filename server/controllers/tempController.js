@@ -1,14 +1,13 @@
-const { getAllTempDocuments } = require('../models/TempModel.js');
+// controllers/tempController.js
+const Temp = require('../models/TempModel');
 
-async function fetchAndLogTempDocs() {
+const getAllTempDocuments = async () => {
     try {
-        const documents = await getAllTempDocuments();
-        documents.forEach(doc => console.log(doc));
+        const docs = await Temp.find();
+        return docs;
     } catch (err) {
-        console.error("Error in Controller:", err);
+        throw new Error('Error fetching temp documents: ' + err.message);
     }
-}
+};
 
-module.exports = { fetchAndLogTempDocs };
-
-
+module.exports = { getAllTempDocuments };

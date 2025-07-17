@@ -1,9 +1,10 @@
-const connectDB = require('../config/db.js');
+const mongoose = require('mongoose');
 
-async function getAllTempDocuments() {
-    const db = await connectDB();
-    const tempCollection = db.collection("Temp");
-    return tempCollection.find({}).toArray();
-}
+const TempSchema = new mongoose.Schema({
+    name: String,
+    age: Number,
+});
 
-module.exports = { getAllTempDocuments };
+const Temp = mongoose.model('Temp', TempSchema);
+
+module.exports = Temp;
