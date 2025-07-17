@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
-        const uri = 'mongodb+srv://root:1234@alalay.yt6coul.mongodb.net/';
+        const uri = 'mongodb+srv://root:1234@alalay.yt6coul.mongodb.net/AlalayApp';
         
         const conn = await mongoose.connect(uri);
 
