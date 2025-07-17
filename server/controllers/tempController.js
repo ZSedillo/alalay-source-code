@@ -15,7 +15,15 @@ const { getAllTempDocuments } = require('../models/TempModel.js');
 
 async function fetchAndLogTempDocs() {
     try {
+        console.log("Fetching documents...");
         const documents = await getAllTempDocuments();
+
+        console.log("Documents fetched:", documents.length);
+
+        if (documents.length === 0) {
+            console.log("No documents found in the Temp collection.");
+            return;
+        }
 
         documents.forEach(doc => {
             const id = doc._id.toString();
@@ -34,3 +42,4 @@ async function fetchAndLogTempDocs() {
 }
 
 module.exports = { fetchAndLogTempDocs };
+
