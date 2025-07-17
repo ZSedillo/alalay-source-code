@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const TempSchema = new mongoose.Schema({
-    name: String,
+    username: String,
     age: Number,
 });
 

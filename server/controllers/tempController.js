@@ -3,8 +3,7 @@ const Temp = require('../models/TempModel');
 
 const getAllTempDocuments = async () => {
     try {
-        const docs = await Temp.find();
-        return docs;
+        return await Temp.find();
     } catch (err) {
         throw new Error('Error fetching temp documents: ' + err.message);
     }
