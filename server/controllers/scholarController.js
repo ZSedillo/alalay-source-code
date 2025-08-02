@@ -69,7 +69,7 @@ const editScholar = async (req, res) => {
 
             // Derive key from previous URL
             if (image_url) {
-                const filename = image_url.split("https://alalay-scholar.s3.ap-southeast-1.amazonaws.com//")[1];
+                const filename = image_url.split("https://alalay-scholar.s3.ap-southeast-1.amazonaws.com/")[1];
                 if (filename) await deleteObjectScholar(filename);
             }
 
