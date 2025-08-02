@@ -33,11 +33,13 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Routes
-const userRoutes = require('./routes/userRoutes');
 const tempRoutes = require('./routes/tempRoutes');
+const userRoutes = require('./routes/userRoutes');
+const scholarRoutes = require('./routes/scholarRoutes');
 
-app.use('/user', userRoutes);
 app.use('/temp', tempRoutes);
+app.use('/user', userRoutes);
+app.use('/scholar', scholarRoutes);
 
 // Start server
 const PORT = process.env.PORT || 3000;
