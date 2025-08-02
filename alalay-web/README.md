@@ -1,0 +1,6 @@
+# React + Vite
+
+Alalay Web – BPI DATA Wave Hackathon and Summit 2025
+Alalay Web is a hackathon project developed for the BPI DATA Wave Hackathon and Summit 2025. Inspired by platforms like GoFundMe, this application is designed to provide a safe, localized crowdfunding solution for those in need across the Philippines, with a special focus on assisting underprivileged individuals and communities.
+
+Built using React + Vite, the project ensures fast performance, modern development standards, and scalability for real-world deployment.
