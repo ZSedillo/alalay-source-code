@@ -100,7 +100,7 @@ const deleteScholar = async (req, res) => {
 
         // Delete image from S3 if it exists
         if (scholar.image_url) {
-            // const key = scholar.image_url.split("https://alalay-scholar.s3.ap-southeast-1.amazonaws.com/")[1];
+            const key = scholar.image_url.split("https://alalay-scholar.s3.ap-southeast-1.amazonaws.com/")[1];
             if (key) await deleteObjectScholar(key);
         }
 
