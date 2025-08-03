@@ -111,7 +111,6 @@ console.log('✅ Test route added');
 
 // COMMENT OUT ALL ROUTES FIRST - then uncomment one by one
 console.log('📝 Loading routes...');
-
 // Step 1: Try tempRoutes first
 // try {
 //   console.log('🔍 Attempting to load tempRoutes...');
@@ -138,6 +137,9 @@ console.log('📝 Loading routes...');
 
 // Step 3: If userRoutes works, try postRoutes
 // UNCOMMENT ONLY AFTER userRoutes works
+
+  const userRoutes = require('./routes/userRoutes');
+  app.use('/user', userRoutes);
 
 try {
   console.log('🔍 Attempting to load postRoutes...');
