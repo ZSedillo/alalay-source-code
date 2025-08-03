@@ -113,19 +113,19 @@ console.log('✅ Test route added');
 console.log('📝 Loading routes...');
 
 // Step 1: Try tempRoutes first
-try {
-  console.log('🔍 Attempting to load tempRoutes...');
-  const tempRoutes = require('./routes/tempRoutes');
-  app.use('/temp', tempRoutes);
-  console.log('✅ tempRoutes loaded successfully');
-} catch (error) {
-  console.log('❌ ERROR in tempRoutes:', error.message);
-  console.log('   This is likely where the problem is!');
-}
+// try {
+//   console.log('🔍 Attempting to load tempRoutes...');
+//   const tempRoutes = require('./routes/tempRoutes');
+//   app.use('/temp', tempRoutes);
+//   console.log('✅ tempRoutes loaded successfully');
+// } catch (error) {
+//   console.log('❌ ERROR in tempRoutes:', error.message);
+//   console.log('   This is likely where the problem is!');
+// }
 
 // Step 2: If tempRoutes works, try userRoutes
 // UNCOMMENT ONLY AFTER tempRoutes works
-/*
+
 try {
   console.log('🔍 Attempting to load userRoutes...');
   const userRoutes = require('./routes/userRoutes');
@@ -134,7 +134,7 @@ try {
 } catch (error) {
   console.log('❌ ERROR in userRoutes:', error.message);
 }
-*/
+
 
 // Step 3: If userRoutes works, try postRoutes
 // UNCOMMENT ONLY AFTER userRoutes works
