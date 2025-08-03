@@ -126,19 +126,19 @@ console.log('📝 Loading routes...');
 // Step 2: If tempRoutes works, try userRoutes
 // UNCOMMENT ONLY AFTER tempRoutes works
 
-try {
-  console.log('🔍 Attempting to load userRoutes...');
-  const userRoutes = require('./routes/userRoutes');
-  app.use('/user', userRoutes);
-  console.log('✅ userRoutes loaded successfully');
-} catch (error) {
-  console.log('❌ ERROR in userRoutes:', error.message);
-}
+// try {
+//   console.log('🔍 Attempting to load userRoutes...');
+//   const userRoutes = require('./routes/userRoutes');
+//   app.use('/user', userRoutes);
+//   console.log('✅ userRoutes loaded successfully');
+// } catch (error) {
+//   console.log('❌ ERROR in userRoutes:', error.message);
+// }
 
 
 // Step 3: If userRoutes works, try postRoutes
 // UNCOMMENT ONLY AFTER userRoutes works
-/*
+
 try {
   console.log('🔍 Attempting to load postRoutes...');
   const postRoutes = require('./routes/postRoutes');
@@ -147,7 +147,7 @@ try {
 } catch (error) {
   console.log('❌ ERROR in postRoutes:', error.message);
 }
-*/
+
 
 // Health check endpoint
 app.get('/health', (req, res) => {
