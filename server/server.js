@@ -27,19 +27,35 @@ app.use(cors({
 }));
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
 // Routes
 const tempRoutes = require('./routes/tempRoutes');
 const userRoutes = require('./routes/userRoutes');
-const scholarRoutes = require('./routes/scholarRoutes');
+const postRoutes = require('./routes/postRoutes'); // Updated from scholarRoutes
 
 app.use('/temp', tempRoutes);
 app.use('/user', userRoutes);
-app.use('/scholar', scholarRoutes);
+app.use('/posts', postRoutes); // New posts route
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', message: 'Server is running' });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
 
 // Start server
 const PORT = process.env.PORT || 3000;
