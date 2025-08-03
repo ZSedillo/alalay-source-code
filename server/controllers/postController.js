@@ -95,7 +95,9 @@ const getUserFeed = async (req, res) => {
 const createPost = async (req, res) => {
     try {
         const { description, visibility = 'public', tags } = req.body;
-        const userId = req.user.id;
+        // const userId = req.user.id; // Original Code Use this later
+        // Debugging Code Replace Later
+        const userId = req.user?.id || req.body.userId; // This handles both cases
 
         if (!description || description.trim().length === 0) {
             return res.status(400).json({ error: "Description is required" });
