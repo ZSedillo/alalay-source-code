@@ -32,6 +32,11 @@ const scholars = [
   },
 ];
 
+  const handleLogout = async () => {
+    await dispatch(logout()); // ✅ Redux logout action
+    navigate("/Login"); // ✅ Go to login page without reloading the browser
+  };
+
 function Scholars() {
   const navigate = useNavigate();
 
@@ -57,7 +62,7 @@ function Scholars() {
             </li>
             <li className="text-blue-600 font-semibold">🎓 Our Scholars</li>
             <li className="text-gray-600 hover:text-blue-600 cursor-pointer">⚙️ Settings</li>
-            <li className="text-gray-600 hover:text-blue-600 cursor-pointer">🚪 Logout</li>
+            <li className="text-gray-600 hover:text-red-600 cursor-pointer" onClick={handleLogout}> 🚪 Logout</li>
           </ul>
         </nav>
       </aside>
