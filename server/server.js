@@ -42,9 +42,9 @@ app.get('/test', (req, res) => {
 
 const tempRoutes = require('./temp/temp.routes');
 app.use('/temp', tempRoutes);
-const userRoutes = require('./routes/userRoutes');
+const userRoutes = require('./user/user.routes');
 app.use('/user', userRoutes);
-const postRoutes = require('./routes/postRoutes');
+const postRoutes = require('./post/post.routes');
 app.use('/posts', postRoutes);
 
 // Health check endpoint
