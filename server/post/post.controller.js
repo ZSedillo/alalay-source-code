@@ -1,6 +1,6 @@
 // postController.js - Updated with funding functionality
-const postModel = require('../models/Post');
-const userModel = require('../models/User');
+const postModel = require('./post.model');
+const userModel = require('../user/user.model');
 const { v4 } = require("uuid");
 const { putObjectScholar } = require("../util/putObjectScholar");
 const { deleteObjectScholar } = require("../util/deleteObjectScholar");

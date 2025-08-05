@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getAllTempDocuments } = require('../controllers/tempController');
+const { getAllTempDocuments } = require('./temp.controller');
 
 // @route   GET /temp
 // @desc    Get all temp documents
