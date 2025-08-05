@@ -41,7 +41,7 @@
 // module.exports = authenticate;
 
 const jwt = require('jsonwebtoken');
-const userModel = require('../models/user.model');
+const userModel = require('../user/user.model');
 
 const protect = async (req, res, next) => {
   try {
