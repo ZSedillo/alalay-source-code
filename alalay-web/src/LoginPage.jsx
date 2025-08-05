@@ -1,22 +1,32 @@
-import React, { useEffect } from 'react';
+// export default LoginPage;
+
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { listTemps } from './_actions/temp.actions';
+import { login } from './_actions/user.actions'; // ✅ adjust path as needed
 
 function LoginPage() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const tempList = useSelector((state) => state.tempList);
-  const { loading, error, temps } = tempList;
+  // Controlled inputs
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
+  // Redux state
+  const userState = useSelector((state) => state.user);
+  const { loading, error, userInfo } = userState;
+
+  // On successful login, navigate to /Feed
   useEffect(() => {
-    dispatch(listTemps());
-  }, [dispatch]);
+    if (userInfo) {
+      navigate('/Feed');
+    }
+  }, [userInfo, navigate]);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    navigate('/Feed');
+    dispatch(login(username, password));
   };
 
   return (
@@ -33,6 +43,8 @@ function LoginPage() {
             <input
               id="username"
               type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your username"
             />
@@ -44,10 +56,27 @@ function LoginPage() {
             <input
               id="password"
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your password"
             />
           </div>
+
+          {/* Show error */}
+          {error && (
+            <div className="text-red-500 text-sm font-medium">
+              {error}
+            </div>
+          )}
+
+          {/* Show loading */}
+          {loading && (
+            <div className="text-gray-500 text-sm font-medium">
+              Logging in...
+            </div>
+          )}
+
           <div className="flex justify-between space-x-2 pt-4">
             <button
               type="submit"
@@ -65,6 +94,8 @@ function LoginPage() {
         </form>
       </div>
 
+
+
       {/* DO NOT DELETE I WILL USE THIS AS REFERENCE CODE  */}
       {/* <div className="bg-white p-4 rounded-xl shadow w-full max-w-sm">
         <h3 className="text-lg font-semibold mb-2">Temp Data Preview</h3>
@@ -81,6 +112,8 @@ function LoginPage() {
         )}
       </div> */}
 
+
+      
     </div>
   );
 }

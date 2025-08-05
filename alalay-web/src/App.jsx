@@ -8,7 +8,11 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<LoginPage />} />
+        <Route path="/Login" element={<LoginPage />} />
+
+        {/* Protected routes (Will be done later)*/} 
         <Route path="/Feed" element={<Feed />} />
         <Route path="/Scholars" element={<Scholars />} />
       </Routes>

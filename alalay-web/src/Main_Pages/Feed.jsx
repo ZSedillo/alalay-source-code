@@ -18,6 +18,12 @@ function Feed() {
     );
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    window.location.href = "/Login"; // full page reload to /Login
+  };
+
+
   return (
     <div className="min-h-screen flex bg-gray-100">
       {/* Sidebar */}
@@ -40,7 +46,12 @@ function Feed() {
               🎓 Our Scholars
             </li>
             <li className="text-gray-600 hover:text-blue-600 cursor-pointer">⚙️ Settings</li>
-            <li className="text-gray-600 hover:text-blue-600 cursor-pointer">🚪 Logout</li>
+            <li
+              className="text-gray-600 hover:text-red-600 cursor-pointer"
+              onClick={handleLogout}
+            >
+              🚪 Logout
+            </li>
           </ul>
         </nav>
       </aside>
