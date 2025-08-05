@@ -6,12 +6,12 @@ const authenticate = require('../middleware/authMiddleware');
 const {
     // Authentication
     login, 
-    logout,
     register, 
     forgotPassword, 
     resetPassword, 
     editPassword,
     // User Management
+    logout,
     updateUserInfo, 
     updateScholarInfo,
     deleteAccount, 

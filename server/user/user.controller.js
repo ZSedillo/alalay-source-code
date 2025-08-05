@@ -403,12 +403,12 @@ const getAllScholars = async (req, res) => {
 module.exports = {
     // Authentication
     login, 
-    logout,
     register, 
     forgotPassword, 
     resetPassword, 
     editPassword,
     // User Management
+    logout,
     updateUserInfo, 
     updateScholarInfo,
     deleteAccount, 
