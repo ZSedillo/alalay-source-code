@@ -1,18 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { listTemps } from './_actions/temp.actions';
 
 function LoginPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const tempList = useSelector((state) => state.tempList);
+  const { loading, error, temps } = tempList;
+
+  useEffect(() => {
+    dispatch(listTemps());
+  }, [dispatch]);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Add your validation/auth here if needed
-    navigate('/Feed'); // ✅ This matches the route in App.jsx
+    navigate('/Feed');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm mb-6">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Login to Your Account
         </h2>
@@ -55,6 +64,23 @@ function LoginPage() {
           </div>
         </form>
       </div>
+
+      {/* DO NOT DELETE I WILL USE THIS AS REFERENCE CODE  */}
+      {/* <div className="bg-white p-4 rounded-xl shadow w-full max-w-sm">
+        <h3 className="text-lg font-semibold mb-2">Temp Data Preview</h3>
+        {loading && <p>Loading...</p>}
+        {error && <p className="text-red-500">Error: {error}</p>}
+        {!loading && !error && (
+          <ul className="list-disc pl-5 space-y-1">
+            {temps.map((temp) => (
+              <li key={temp._id}>
+                {temp.username} — {temp.age}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div> */}
+
     </div>
   );
 }
