@@ -1,4 +1,4 @@
-// userController.js
+// user.controller.js
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const userModel = require('./user.model');
@@ -11,31 +11,49 @@ dotenv.config();
 
 // Authentication Controllers
 const login = async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const user = await userModel.findOne({ username }).populate('friends', 'username scholarInfo.firstName scholarInfo.lastName scholarInfo.profileImage');
-        if (!user) return res.status(400).json({ error: "Incorrect Credentials" });
+  const { username, password } = req.body;
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ error: "Incorrect Credentials" });
+  try {
+    const user = await userModel.findOne({ username }).populate('friends', 'username scholarInfo.firstName scholarInfo.lastName scholarInfo.profileImage');
+    if (!user) return res.status(400).json({ error: "Incorrect Credentials" });
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ error: "Incorrect Credentials" });
 
-        res.status(200).json({ 
-            message: "Success", 
-            token,
-            user: { 
-                id: user._id, 
-                username: user.username, 
-                email: user.email,
-                scholarInfo: user.scholarInfo,
-                friends: user.friends
-            }
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Server error" });
-    }
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // ✅ Set HttpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Lax',
+      maxAge: 60 * 60 * 1000, // 1 hour
+    });
+
+    res.status(200).json({
+      message: "Login successful",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        scholarInfo: user.scholarInfo,
+        friends: user.friends,
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+const logout = (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'Lax',
+  });
+
+  res.status(200).json({ message: 'Logged out successfully' });
 };
 
 const register = async (req, res) => {
@@ -361,7 +379,8 @@ const getAllScholars = async (req, res) => {
 
 module.exports = {
     // Authentication
-    login, 
+    login,
+    logout, 
     register, 
     forgotPassword, 
     resetPassword, 
