@@ -6,7 +6,6 @@ const authenticate = require('../middleware/authMiddleware');
 const {
     // Authentication
     login, 
-    logout,
     register, 
     forgotPassword, 
     resetPassword, 
@@ -26,7 +25,6 @@ const {
 
 // Authentication routes
 router.post('/login', login);
-router.post('/logout', logout);
 router.post('/register', register);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);

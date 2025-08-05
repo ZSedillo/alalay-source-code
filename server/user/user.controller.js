@@ -1,4 +1,4 @@
-// user.controller.js
+// userController.js
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const userModel = require('./user.model');
@@ -14,7 +14,9 @@ const login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const user = await userModel.findOne({ username }).populate('friends', 'username scholarInfo.firstName scholarInfo.lastName scholarInfo.profileImage');
+    const user = await userModel.findOne({ username })
+      .populate('friends', 'username scholarInfo.firstName scholarInfo.lastName scholarInfo.profileImage');
+
     if (!user) return res.status(400).json({ error: "Incorrect Credentials" });
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -22,14 +24,15 @@ const login = async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    // ✅ Set HttpOnly cookie
+    // Send token in HTTP-only cookie
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'Lax',
-      maxAge: 60 * 60 * 1000, // 1 hour
+      maxAge: 60 * 60 * 1000 // 1 hour
     });
 
+    // Optional: send user data (not the token)
     res.status(200).json({
       message: "Login successful",
       user: {
@@ -37,7 +40,7 @@ const login = async (req, res) => {
         username: user.username,
         email: user.email,
         scholarInfo: user.scholarInfo,
-        friends: user.friends,
+        friends: user.friends
       }
     });
   } catch (error) {
@@ -46,15 +49,6 @@ const login = async (req, res) => {
   }
 };
 
-const logout = (req, res) => {
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'Lax',
-  });
-
-  res.status(200).json({ message: 'Logged out successfully' });
-};
 
 const register = async (req, res) => {
     const { username, email, password, firstName, middleInitial, lastName, gpa, userLevel } = req.body;
@@ -379,8 +373,7 @@ const getAllScholars = async (req, res) => {
 
 module.exports = {
     // Authentication
-    login,
-    logout, 
+    login, 
     register, 
     forgotPassword, 
     resetPassword, 

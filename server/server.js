@@ -6,12 +6,14 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
+const cookieParser = require('cookie-parser');
 
 // Load env
 dotenv.config();
 
 // Create app
 const app = express();
+app.use(cookieParser());
 
 console.log('🔧 Starting server setup...');
 
@@ -31,7 +33,9 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
 });
-app.use(limiter);
+
+//Disable rate limiting for debugging
+// app.use(limiter);
 
 console.log('✅ Basic middleware setup complete');
 
