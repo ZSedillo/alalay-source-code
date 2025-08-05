@@ -41,7 +41,7 @@ app.get('/test', (req, res) => {
 });
 
 const tempRoutes = require('./routes/tempRoutes');
-app.use('/test', tempRoutes);
+app.use('/temp', tempRoutes);
 const userRoutes = require('./routes/userRoutes');
 app.use('/user', userRoutes);
 const postRoutes = require('./routes/postRoutes');
