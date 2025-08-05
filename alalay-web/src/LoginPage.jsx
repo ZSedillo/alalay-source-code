@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { listTemps } from './_actions/temp.actions'; // ✅ adjust path as needed
 import { login } from './_actions/user.actions'; // ✅ adjust path as needed
 
 function LoginPage() {
@@ -16,6 +17,7 @@ function LoginPage() {
   // Redux state
   const userState = useSelector((state) => state.user);
   const { loading, error, user } = userState;
+  const { temps } = useSelector((state) => state.tempList);
 
   // On successful login, navigate to /Feed
   useEffect(() => {
@@ -97,20 +99,22 @@ function LoginPage() {
 
 
       {/* DO NOT DELETE I WILL USE THIS AS REFERENCE CODE  */}
-      {/* <div className="bg-white p-4 rounded-xl shadow w-full max-w-sm">
-        <h3 className="text-lg font-semibold mb-2">Temp Data Preview</h3>
-        {loading && <p>Loading...</p>}
-        {error && <p className="text-red-500">Error: {error}</p>}
-        {!loading && !error && (
-          <ul className="list-disc pl-5 space-y-1">
-            {temps.map((temp) => (
-              <li key={temp._id}>
-                {temp.username} — {temp.age}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div> */}
+<div className="bg-white p-4 rounded-xl shadow w-full max-w-sm">
+      <h3 className="text-lg font-semibold mb-2">Temp Data Preview</h3>
+
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">Error: {error}</p>}
+
+      {!loading && !error && Array.isArray(temps) && (
+        <ul className="list-disc pl-5 space-y-1">
+          {temps.map((temp) => (
+            <li key={temp._id}>
+              {temp.username} — {temp.age}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
 
 
       
