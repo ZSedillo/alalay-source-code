@@ -41,28 +41,25 @@
 // module.exports = authenticate;
 
 const jwt = require('jsonwebtoken');
-const userModel = require('../user/user.model.js');
+const userModel = require('../models/user.model');
 
-const authenticate = async (req, res, next) => {
+const protect = async (req, res, next) => {
   try {
-    const token = req.cookies.token; // Read cookie
+    const token = req.cookies.token;
 
-    if (!token) {
-      return res.status(401).json({ error: 'Not authenticated' });
-    }
+    if (!token) return res.status(401).json({ error: 'No token, authorization denied' });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await userModel.findById(decoded.id);
+    req.user = await userModel.findById(decoded.id).select('-password');
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+    if (!req.user) return res.status(404).json({ error: 'User not found' });
 
-    req.user = { id: user._id };
     next();
   } catch (err) {
-    return res.status(401).json({ error: 'Invalid token' });
+    console.error(err);
+    res.status(401).json({ error: 'Token is not valid' });
   }
 };
 
-module.exports = authenticate;
+module.exports = protect;
+

@@ -230,19 +230,20 @@ const deleteAccount = async (req, res) => {
 };
 
 const getCurrentUser = async (req, res) => {
-    try {
-        const user = await userModel.findById(req.user.id)
-            .select('-password')
-            .populate('friends', 'username scholarInfo.firstName scholarInfo.lastName scholarInfo.profileImage');
-        
-        if (!user) return res.status(404).json({ error: "User not found" });
+  try {
+    const user = await userModel.findById(req.user._id) // or req.user.id
+      .select('-password')
+      .populate('friends', 'username scholarInfo.firstName scholarInfo.lastName scholarInfo.profileImage');
+    
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
-        res.status(200).json({ user });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Server error" });
-    }
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
 };
+
 
 // Friend Management Controllers
 const sendFriendRequest = async (req, res) => {
