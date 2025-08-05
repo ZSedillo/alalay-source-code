@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { logout } from './_actions/user.actions'; // adjust path if needed
+import { logout } from './_actions/user.actions'; // adjust this path if needed
 
 export default function ProtectedRoute({ children }) {
   const dispatch = useDispatch();
@@ -9,11 +9,14 @@ export default function ProtectedRoute({ children }) {
 
   const timerRef = useRef(null);
   const countdownRef = useRef(null);
-  const secondsRemaining = useRef(15); // 10-second timer
+
+  // Configurable timeout settings
+  const INACTIVITY_TIMEOUT = 300; // seconds before auto-logout
+  const MODAL_SHOW_THRESHOLD = 10; // when to show the modal
 
   // Modal state
   const [showModal, setShowModal] = useState(false);
-  const [modalSeconds, setModalSeconds] = useState(300);
+  const [modalSeconds, setModalSeconds] = useState(INACTIVITY_TIMEOUT);
 
   useEffect(() => {
     if (!user) return;
@@ -22,35 +25,36 @@ export default function ProtectedRoute({ children }) {
       clearTimeout(timerRef.current);
       clearInterval(countdownRef.current);
 
-      secondsRemaining.current = 300;
+      const deadline = Date.now() + INACTIVITY_TIMEOUT * 1000;
+
       setShowModal(false);
-      setModalSeconds(10);
+      setModalSeconds(INACTIVITY_TIMEOUT);
 
-      // 🔁 Log remaining seconds every second
       countdownRef.current = setInterval(() => {
-        // Show modal if 10 seconds or less remain
-        if (secondsRemaining.current <= 10) {
-          setShowModal(true);
-          setModalSeconds(secondsRemaining.current);
-        }
-        console.log(`Logging out in ${secondsRemaining.current} seconds...`);
-        secondsRemaining.current -= 1;
+        const secondsLeft = Math.ceil((deadline - Date.now()) / 1000);
 
-        if (secondsRemaining.current < 0) {
+        if (secondsLeft <= MODAL_SHOW_THRESHOLD) {
+          setShowModal(true);
+          setModalSeconds(secondsLeft);
+        }
+
+        if (secondsLeft <= 0) {
           clearInterval(countdownRef.current);
         }
       }, 1000);
 
-      // ⏲️ Actual logout timer
       timerRef.current = setTimeout(() => {
+        clearInterval(countdownRef.current);
         setShowModal(false);
         console.log('⏳ Logging out due to inactivity.');
         dispatch(logout());
-      }, 10000); // 10 seconds
+      }, INACTIVITY_TIMEOUT * 1000);
     };
 
     const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
     events.forEach((event) => window.addEventListener(event, resetTimer));
+
+    // Start timer initially
     resetTimer();
 
     return () => {
@@ -69,7 +73,7 @@ export default function ProtectedRoute({ children }) {
         <div style={{
           position: 'fixed',
           top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(30, 41, 59, 0.45)', // dark overlay
+          background: 'rgba(30, 41, 59, 0.45)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
