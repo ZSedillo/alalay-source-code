@@ -13,18 +13,36 @@ dotenv.config();
 const login = async (req, res) => {
   const { username, password } = req.body;
 
+  // 🔍 Check for missing inputs
+  if (!username && !password) {
+    return res.status(400).json({ error: "Please enter username and password" });
+  }
+  if (!username) {
+    return res.status(400).json({ error: "Please enter username" });
+  }
+  if (!password) {
+    return res.status(400).json({ error: "Please enter password" });
+  }
+
   try {
     const user = await userModel.findOne({ username })
       .populate('friends', 'username scholarInfo.firstName scholarInfo.lastName scholarInfo.profileImage');
 
-    if (!user) return res.status(400).json({ error: "Incorrect Credentials" });
+    // ❌ Username not found
+    if (!user) {
+      return res.status(400).json({ error: "Incorrect Credentials" });
+    }
 
+    // ❌ Password mismatch
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ error: "Incorrect Credentials" });
+    if (!isMatch) {
+      return res.status(400).json({ error: "Incorrect Credentials" });
+    }
 
+    // ✅ Create JWT
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    // Send token in HTTP-only cookie
+    // 🍪 Send token in HTTP-only cookie
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -32,7 +50,7 @@ const login = async (req, res) => {
       maxAge: 60 * 60 * 1000 // 1 hour
     });
 
-    // Optional: send user data (not the token)
+    // ✅ Success response with user info
     res.status(200).json({
       message: "Login successful",
       user: {
@@ -43,11 +61,13 @@ const login = async (req, res) => {
         friends: user.friends
       }
     });
+
   } catch (error) {
-    console.error(error);
+    console.error("Login Error:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 const logout = (req, res) => {
   res.clearCookie('token', {
