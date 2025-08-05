@@ -26,13 +26,13 @@ const {
 
 // Authentication routes
 router.post('/login', login);
-router.post('/logout', logout);
 router.post('/register', register);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.post('/edit-password', authenticate, editPassword);
 
 // User management routes
+router.post('/logout', authenticate, logout);
 router.post('/update-user-info', authenticate, updateUserInfo);
 router.post('/update-scholar-info', authenticate, fileUpload(), updateScholarInfo);
 router.delete('/delete-account', authenticate, deleteAccount);
