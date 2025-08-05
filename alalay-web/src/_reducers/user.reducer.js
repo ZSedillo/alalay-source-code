@@ -12,37 +12,33 @@ import {
 
 const initialState = {
   loading: false,
-  userInfo: localStorage.getItem('userInfo')
-    ? JSON.parse(localStorage.getItem('userInfo'))
-    : null,
   user: null,
-  error: null
+  error: null,
+  loaded: false // ✅ NEW: tells if session check is completed
 };
 
 export const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case USER_LOGIN_REQUEST:
     case USER_REGISTER_REQUEST:
-      return { ...state, loading: true };
+      return { ...state, loading: true, error: null };
 
     case USER_LOGIN_SUCCESS:
-      return { ...state, loading: false, userInfo: action.payload, error: null };
+      return { ...state, loading: false, error: null };
+
+    case USER_PROFILE_SUCCESS:
+      return { ...state, loading: false, user: action.payload, error: null, loaded: true };
 
     case USER_LOGIN_FAIL:
     case USER_REGISTER_FAIL:
-      return { ...state, loading: false, error: action.payload };
+    case USER_PROFILE_FAIL:
+      return { ...state, loading: false, error: action.payload, loaded: true };
 
     case USER_REGISTER_SUCCESS:
       return { ...state, loading: false, error: null };
 
     case USER_LOGOUT:
-      return { ...initialState, userInfo: null };
-
-    case USER_PROFILE_SUCCESS:
-      return { ...state, user: action.payload };
-
-    case USER_PROFILE_FAIL:
-      return { ...state, error: action.payload };
+      return { ...initialState, loaded: true }; // ✅ keep loaded true even after logout
 
     default:
       return state;

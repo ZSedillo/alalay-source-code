@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../_actions/user.actions"; // ✅ Adjust path as needed
 
 function Feed() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [posts, setPosts] = useState([
     { id: 1, user: "john_doe", content: "Had a great day exploring!", likes: 3 },
@@ -18,11 +21,10 @@ function Feed() {
     );
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("userInfo");
-    window.location.href = "/Login"; // full page reload to /Login
+  const handleLogout = async () => {
+    await dispatch(logout()); // ✅ Redux logout action
+    navigate("/Login"); // ✅ Go to login page without reloading the browser
   };
-
 
   return (
     <div className="min-h-screen flex bg-gray-100">

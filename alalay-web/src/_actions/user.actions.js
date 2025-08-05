@@ -1,3 +1,4 @@
+// _actions/user.actions.js
 import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
@@ -10,7 +11,7 @@ import {
   USER_PROFILE_FAIL
 } from '../_constants/user.constants';
 
-const API = 'http://localhost:3000'; // adjust to your actual backend base URL
+const API = 'http://localhost:3000'; // adjust as needed
 
 export const login = (username, password) => async (dispatch) => {
   try {
@@ -19,21 +20,34 @@ export const login = (username, password) => async (dispatch) => {
     const res = await fetch(`${API}/user/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      credentials: 'include', // ⬅️ CRITICAL: includes cookie in request
+      body: JSON.stringify({ username, password }),
     });
 
     const data = await res.json();
-
     if (!res.ok) throw new Error(data.error || 'Login failed');
 
-    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+    dispatch({ type: USER_LOGIN_SUCCESS });
 
-    localStorage.setItem('userInfo', JSON.stringify(data));
+    // ✅ fetch the logged in user from cookie/session
+    dispatch(fetchCurrentUser());
   } catch (error) {
-    dispatch({
-      type: USER_LOGIN_FAIL,
-      payload: error.message
+    dispatch({ type: USER_LOGIN_FAIL, payload: error.message });
+  }
+};
+
+export const fetchCurrentUser = () => async (dispatch) => {
+  try {
+    const res = await fetch(`${API}/user/current-user`, {
+      credentials: 'include', // ⬅️ CRUCIAL
     });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to fetch user');
+
+    dispatch({ type: USER_PROFILE_SUCCESS, payload: data.user });
+  } catch (error) {
+    dispatch({ type: USER_PROFILE_FAIL, payload: error.message });
   }
 };
 
@@ -44,39 +58,30 @@ export const register = (userData) => async (dispatch) => {
     const res = await fetch(`${API}/user/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData)
+      body: JSON.stringify(userData),
     });
 
     const data = await res.json();
-
     if (!res.ok) throw new Error(data.error || 'Registration failed');
 
     dispatch({ type: USER_REGISTER_SUCCESS });
   } catch (error) {
     dispatch({
       type: USER_REGISTER_FAIL,
-      payload: error.message
+      payload: error.message,
     });
   }
 };
 
-export const logout = () => (dispatch) => {
-  localStorage.removeItem('userInfo');
-  dispatch({ type: USER_LOGOUT });
-};
-
-export const fetchCurrentUser = (token) => async (dispatch) => {
+export const logout = () => async (dispatch) => {
   try {
-    const res = await fetch(`${API}/user/current-user`, {
-      headers: { Authorization: `Bearer ${token}` }
+    await fetch(`${API}/user/logout`, {
+      method: 'POST',
+      credentials: 'include',
     });
-
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.error || 'Failed to fetch user');
-
-    dispatch({ type: USER_PROFILE_SUCCESS, payload: data.user });
-  } catch (error) {
-    dispatch({ type: USER_PROFILE_FAIL, payload: error.message });
+  } catch (err) {
+    console.error('Logout request failed:', err);
   }
+
+  dispatch({ type: USER_LOGOUT });
 };

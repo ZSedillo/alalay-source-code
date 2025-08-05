@@ -15,14 +15,14 @@ function LoginPage() {
 
   // Redux state
   const userState = useSelector((state) => state.user);
-  const { loading, error, userInfo } = userState;
+  const { loading, error, user } = userState;
 
   // On successful login, navigate to /Feed
   useEffect(() => {
-    if (userInfo) {
+    if (user) {
       navigate('/Feed');
-    }
-  }, [userInfo, navigate]);
+    } 
+  }, [user, navigate]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -64,7 +64,7 @@ function LoginPage() {
           </div>
 
           {/* Show error */}
-          {error && (
+          {error && error !== "No token, authorization denied" && (
             <div className="text-red-500 text-sm font-medium">
               {error}
             </div>
@@ -119,3 +119,4 @@ function LoginPage() {
 }
 
 export default LoginPage;
+
