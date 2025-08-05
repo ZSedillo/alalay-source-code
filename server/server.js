@@ -40,7 +40,7 @@ app.get('/test', (req, res) => {
   res.json({ message: 'Server basic setup working!' });
 });
 
-const tempRoutes = require('./routes/tempRoutes');
+const tempRoutes = require('./temp/temp.routes');
 app.use('/temp', tempRoutes);
 const userRoutes = require('./routes/userRoutes');
 app.use('/user', userRoutes);

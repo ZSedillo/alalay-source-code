@@ -1,4 +1,4 @@
-const Temp = require('../models/TempModel');
+const Temp = require('./temp.model');
 
 // @desc    Get all temp documents
 const getAllTempDocuments = async (req, res) => {

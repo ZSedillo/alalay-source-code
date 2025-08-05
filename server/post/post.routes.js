@@ -18,7 +18,7 @@ const {
     getUserFundingHistory,
     getFundingStats,
     togglePostFunding
-} = require("../controllers/postController");
+} = require("./post.controller");
 
 // Public routes
 router.get("/", getAllPosts); // Get all public posts

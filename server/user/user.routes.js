@@ -21,7 +21,7 @@ const {
     removeFriend,
     // Scholar browsing
     getAllScholars
-} = require('../controllers/userController');
+} = require('./user.controller');
 
 // Authentication routes
 router.post('/login', login);

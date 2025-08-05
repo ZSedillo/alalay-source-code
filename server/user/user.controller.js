@@ -1,7 +1,7 @@
 // userController.js
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const userModel = require('../models/User');
+const userModel = require('./user.model');
 const { v4 } = require("uuid");
 const { putObjectScholar } = require("../util/putObjectScholar");
 const { deleteObjectScholar } = require("../util/deleteObjectScholar");
