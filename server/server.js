@@ -46,6 +46,18 @@ app.get('/test', (req, res) => {
   res.json({ message: 'Server basic setup working!' });
 });
 
+
+// FOR DEBUGGING PURPOSES
+app.use((req, res, next) => {
+    console.log('🔍 Debug middleware:');
+    console.log('Method:', req.method);
+    console.log('URL:', req.url);
+    console.log('Content-Type:', req.headers['content-type']);
+    console.log('Raw body:', req.body);
+    console.log('---');
+    next();
+});
+
 const tempRoutes = require('./temp/temp.routes');
 app.use('/temp', tempRoutes);
 const userRoutes = require('./user/user.routes');
