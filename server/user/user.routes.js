@@ -29,8 +29,7 @@ router.post('/login', login);
 router.post('/register', register);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
-// router.post('/edit-password', authenticate, editPassword); //Add later
-router.post('/edit-password', editPassword);
+router.post('/edit-password', authenticate, editPassword);
 
 // User management routes
 router.post('/logout', authenticate, logout);
