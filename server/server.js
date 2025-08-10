@@ -13,7 +13,6 @@ dotenv.config();
 
 // Create app
 const app = express();
-app.use(cookieParser());
 
 console.log('🔧 Starting server setup...');
 
@@ -24,7 +23,9 @@ connectDB();
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
+// CORS setup
 app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:5174'],
   credentials: true,
