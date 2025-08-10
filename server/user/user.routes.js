@@ -12,7 +12,8 @@ const {
     editPassword,
     // User Management
     logout,
-    updateUserInfo, 
+    updateUserInfo,
+    updateSponsorInfo, 
     updateScholarInfo,
     deleteAccount, 
     getCurrentUser,
@@ -34,6 +35,7 @@ router.post('/edit-password', authenticate, editPassword);
 // User management routes
 router.post('/logout', authenticate, logout);
 router.post('/update-user-info', authenticate, updateUserInfo);
+router.post('/update-sponsor-info', authenticate, fileUpload(), updateSponsorInfo);
 router.post('/update-scholar-info', authenticate, fileUpload(), updateScholarInfo);
 router.delete('/delete-account', authenticate, deleteAccount);
 router.get('/current-user', authenticate, getCurrentUser);

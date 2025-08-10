@@ -154,6 +154,59 @@ const editPassword = async (req, res) => {
     }
 };
 
+// Sponsor Information Controllers
+const updateSponsorInfo = async (req, res) => {
+    try {
+        const { firstName, middleInitial, lastName } = req.body;
+        const userId = req.user.id;
+
+        const user = await userModel.findById(userId);
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        let profileImage = user.sponsorInfo?.profileImage || null;
+
+        // Handle image upload
+        if (req.files && req.files.image) {
+            const file = req.files.image;
+            const fileName = `sponsors/${v4()}`;
+            const { url, key } = await putObjectSponsor(file.data, fileName); // Assuming you have a sponsor S3 bucket method
+
+            if (!url || !key) {
+                return res.status(400).json({ message: "Image upload failed" });
+            }
+
+            // Delete old image if exists
+            if (profileImage) {
+                const oldKey = profileImage.split("https://alalay-sponsor.s3.ap-southeast-1.amazonaws.com/")[1];
+                if (oldKey) await deleteObjectSponsor(oldKey);
+            }
+
+            profileImage = url;
+        }
+
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    'sponsorInfo.firstName': firstName,
+                    'sponsorInfo.middleInitial': middleInitial,
+                    'sponsorInfo.lastName': lastName,
+                    'sponsorInfo.profileImage': profileImage
+                }
+            },
+            { new: true, select: '-password' }
+        );
+
+        res.status(200).json({
+            message: "Sponsor information updated successfully",
+            user: updatedUser
+        });
+    } catch (error) {
+        console.error("Error updating sponsor info:", error);
+        res.status(500).json({ error: "Failed to update sponsor information" });
+    }
+};
+
 // Scholar Information Controllers
 const updateScholarInfo = async (req, res) => {
     try {
@@ -410,6 +463,7 @@ module.exports = {
     // User Management
     logout,
     updateUserInfo, 
+    updateSponsorInfo,
     updateScholarInfo,
     deleteAccount, 
     getCurrentUser,
