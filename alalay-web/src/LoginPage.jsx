@@ -1,25 +1,20 @@
-// export default LoginPage;
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { listTemps } from './_actions/temp.actions'; // ✅ adjust path as needed
-import { login } from './_actions/user.actions'; // ✅ adjust path as needed
+import { listTemps } from './_actions/temp.actions'; 
+import { login } from './_actions/user.actions'; 
 
 function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Controlled inputs
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  // Redux state
   const userState = useSelector((state) => state.user);
   const { loading, error, user } = userState;
   const { temps } = useSelector((state) => state.tempList);
 
-  // On successful login, navigate to /Feed
   useEffect(() => {
     if (user) {
       navigate('/Feed');
@@ -32,7 +27,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex flex-col items-center justify-center" style={{ backgroundColor: '#B11116' }}>
       <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm mb-6">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Login to Your Account
@@ -47,7 +42,7 @@ function LoginPage() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D5B527]"
               placeholder="Enter your username"
             />
           </div>
@@ -60,19 +55,17 @@ function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D5B527]"
               placeholder="Enter your password"
             />
           </div>
 
-          {/* Show error */}
           {error && error !== "No token, authorization denied" && (
             <div className="text-red-500 text-sm font-medium">
               {error}
             </div>
           )}
 
-          {/* Show loading */}
           {loading && (
             <div className="text-gray-500 text-sm font-medium">
               Logging in...
@@ -82,7 +75,8 @@ function LoginPage() {
           <div className="flex justify-between space-x-2 pt-4">
             <button
               type="submit"
-              className="w-1/2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+              className="w-1/2 text-white py-2 rounded-lg hover:opacity-90 transition"
+              style={{ backgroundColor: '#D5B527' }}
             >
               Login
             </button>
@@ -95,32 +89,8 @@ function LoginPage() {
           </div>
         </form>
       </div>
-
-
-
-      {/* DO NOT DELETE I WILL USE THIS AS REFERENCE CODE  */}
-<div className="bg-white p-4 rounded-xl shadow w-full max-w-sm">
-      <h3 className="text-lg font-semibold mb-2">Temp Data Preview</h3>
-
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
-
-      {!loading && !error && Array.isArray(temps) && (
-        <ul className="list-disc pl-5 space-y-1">
-          {temps.map((temp) => (
-            <li key={temp._id}>
-              {temp.username} — {temp.age}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-
-
-      
     </div>
   );
 }
 
 export default LoginPage;
-

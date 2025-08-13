@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { fetchCurrentUser } from './_actions/user.actions'; // ✅ import this
+import { fetchCurrentUser } from './_actions/user.actions';
 import LoginPage from './LoginPage';
 import Feed from './Main_Pages/Feed';
 import Scholars from './Main_Pages/Scholars';
+import ScholarProfile from './Main_Pages/ScholarProfile'; 
 import ProtectedRoute from './ProtectedRoute';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         {/* Protected Routes */}
         <Route path="/Feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
         <Route path="/Scholars" element={<ProtectedRoute><Scholars /></ProtectedRoute>} />
+        <Route path="/Scholars/ScholarProfile" element={<ProtectedRoute><ScholarProfile /></ProtectedRoute>} />
       </Routes>
     </Router>
   );
