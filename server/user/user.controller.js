@@ -79,7 +79,7 @@ const logout = (req, res) => {
 };
 
 const register = async (req, res) => {
-    const { username, email, password, firstName, middleInitial, lastName, gpa, userLevel } = req.body;
+    const { username, email, password, firstName, middleInitial, lastName, gwa, userLevel } = req.body;
     try {
         if (await userModel.findOne({ username })) return res.status(400).json({ error: "Username already exists" });
         if (await userModel.findOne({ email })) return res.status(400).json({ error: "Email already exists" });
@@ -94,7 +94,7 @@ const register = async (req, res) => {
                 firstName,
                 middleInitial,
                 lastName,
-                gpa,
+                gwa,
                 userLevel
             }
         });
@@ -210,7 +210,7 @@ const updateSponsorInfo = async (req, res) => {
 // Scholar Information Controllers
 const updateScholarInfo = async (req, res) => {
     try {
-        const { firstName, middleInitial, lastName, gpa, userLevel } = req.body;
+        const { firstName, middleInitial, lastName, gwa, userLevel } = req.body;
         const userId = req.user.id;
 
         const user = await userModel.findById(userId);
@@ -244,7 +244,7 @@ const updateScholarInfo = async (req, res) => {
                     'scholarInfo.firstName': firstName,
                     'scholarInfo.middleInitial': middleInitial,
                     'scholarInfo.lastName': lastName,
-                    'scholarInfo.gpa': gpa,
+                    'scholarInfo.gwa': gwa,
                     'scholarInfo.userLevel': userLevel,
                     'scholarInfo.profileImage': profileImage
                 }
@@ -423,7 +423,7 @@ const getScholars = async (req, res) => {
     // Find all users, but only return the fields we want
     const scholars = await userModel.find({}, {
       username: 1,
-      'scholarInfo.gpa': 1,
+      'scholarInfo.gwa': 1,
       'scholarInfo.userLevel': 1,
       'scholarInfo.profileImage': 1
     });
@@ -434,6 +434,51 @@ const getScholars = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+const getScholarProfile = async (req, res) => {
+  try {
+    const { scholarId } = req.params;
+
+    // Find the specific scholar and only return name, GWA, and bio
+    const scholar = await userModel.findById(scholarId, {
+      username: 1,
+      'scholarInfo.firstName': 1,
+      'scholarInfo.middleInitial': 1,
+      'scholarInfo.lastName': 1,
+      'scholarInfo.gwa': 1,
+      'scholarInfo.bio': 1,
+      'scholarInfo.profileImage': 1,
+      'scholarInfo.userLevel': 1
+    });
+
+    if (!scholar) {
+      return res.status(404).json({ error: "Scholar not found" });
+    }
+
+    // Transform the data to include full name
+    const scholarProfile = {
+      _id: scholar._id,
+      username: scholar.username,
+      fullName: scholar.scholarInfo.fullName, // Uses the virtual
+      gwa: scholar.scholarInfo.gwa,
+      bio: scholar.scholarInfo.bio || "No bio available",
+      profileImage: scholar.scholarInfo.profileImage,
+      userLevel: scholar.scholarInfo.userLevel
+    };
+
+    res.status(200).json(scholarProfile);
+  } catch (error) {
+    console.error("Get Scholar Profile Error:", error);
+    
+    // Handle invalid ObjectId format
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: "Invalid scholar ID format" });
+    }
+    
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 
 module.exports = {
     // Authentication
@@ -454,5 +499,6 @@ module.exports = {
     acceptFriendRequest,
     removeFriend,
     // Scholar browsing
-    getScholars
+    getScholars,
+    getScholarProfile
 };

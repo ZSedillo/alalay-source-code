@@ -22,7 +22,8 @@ const {
     acceptFriendRequest,
     removeFriend,
     // Scholar browsing
-    getScholars
+    getScholars,
+    getScholarProfile // ✅ Import the new function
 } = require('./user.controller');
 
 // Authentication routes
@@ -46,6 +47,7 @@ router.post('/accept-friend-request', authenticate, acceptFriendRequest);
 router.post('/remove-friend', authenticate, removeFriend);
 
 // Scholar browsing routes
-router.get('/scholars', getScholars); // Public route for browsing scholars
+router.get('/scholars', authenticate,getScholars); // Public route for browsing scholars
+router.get('/scholars/:scholarId', authenticate, getScholarProfile); // ✅ NEW: Get individual scholar profile
 
 module.exports = router;

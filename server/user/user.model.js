@@ -1,4 +1,3 @@
-//User.js 
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -44,7 +43,7 @@ const userSchema = new mongoose.Schema({
       required: true,
       trim: true
     },
-    gpa: {
+    gwa: {
       type: Number,
       min: 0,
       max: 4.0,
@@ -52,7 +51,7 @@ const userSchema = new mongoose.Schema({
         validator: function(v) {
           return v >= 0 && v <= 4.0;
         },
-        message: 'GPA must be between 0 and 4.0'
+        message: 'GWA must be between 0 and 4.0'
       }
     },
     userLevel: {
@@ -63,6 +62,13 @@ const userSchema = new mongoose.Schema({
     profileImage: {
       type: String, // URL to profile image
       default: null
+    },
+    // ✅ NEW: Add bio field
+    bio: {
+      type: String,
+      maxlength: 500, // Limit bio to 500 characters
+      trim: true,
+      default: ''
     }
   },
   
