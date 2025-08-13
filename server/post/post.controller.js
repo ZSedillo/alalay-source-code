@@ -309,7 +309,9 @@ const deletePost = async (req, res) => {
 const toggleLike = async (req, res) => {
     try {
         const { id } = req.params;
-        const userId = req.user.id;
+
+        // Temporary hardcoded user for testing
+        const userId = "689889e827f976dd2c673d4c"; 
 
         const post = await postModel.findById(id);
         if (!post) {
@@ -320,10 +322,18 @@ const toggleLike = async (req, res) => {
 
         if (isLiked) {
             await post.removeLike(userId);
-            res.status(200).json({ message: "Post unliked", liked: false, likeCount: post.likeCount });
+            res.status(200).json({
+                message: "Post unliked",
+                liked: false,
+                likeCount: post.likeCount
+            });
         } else {
             await post.addLike(userId);
-            res.status(200).json({ message: "Post liked", liked: true, likeCount: post.likeCount });
+            res.status(200).json({
+                message: "Post liked",
+                liked: true,
+                likeCount: post.likeCount
+            });
         }
     } catch (error) {
         console.error("Error toggling like:", error);
