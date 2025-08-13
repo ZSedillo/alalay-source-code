@@ -23,7 +23,7 @@ const {
     acceptFriendRequest,
     removeFriend,
     // Scholar browsing
-    getAllScholars
+    getScholars
 } = require('./user.controller');
 
 // Authentication routes
@@ -34,7 +34,6 @@ router.post('/reset-password', resetPassword);
 router.post('/edit-password', authenticate, editPassword);
 
 // User management routes
-router.get('/scholars', authenticate, getScholars);
 router.post('/logout', authenticate, logout);
 router.post('/update-user-info', authenticate, updateUserInfo);
 router.post('/update-sponsor-info', authenticate, fileUpload(), updateSponsorInfo);
@@ -48,6 +47,6 @@ router.post('/accept-friend-request', authenticate, acceptFriendRequest);
 router.post('/remove-friend', authenticate, removeFriend);
 
 // Scholar browsing routes
-router.get('/scholars', getAllScholars); // Public route for browsing scholars
+router.get('/scholars', getScholars); // Public route for browsing scholars
 
 module.exports = router;

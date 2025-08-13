@@ -139,25 +139,6 @@ const resetPassword = async (req, res) => {
     }
 };
 
-// Inside userController.js
-const getScholars = async (req, res) => {
-  try {
-    // Find all users, but only return the fields we want
-    const scholars = await userModel.find({}, {
-      username: 1,
-      'scholarInfo.gpa': 1,
-      'scholarInfo.userLevel': 1,
-      'scholarInfo.profileImage': 1
-    });
-
-    res.status(200).json(scholars);
-  } catch (error) {
-    console.error("Get Scholars Error:", error);
-    res.status(500).json({ error: "Server error" });
-  }
-};
-
-
 const editPassword = async (req, res) => {
     const { password, targetUserId } = req.body;
     try {
@@ -437,39 +418,21 @@ const removeFriend = async (req, res) => {
     }
 };
 
-// Get all scholars (for browsing/searching)
-const getAllScholars = async (req, res) => {
-    try {
-        const { page = 1, limit = 10, userLevel, search } = req.query;
-        const query = {};
+const getScholars = async (req, res) => {
+  try {
+    // Find all users, but only return the fields we want
+    const scholars = await userModel.find({}, {
+      username: 1,
+      'scholarInfo.gpa': 1,
+      'scholarInfo.userLevel': 1,
+      'scholarInfo.profileImage': 1
+    });
 
-        if (userLevel) query['scholarInfo.userLevel'] = userLevel;
-        if (search) {
-            query.$or = [
-                { 'scholarInfo.firstName': { $regex: search, $options: 'i' } },
-                { 'scholarInfo.lastName': { $regex: search, $options: 'i' } },
-                { username: { $regex: search, $options: 'i' } }
-            ];
-        }
-
-        const scholars = await userModel.find(query)
-            .select('username scholarInfo createdAt')
-            .limit(limit * 1)
-            .skip((page - 1) * limit)
-            .sort({ createdAt: -1 });
-
-        const total = await userModel.countDocuments(query);
-
-        res.json({ 
-            scholars, 
-            totalPages: Math.ceil(total / limit),
-            currentPage: page,
-            total
-        });
-    } catch (error) {
-        console.error("Error fetching scholars:", error);
-        res.status(500).json({ error: "Failed to fetch scholars" });
-    }
+    res.status(200).json(scholars);
+  } catch (error) {
+    console.error("Get Scholars Error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
 };
 
 module.exports = {
@@ -480,7 +443,6 @@ module.exports = {
     resetPassword, 
     editPassword,
     // User Management
-    getScholars,
     logout,
     updateUserInfo, 
     updateSponsorInfo,
@@ -492,5 +454,5 @@ module.exports = {
     acceptFriendRequest,
     removeFriend,
     // Scholar browsing
-    getAllScholars
+    getScholars
 };
