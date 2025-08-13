@@ -26,7 +26,8 @@ function App() {
         {/* Protected Routes */}
         <Route path="/Feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
         <Route path="/Scholars" element={<ProtectedRoute><Scholars /></ProtectedRoute>} />
-        <Route path="/Scholars/ScholarProfile" element={<ProtectedRoute><ScholarProfile /></ProtectedRoute>} />
+        {/* ✅ FIXED: Change this route to use :scholarId parameter */}
+        <Route path="/Scholars/:scholarId" element={<ProtectedRoute><ScholarProfile /></ProtectedRoute>} />
       </Routes>
     </Router>
   );

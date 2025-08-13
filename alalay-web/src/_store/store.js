@@ -1,11 +1,13 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
 import { tempListReducer } from '../_reducers/temp.reducer';
-import { userReducer } from '../_reducers/user.reducer'; // ⬅️ update path as needed
+import { userReducer, scholarsReducer, scholarProfileReducer } from '../_reducers/user.reducer'; // ✅ Import all reducers
 
 const rootReducer = combineReducers({
   tempList: tempListReducer,
-  user: userReducer, // ⬅️ add user reducer here
+  user: userReducer,
+  scholars: scholarsReducer,
+  scholarProfile: scholarProfileReducer, // ✅ Add scholar profile reducer
 });
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
