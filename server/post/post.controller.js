@@ -8,10 +8,16 @@ const { deleteObjectScholar } = require("../util/deleteObjectScholar");
 // 📌 Get all posts (with pagination and filtering)
 const getAllPosts = async (req, res) => {
     try {
-        const { page = 1, limit = 10, visibility = 'public', authorId, fundingEnabled } = req.query;
+        const { page = 1, limit = 10, authorId, fundingEnabled } = req.query;
         const userId = req.user?.id;
 
         let query = { isActive: true };
+
+        // Get the logged-in user (if any)
+        let currentUser = null;
+        if (userId) {
+            currentUser = await userModel.findById(userId);
+        }
 
         // Filter by author if specified
         if (authorId) {
@@ -23,15 +29,24 @@ const getAllPosts = async (req, res) => {
             query.isFundingEnabled = true;
         }
 
-        // Handle visibility filtering
-        if (visibility === 'friends' && userId) {
-            const user = await userModel.findById(userId);
-            const friendIds = user.friends;
-            query.$or = [
-                { author: { $in: friendIds }, visibility: { $in: ['public', 'friends'] } },
-                { author: userId } // User can see their own posts
-            ];
-        } else if (visibility === 'public') {
+        // Visibility handling
+        if (currentUser) {
+            if (req.query.visibility === 'friends') {
+                // Friends filter
+                const friendIds = currentUser.friends;
+                query.$or = [
+                    { author: { $in: friendIds }, visibility: { $in: ['public', 'friends'] } },
+                    { author: userId } // user can see their own posts
+                ];
+            } else if (currentUser.role === 'sponsor') {
+                // Sponsors see public + sponsor posts
+                query.visibility = { $in: ['public', 'sponsor'] };
+            } else {
+                // Default for logged in non-sponsor users → public only
+                query.visibility = 'public';
+            }
+        } else {
+            // Not logged in → public only
             query.visibility = 'public';
         }
 
@@ -40,8 +55,8 @@ const getAllPosts = async (req, res) => {
             .populate('likes.user', 'username scholarInfo.firstName scholarInfo.lastName')
             .populate('comments.user', 'username scholarInfo.firstName scholarInfo.lastName scholarInfo.profileImage')
             .populate('fundings.funder', 'username scholarInfo.firstName scholarInfo.lastName scholarInfo.profileImage')
-            .limit(limit * 1)
-            .skip((page - 1) * limit)
+            .limit(Number(limit))
+            .skip((Number(page) - 1) * Number(limit))
             .sort({ createdAt: -1 });
 
         const total = await postModel.countDocuments(query);
@@ -49,7 +64,7 @@ const getAllPosts = async (req, res) => {
         res.json({ 
             posts, 
             totalPages: Math.ceil(total / limit),
-            currentPage: page,
+            currentPage: Number(page),
             total
         });
     } catch (error) {
@@ -57,6 +72,7 @@ const getAllPosts = async (req, res) => {
         res.status(500).json({ error: "Failed to fetch posts" });
     }
 };
+
 
 // 📌 Get user's feed (posts from friends)
 const getUserFeed = async (req, res) => {
