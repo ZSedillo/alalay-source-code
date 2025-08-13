@@ -11,6 +11,7 @@ const {
     resetPassword, 
     editPassword,
     // User Management
+    getScholars,
     logout,
     updateUserInfo,
     updateSponsorInfo, 
@@ -33,6 +34,7 @@ router.post('/reset-password', resetPassword);
 router.post('/edit-password', authenticate, editPassword);
 
 // User management routes
+router.get('/scholars', authenticate, getScholars);
 router.post('/logout', authenticate, logout);
 router.post('/update-user-info', authenticate, updateUserInfo);
 router.post('/update-sponsor-info', authenticate, fileUpload(), updateSponsorInfo);

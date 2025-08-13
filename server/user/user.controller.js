@@ -139,6 +139,25 @@ const resetPassword = async (req, res) => {
     }
 };
 
+// Inside userController.js
+const getScholars = async (req, res) => {
+  try {
+    // Find all users, but only return the fields we want
+    const scholars = await userModel.find({}, {
+      username: 1,
+      'scholarInfo.gpa': 1,
+      'scholarInfo.userLevel': 1,
+      'scholarInfo.profileImage': 1
+    });
+
+    res.status(200).json(scholars);
+  } catch (error) {
+    console.error("Get Scholars Error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
 const editPassword = async (req, res) => {
     const { password, targetUserId } = req.body;
     try {
@@ -461,6 +480,7 @@ module.exports = {
     resetPassword, 
     editPassword,
     // User Management
+    getScholars,
     logout,
     updateUserInfo, 
     updateSponsorInfo,
