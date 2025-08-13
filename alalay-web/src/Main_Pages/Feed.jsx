@@ -7,27 +7,33 @@ import { getUserFeed } from "../_actions/feed.actions";
 import Sidebar from "../_components/Sidebar";
 import NewPostModal from "../_components/NewPostModal";
 
+const API = "http://localhost:3000";
+
 function Feed() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Redux state
   const { posts, loading, error, totalPages, currentPage } = useSelector(
     (state) => state.feed
   );
-
   const { user } = useSelector((state) => state.user);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Load feed on mount
   useEffect(() => {
-    dispatch(getUserFeed(1)); // no limit param → all posts
+    dispatch(getUserFeed(1));
   }, [dispatch]);
 
-  const handleLike = (postId) => {
-    // TODO: Call backend /posts/like/:id
-    console.log("Like clicked for post", postId);
+  const handleLike = async (postId) => {
+    try {
+      await fetch(`${API}/posts/like/${postId}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      dispatch(getUserFeed(currentPage)); // refresh likes count
+    } catch (err) {
+      console.error("Error liking post:", err);
+    }
   };
 
   const handleLogout = async () => {
@@ -35,19 +41,33 @@ function Feed() {
     navigate("/Login");
   };
 
-  const handleNewPost = (description) => {
-    // TODO: Call backend /posts/create
-    console.log("New post description:", description);
+  const handleNewPost = async ({ description, visibility }) => {
+    try {
+      const res = await fetch(`${API}/posts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ description, visibility }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Failed to create post");
+      }
+
+      setIsModalOpen(false);
+      dispatch(getUserFeed(1)); // refresh to show new post
+    } catch (error) {
+      console.error("Error creating post:", error);
+      alert(error.message);
+    }
   };
 
   return (
     <div className="bg-gray-100 relative">
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Content */}
       <div className="ml-64 h-screen flex flex-col">
-        {/* Heading */}
         <header className="px-6 py-4 flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-800">Feed</h1>
           <button
@@ -58,7 +78,6 @@ function Feed() {
           </button>
         </header>
 
-        {/* Scrollable posts */}
         <main className="flex-1 overflow-y-auto px-6 py-6">
           {loading && <p className="text-gray-500">Loading feed...</p>}
           {error && <p className="text-red-500">{error}</p>}
@@ -66,7 +85,6 @@ function Feed() {
           <div className="w-full max-w-md mx-auto space-y-6">
             {posts.map((post) => (
               <div key={post._id} className="bg-white p-4 rounded-xl shadow-md">
-                {/* Top bar with avatar, username, timestamp, audience tag */}
                 <div className="flex justify-between items-center mb-2">
                   <div className="flex items-center space-x-3">
                     <img
@@ -100,14 +118,12 @@ function Feed() {
                   </span>
                 </div>
 
-                {/* Post description */}
                 <p className="text-gray-700 mb-3">{post.description}</p>
 
-                {/* Images */}
                 {post.images && post.images.length > 0 ? (
                   <div className="w-full h-48 bg-gray-200 rounded-lg overflow-hidden mb-3">
                     <img
-                      src={post.images[0]}
+                      src={post.images[0].url}
                       alt="post"
                       className="w-full h-full object-cover"
                     />
@@ -118,7 +134,6 @@ function Feed() {
                   </div>
                 )}
 
-                {/* Like button */}
                 <button
                   onClick={() => handleLike(post._id)}
                   className="flex items-center space-x-1 text-gray-500 hover:text-red-500 transition"
@@ -129,7 +144,6 @@ function Feed() {
             ))}
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex justify-center space-x-2 mt-6">
               {Array.from({ length: totalPages }, (_, idx) => (
@@ -150,7 +164,6 @@ function Feed() {
         </main>
       </div>
 
-      {/* Floating Add Button */}
       <button
         onClick={() => setIsModalOpen(true)}
         className="fixed bottom-6 right-6 bg-[#D5B527] text-white p-4 rounded-full shadow-lg hover:opacity-90 transition"
@@ -158,12 +171,12 @@ function Feed() {
         <FaPlus size={20} />
       </button>
 
-      {/* New Post Modal */}
       <NewPostModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleNewPost}
+        onPostCreated={() => dispatch(getUserFeed(1))} // reload posts after creation
       />
+
     </div>
   );
 }
