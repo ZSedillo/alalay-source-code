@@ -200,7 +200,7 @@ const editPost = async (req, res) => {
     try {
         const { id } = req.params;
         const { description, visibility, tags, isFundingEnabled, fundingGoal } = req.body;
-        const userId = req.user.id;
+        const userId = req.body.userId;
 
         const post = await postModel.findById(id);
         if (!post) {
@@ -308,7 +308,7 @@ const deletePost = async (req, res) => {
 const toggleLike = async (req, res) => {
     try {
         const { id } = req.params;
-        const userId = req.user.id;
+        const userId = req.body.userId;
 
         const post = await postModel.findById(id);
         if (!post) {
