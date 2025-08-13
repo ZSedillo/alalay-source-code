@@ -116,94 +116,84 @@ const getUserFeed = async (req, res) => {
 
 // 📌 Create a new post
 const createPost = async (req, res) => {
-  try {
-    const { 
-      description, 
-      visibility = 'public', 
-      tags, 
-      isFundingEnabled = false,
-      fundingGoal 
-    } = req.body;
+    try {
+        const { 
+            description, 
+            visibility = 'public', 
+            tags, 
+            isFundingEnabled = false,
+            fundingGoal 
+        } = req.body;
+        
+        // const userId = req.user.id; // Original Code Use this later
+        // Debugging Code Replace Later
+        const userId = req.user?.id || req.body.userId; // This handles both cases
 
-    // ✅ Always get user ID from auth middleware
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-
-    if (!description || description.trim().length === 0) {
-      return res.status(400).json({ error: "Description is required" });
-    }
-
-    const images = [];
-
-    // ✅ Handle multiple image uploads
-    if (req.files) {
-      const files = Array.isArray(req.files.images) 
-        ? req.files.images 
-        : [req.files.images];
-
-      for (const file of files) {
-        if (file) {
-          const fileName = `posts/${v4()}`;
-          const { url, key } = await putObjectScholar(file.data, fileName);
-
-          if (url && key) {
-            images.push({
-              url,
-              caption: '', // optional, can add later
-            });
-          }
+        if (!description || description.trim().length === 0) {
+            return res.status(400).json({ error: "Description is required" });
         }
-      }
-    }
 
-    // ✅ Prepare funding goal
-    let parsedFundingGoal = null;
-    if (isFundingEnabled === 'true' || isFundingEnabled === true) {
-      if (fundingGoal) {
-        try {
-          const goalData = typeof fundingGoal === 'string'
-            ? JSON.parse(fundingGoal)
-            : fundingGoal;
+        const images = [];
 
-          parsedFundingGoal = {
-            amount: parseFloat(goalData.amount) || null,
-            description: goalData.description || '',
-            deadline: goalData.deadline ? new Date(goalData.deadline) : null
-          };
-        } catch (err) {
-          console.error("Error parsing funding goal:", err);
+        // Handle multiple image uploads
+        if (req.files) {
+            const files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
+            
+            for (const file of files) {
+                if (file) {
+                    const fileName = `posts/${v4()}`;
+                    const { url, key } = await putObjectScholar(file.data, fileName);
+
+                    if (url && key) {
+                        images.push({
+                            url: url,
+                            caption: '', // You can add caption support later
+                        });
+                    }
+                }
+            }
         }
-      }
+
+        // Prepare funding goal if provided
+        let parsedFundingGoal = null;
+        if (isFundingEnabled === 'true' || isFundingEnabled === true) {
+            if (fundingGoal) {
+                try {
+                    const goalData = typeof fundingGoal === 'string' ? JSON.parse(fundingGoal) : fundingGoal;
+                    parsedFundingGoal = {
+                        amount: parseFloat(goalData.amount) || null,
+                        description: goalData.description || '',
+                        deadline: goalData.deadline ? new Date(goalData.deadline) : null
+                    };
+                } catch (err) {
+                    console.error("Error parsing funding goal:", err);
+                }
+            }
+        }
+
+        const newPost = new postModel({
+            author: userId,
+            description: description.trim(),
+            images,
+            visibility,
+            tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+            isFundingEnabled: isFundingEnabled === 'true' || isFundingEnabled === true,
+            fundingGoal: parsedFundingGoal
+        });
+
+        await newPost.save();
+
+        const populatedPost = await postModel.findById(newPost._id)
+            .populate('author', 'username scholarInfo.firstName scholarInfo.lastName scholarInfo.profileImage');
+
+        res.status(201).json({ 
+            message: "Post created successfully", 
+            post: populatedPost 
+        });
+    } catch (error) {
+        console.error("Error creating post:", error);
+        res.status(500).json({ error: "Failed to create post" });
     }
-
-    // ✅ Create post
-    const newPost = new postModel({
-      author: userId, // ✅ Always from logged-in user
-      description: description.trim(),
-      images,
-      visibility,
-      tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
-      isFundingEnabled: isFundingEnabled === 'true' || isFundingEnabled === true,
-      fundingGoal: parsedFundingGoal
-    });
-
-    await newPost.save();
-
-    // ✅ Populate author info for frontend
-    const populatedPost = await postModel.findById(newPost._id)
-      .populate('author', 'username scholarInfo.firstName scholarInfo.lastName scholarInfo.profileImage');
-
-    res.status(201).json({ 
-      message: "Post created successfully", 
-      post: populatedPost 
-    });
-
-  } catch (error) {
-    console.error("Error creating post:", error);
-    res.status(500).json({ error: "Failed to create post" });
-  }
 };
 
 // 📌 Edit a post
