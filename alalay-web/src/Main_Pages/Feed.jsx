@@ -28,7 +28,9 @@ function Feed() {
     try {
       await fetch(`${API}/posts/like/${postId}`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
+        body: JSON.stringify({ userId: user._id }), // send current userId
       });
       dispatch(getUserFeed(currentPage)); // refresh likes count
     } catch (err) {
@@ -134,12 +136,24 @@ function Feed() {
                   </div>
                 )}
 
+                {/* Like Button */}
                 <button
                   onClick={() => handleLike(post._id)}
-                  className="flex items-center space-x-1 text-gray-500 hover:text-red-500 transition"
+                  className={`flex items-center space-x-1 transition ${
+                    post.likes?.some((like) => {
+                      const likeUserId =
+                        like.user?._id ||  // populated user object
+                        null;
+                      return likeUserId?.toString() === user._id?.toString();
+                    })
+                      ? "text-red-500"
+                      : "text-gray-500 hover:text-red-500"
+                  }`}
                 >
-                  <FaHeart /> <span>{post.likes?.length || 0}</span>
+                  <FaHeart />
+                  <span>{post.likes?.length || 0}</span>
                 </button>
+
               </div>
             ))}
           </div>
@@ -176,7 +190,6 @@ function Feed() {
         onClose={() => setIsModalOpen(false)}
         onPostCreated={() => dispatch(getUserFeed(1))} // reload posts after creation
       />
-
     </div>
   );
 }
