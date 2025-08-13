@@ -1,8 +1,9 @@
-import { FaHeart, FaPlus, FaUserCircle } from "react-icons/fa";
-import React, { useState } from "react";
+import { FaHeart, FaPlus } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../_actions/user.actions";
+import { getUserFeed } from "../_actions/feed.actions";
 import Sidebar from "../_components/Sidebar";
 import NewPostModal from "../_components/NewPostModal";
 
@@ -10,49 +11,23 @@ function Feed() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      user: "Luise Andrei Cardino",
-      content: "Just graduated! Lets go batch 2025!",
-      likes: 3,
-      time: "August 5 at 11:55 am",
-      audience: "public"
-    },
-    {
-      id: 2,
-      user: "Rodolfo Thirdy Aniceto",
-      content: "Attending my first hackathon! 🥳",
-      likes: 6,
-      time: "August 23 at 12:15 am",
-      audience: "public"
-    },
-    {
-      id: 3,
-      user: "Sofia Marie Pauline Caldit",
-      content: "First day at OJT! Wish me luck guys 😭",
-      likes: 7,
-      time: "August 2 at 9:00 am",
-      audience: "sponsors"
-    },
-    {
-      id: 4,
-      user: "Zandro Miguel Sedillo",
-      content: "Studying with my matcha :>",
-      likes: 5,
-      time: "July 10 at 2:55 pm",
-      audience: "public"
-    },
-  ]);
+  // Redux state
+  const { posts, loading, error, totalPages, currentPage } = useSelector(
+    (state) => state.feed
+  );
+
+  const { user } = useSelector((state) => state.user);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleLike = (id) => {
-    setPosts(
-      posts.map((post) =>
-        post.id === id ? { ...post, likes: post.likes + 1 } : post
-      )
-    );
+  // Load feed on mount
+  useEffect(() => {
+    dispatch(getUserFeed(1)); // no limit param → all posts
+  }, [dispatch]);
+
+  const handleLike = (postId) => {
+    // TODO: Call backend /posts/like/:id
+    console.log("Like clicked for post", postId);
   };
 
   const handleLogout = async () => {
@@ -60,20 +35,9 @@ function Feed() {
     navigate("/Login");
   };
 
-  const handleNewPost = (content) => {
-    const newPost = {
-      id: posts.length + 1,
-      user: "Current User", // You can replace with logged-in user
-      content,
-      likes: 0,
-      time: new Date().toLocaleString("en-US", {
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-      }),
-    };
-    setPosts([newPost, ...posts]);
+  const handleNewPost = (description) => {
+    // TODO: Call backend /posts/create
+    console.log("New post description:", description);
   };
 
   return (
@@ -84,53 +48,105 @@ function Feed() {
       {/* Content */}
       <div className="ml-64 h-screen flex flex-col">
         {/* Heading */}
-        <header className="px-6 py-4">
+        <header className="px-6 py-4 flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-800">Feed</h1>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 text-white px-3 py-1 rounded hover:opacity-90"
+          >
+            Logout
+          </button>
         </header>
 
         {/* Scrollable posts */}
         <main className="flex-1 overflow-y-auto px-6 py-6">
+          {loading && <p className="text-gray-500">Loading feed...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+
           <div className="w-full max-w-md mx-auto space-y-6">
             {posts.map((post) => (
-              <div key={post.id} className="bg-white p-4 rounded-xl shadow-md">
+              <div key={post._id} className="bg-white p-4 rounded-xl shadow-md">
                 {/* Top bar with avatar, username, timestamp, audience tag */}
                 <div className="flex justify-between items-center mb-2">
                   <div className="flex items-center space-x-3">
-                    {/* Placeholder profile picture */}
-                    <FaUserCircle className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-500 text-sm" />
+                    <img
+                      src={
+                        post.author?.scholarInfo?.profileImage ||
+                        "/default-avatar.png"
+                      }
+                      alt="author"
+                      className="w-10 h-10 rounded-full object-cover bg-gray-300"
+                    />
                     <div>
-                      <span className="font-semibold text-gray-700 block">{post.user}</span>
-                      <span className="text-gray-500 text-sm">{post.time}</span>
+                      <span className="font-semibold text-gray-700 block">
+                        {post.author?.scholarInfo?.firstName}{" "}
+                        {post.author?.scholarInfo?.lastName}
+                      </span>
+                      <span className="text-gray-500 text-sm">
+                        {new Date(post.createdAt).toLocaleString()}
+                      </span>
                     </div>
                   </div>
                   <span
-                    className={`px-2 py-1 text-xs rounded-full font-medium ${post.audience === "public"
+                    className={`px-2 py-1 text-xs rounded-full font-medium ${
+                      post.visibility === "public"
                         ? "bg-green-100 text-green-700"
                         : "bg-purple-100 text-purple-700"
-                      }`}
+                    }`}
                   >
-                    {post.audience === "public" ? "Public" : "Sponsors Only"}
+                    {post.visibility === "public"
+                      ? "Public"
+                      : "Sponsors Only"}
                   </span>
                 </div>
 
-                {/* Post content */}
-                <p className="text-gray-700 mb-3">{post.content}</p>
+                {/* Post description */}
+                <p className="text-gray-700 mb-3">{post.description}</p>
 
-                {/* Image placeholder */}
-                <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-sm mb-3">
-                  [ Image Placeholder ]
-                </div>
+                {/* Images */}
+                {post.images && post.images.length > 0 ? (
+                  <div className="w-full h-48 bg-gray-200 rounded-lg overflow-hidden mb-3">
+                    <img
+                      src={post.images[0]}
+                      alt="post"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-sm mb-3">
+                    [ No Image ]
+                  </div>
+                )}
 
                 {/* Like button */}
                 <button
-                  onClick={() => handleLike(post.id)}
+                  onClick={() => handleLike(post._id)}
                   className="flex items-center space-x-1 text-gray-500 hover:text-red-500 transition"
                 >
-                  <FaHeart /> <span>{post.likes}</span>
+                  <FaHeart /> <span>{post.likes?.length || 0}</span>
                 </button>
               </div>
             ))}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center space-x-2 mt-6">
+              {Array.from({ length: totalPages }, (_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => dispatch(getUserFeed(idx + 1))}
+                  className={`px-3 py-1 rounded ${
+                    currentPage === idx + 1
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+          )}
         </main>
       </div>
 
