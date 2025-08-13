@@ -11,7 +11,6 @@ const {
     resetPassword, 
     editPassword,
     // User Management
-    getScholars,
     logout,
     updateUserInfo,
     updateSponsorInfo, 
