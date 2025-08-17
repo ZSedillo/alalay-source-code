@@ -6,6 +6,7 @@ import { logout } from "../_actions/user.actions";
 import { getUserFeed } from "../_actions/feed.actions";
 import Sidebar from "../_components/Sidebar";
 import NewPostModal from "../_components/NewPostModal";
+import PaymentError from "../_components/PaymentFailure";
 
 const API = "http://localhost:3000";
 
@@ -66,7 +67,7 @@ function Feed() {
   };
 
   return (
-    <div className="bg-gray-100 relative">
+    <div className="bg-[#F8F9FA] bg-opacity-95 relative min-h-screen">
       <Sidebar />
 
       <div className="ml-64 h-screen flex flex-col">
