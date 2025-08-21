@@ -1,10 +1,12 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../_actions/user.actions";
+import { Home, Users, User, Settings, LogOut } from "lucide-react"; // icons
 
 function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation(); // to detect current route
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
@@ -12,36 +14,41 @@ function Sidebar() {
     navigate("/Login");
   };
 
+  const navItems = [
+    { label: "Feed", icon: <Home className="w-5 h-5" />, path: "/" },
+    { label: "Our Scholars", icon: <Users className="w-5 h-5" />, path: "/scholars" },
+    { label: "Profile", icon: <User className="w-5 h-5" />, path: "/profile" },
+    { label: "Settings", icon: <Settings className="w-5 h-5" />, path: "/settings" },
+  ];
+
   return (
     <aside
-      className="w-64 p-6 shadow-lg hidden md:flex flex-col justify-between fixed top-0 left-0 h-screen"
-      style={{ backgroundColor: "#B11116" }}
+      className="w-56 p-6 shadow-xl hidden md:flex flex-col justify-between fixed top-0 left-0 h-screen
+                 bg-gradient-to-b from-[#8A1A1C] to-[#5C1213] text-white"
     >
       {/* Top section */}
       <div>
-        <div className="mb-8 text-white">
-          <h2 className="text-xl font-bold">BPI Alalay</h2>
+        <div className="mb-8 border-b border-white/20 pb-4">
+          <h2 className="text-2xl font-extrabold tracking-wide">BPI Alalay</h2>
+          <p className="text-sm text-gray-200">Your trusted partner</p>
         </div>
+
         <nav>
           <ul className="space-y-2">
-            <li
-              className="cursor-pointer text-white hover:text-gray-200 transition"
-              onClick={() => navigate("/")}
-            >
-              Feed
-            </li>
-            <li
-              className="cursor-pointer text-white hover:text-gray-200 transition"
-              onClick={() => navigate("/scholars")}
-            >
-              Our Scholars
-            </li>
-            <li className="cursor-pointer text-white hover:text-gray-200 transition">
-              Profile
-            </li>
-            <li className="cursor-pointer text-white hover:text-gray-200 transition">
-              Settings
-            </li>
+            {navItems.map((item, index) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <li
+                  key={index}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all 
+                    ${isActive ? "bg-white/20 font-semibold" : "hover:bg-white/10"}`}
+                  onClick={() => navigate(item.path)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </li>
+              );
+            })}
           </ul>
         </nav>
       </div>
@@ -50,11 +57,10 @@ function Sidebar() {
       <div>
         <button
           onClick={handleLogout}
-          className="w-full px-4 py-2 text-white rounded-lg transition"
-          style={{ backgroundColor: '#D5B527' }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#bfa021'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#D5B527'}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg 
+                     bg-[#D5B527] hover:bg-[#bfa021] text-black font-medium transition"
         >
+          <LogOut className="w-5 h-5" />
           Logout
         </button>
       </div>

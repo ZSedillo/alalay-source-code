@@ -27,7 +27,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center" style={{ backgroundColor: '#B11116' }}>
+     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#8A1A1C] to-[#5C1213]">
       <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm mb-6">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Login to Your Account
