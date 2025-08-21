@@ -1,21 +1,21 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logout } from "../_actions/user.actions";
+// import { useDispatch } from "react-redux";
+// import { logout } from "../_actions/user.actions";
 import { Home, Users, User, Settings, LogOut } from "lucide-react"; // icons
 
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation(); // to detect current route
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const handleLogout = async () => {
-    await dispatch(logout());
-    navigate("/Login");
+    // await dispatch(logout()); // 🔒 Disabled backend logout for now
+    navigate("/Login"); // Just redirect without backend
   };
 
   const navItems = [
-    { label: "Feed", icon: <Home className="w-5 h-5" />, path: "/" },
+    { label: "Feed", icon: <Home className="w-5 h-5" />, path: "/Feed" },
     { label: "Our Scholars", icon: <Users className="w-5 h-5" />, path: "/scholars" },
     { label: "Profile", icon: <User className="w-5 h-5" />, path: "/profile" },
     { label: "Settings", icon: <Settings className="w-5 h-5" />, path: "/settings" },

@@ -3,19 +3,23 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { fetchCurrentUser } from './_actions/user.actions';
 import LoginPage from './LoginPage';
+import Signup from './Signup';
 import Feed from './Main_Pages/Feed';
 import Scholars from './Main_Pages/Scholars';
 import ScholarProfile from './Main_Pages/ScholarProfile'; 
+import Profile from './Main_Pages/Profile';
+import Settings from './Main_Pages/Settings';
+
 import ProtectedRoute from './ProtectedRoute';
 import PaymentError from './_components/PaymentFailure';
 
 function App() {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   // ✅ Restore session on initial load
-  useEffect(() => {
-    dispatch(fetchCurrentUser());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchCurrentUser());
+  // }, [dispatch]);
 
   return (
     <Router>
@@ -23,19 +27,28 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/Login" element={<LoginPage />} />
-        
+        <Route path="/Signup" element={<Signup />} />
+
         {/* Protected Routes */}
-        <Route path="/Feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
-        <Route path="/Scholars" element={<ProtectedRoute><Scholars /></ProtectedRoute>} />
+        {/* <Route path="/Feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} /> */}
+        {/* <Route path="/Scholars" element={<ProtectedRoute><Scholars /></ProtectedRoute>} /> */}
         {/* ✅ FIXED: Change this route to use :scholarId parameter */}
-        <Route path="/Scholars/:scholarId" element={<ProtectedRoute><ScholarProfile /></ProtectedRoute>} />
+        {/* <Route path="/Scholars/:scholarId" element={<ProtectedRoute><ScholarProfile /></ProtectedRoute>} /> */}
+
+        <Route path="/Feed" element={<Feed />} />
+        <Route path="/Scholars" element={<Scholars />} />
+        {/* ✅ FIXED: Change this route to use :scholarId parameter */}
+        <Route path="/Scholars/:scholarId" element={<ScholarProfile />} />
+        <Route path="/Settings" element={<Settings />} />
+        <Route path="/Profile" element={<Profile />} />
+
 
         <Route
           path="/payment-failure"
           element={
           <PaymentError isOpen={true} onClose={() => {}} />
-  }
-/>
+          }
+          />
         
         {/* Fallback route */}
       </Routes>

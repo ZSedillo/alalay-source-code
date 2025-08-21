@@ -1,27 +1,82 @@
-import React, { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { FaUserCircle, FaArrowLeft, FaShareAlt, FaDonate } from 'react-icons/fa';
-import Sidebar from '../_components/Sidebar';
-import { getScholarProfile, clearScholarProfile } from '../_actions/user.actions';
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+// import { useDispatch, useSelector } from 'react-redux';
+// import { getScholarProfile, clearScholarProfile } from '../_actions/user.actions';
+import { FaUserCircle, FaArrowLeft, FaShareAlt, FaDonate } from "react-icons/fa";
+import Sidebar from "../_components/Sidebar";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 function ScholarProfile() {
   const { scholarId } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const { scholarProfile, loading, error } = useSelector(
-    (state) => state.scholarProfile
-  );
+  // const { scholarProfile, loading, error } = useSelector(
+  //   (state) => state.scholarProfile
+  // );
+
+  // Local state with dummy data
+  const [scholarProfile, setScholarProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error] = useState(null);
+
+  // 🔹 Dummy scholars list (instead of backend)
+  const sampleScholars = [
+    {
+      _id: "1",
+      fullName: "Juan Dela Cruz",
+      username: "juancruz",
+      profileImage: "/default-avatar.png",
+      userLevel: "Incoming 4th Year College",
+      bio: "I am passionate about technology and education. Hoping to inspire others through my journey!",
+      donationProgress: 65,
+      gwa: 1.75,
+      status: "Active",
+      activities: [
+        "Attended scholarship orientation",
+        "Submitted enrollment form",
+        "Received book allowance",
+      ],
+    },
+    {
+      _id: "2",
+      fullName: "Maria Santos",
+      username: "marias",
+      profileImage: "/default-avatar.png",
+      userLevel: "3rd Year High School",
+      bio: "Loves science and math. Dreaming to be an engineer someday!",
+      donationProgress: 45,
+      gwa: 1.90,
+      status: "Active",
+      activities: ["Won 2nd place in Science Fair", "Attended tutorial program"],
+    },
+    {
+      _id: "3",
+      fullName: "Pedro Reyes",
+      username: "pedroreyes",
+      profileImage: "/default-avatar.png",
+      userLevel: "2nd Year College",
+      bio: "Future teacher with a passion for literature and education.",
+      donationProgress: 80,
+      gwa: 1.65,
+      status: "Active",
+      activities: ["Submitted thesis proposal", "Presented in class debate"],
+    },
+  ];
 
   useEffect(() => {
-    if (scholarId) dispatch(getScholarProfile(scholarId));
-    return () => dispatch(clearScholarProfile());
-  }, [dispatch, scholarId]);
+    // 🔹 Instead of API call, just find local sample data
+    const scholar = sampleScholars.find((s) => s._id === scholarId);
+    setTimeout(() => {
+      setScholarProfile(scholar || sampleScholars[0]); // fallback if not found
+      setLoading(false);
+    }, 600);
 
-  const handleBack = () => navigate('/scholars');
+    // return () => dispatch(clearScholarProfile());
+  }, [scholarId]);
+
+  const handleBack = () => navigate("/scholars");
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -54,9 +109,7 @@ function ScholarProfile() {
           {error && (
             <div className="flex justify-center items-center h-64">
               <div className="bg-red-50 p-6 rounded-xl shadow text-center max-w-md">
-                <p className="text-red-600 text-lg font-semibold mb-4">
-                  {error}
-                </p>
+                <p className="text-red-600 text-lg font-semibold mb-4">{error}</p>
                 <button
                   onClick={handleBack}
                   className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
@@ -113,10 +166,10 @@ function ScholarProfile() {
                       value={scholarProfile.donationProgress || 0}
                       text={`${scholarProfile.donationProgress || 0}%`}
                       styles={buildStyles({
-                        textSize: '14px',
-                        pathColor: '#8A1A1C',
-                        textColor: '#5C1213',
-                        trailColor: '#f1f1f1',
+                        textSize: "14px",
+                        pathColor: "#8A1A1C",
+                        textColor: "#5C1213",
+                        trailColor: "#f1f1f1",
                       })}
                     />
                   </div>
@@ -127,30 +180,39 @@ function ScholarProfile() {
                   <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow-sm">
                     <h3 className="text-sm font-medium text-gray-600">GWA</h3>
                     <p className="text-2xl font-bold text-blue-700">
-                      {scholarProfile.gwa ? scholarProfile.gwa.toFixed(2) : 'N/A'}
+                      {scholarProfile.gwa
+                        ? scholarProfile.gwa.toFixed(2)
+                        : "N/A"}
                     </p>
                   </div>
 
                   <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow-sm">
-                    <h3 className="text-sm font-medium text-gray-600">Academic Level</h3>
+                    <h3 className="text-sm font-medium text-gray-600">
+                      Academic Level
+                    </h3>
                     <p className="text-xl font-bold text-green-700 capitalize">
                       {scholarProfile.userLevel}
                     </p>
                   </div>
 
                   <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 shadow-sm">
-                    <h3 className="text-sm font-medium text-gray-600">Enrollment Status</h3>
+                    <h3 className="text-sm font-medium text-gray-600">
+                      Enrollment Status
+                    </h3>
                     <p className="text-xl font-bold text-purple-700">
-                      {scholarProfile.status || 'Active'}
+                      {scholarProfile.status || "Active"}
                     </p>
                   </div>
                 </div>
 
                 {/* Activities */}
                 <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Activities</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                    Activities
+                  </h3>
                   <ul className="space-y-3">
-                    {scholarProfile.activities && scholarProfile.activities.length > 0 ? (
+                    {scholarProfile.activities &&
+                    scholarProfile.activities.length > 0 ? (
                       scholarProfile.activities.map((activity, index) => (
                         <li
                           key={index}

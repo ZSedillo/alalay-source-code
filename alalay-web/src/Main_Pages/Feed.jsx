@@ -1,69 +1,115 @@
 import { FaHeart, FaPlus } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../_actions/user.actions";
-import { getUserFeed } from "../_actions/feed.actions";
+// import { useDispatch, useSelector } from "react-redux";
+// import { logout } from "../_actions/user.actions";
+// import { getUserFeed } from "../_actions/feed.actions";
 import Sidebar from "../_components/Sidebar";
 import NewPostModal from "../_components/NewPostModal";
-import PaymentError from "../_components/PaymentFailure";
+// import PaymentError from "../_components/PaymentFailure";
 
-const API = "http://localhost:3000";
+// const API = "http://localhost:3000";
 
 function Feed() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const { posts, loading, error, totalPages, currentPage } = useSelector(
-    (state) => state.feed
-  );
-  const { user } = useSelector((state) => state.user);
+  // const { posts, loading, error, totalPages, currentPage } = useSelector(
+  //   (state) => state.feed
+  // );
+  // const { user } = useSelector((state) => state.user);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    dispatch(getUserFeed(1));
-  }, [dispatch]);
-
-  const handleLike = async (postId) => {
-    try {
-      await fetch(`${API}/posts/like/${postId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ userId: user._id }), // send current userId
-      });
-      dispatch(getUserFeed(currentPage)); // refresh likes count
-    } catch (err) {
-      console.error("Error liking post:", err);
-    }
+  // Dummy logged-in user
+  const user = {
+    _id: "12345",
+    scholarInfo: {
+      firstName: "Zandro",
+      lastName: "Sedillo",
+      profileImage: "/default-avatar.png",
+    },
   };
 
-  const handleLogout = async () => {
-    await dispatch(logout());
-    navigate("/Login");
+  // Dummy JSON posts
+  const [posts, setPosts] = useState([
+    {
+      _id: "p1",
+      author: {
+        scholarInfo: {
+          firstName: "Maria",
+          lastName: "Santos",
+          profileImage: "/default-avatar.png",
+        },
+      },
+      description: "Excited to start the new semester!",
+      visibility: "public",
+      createdAt: new Date().toISOString(),
+      images: [],
+      likes: [],
+    },
+    {
+      _id: "p2",
+      author: {
+        scholarInfo: {
+          firstName: "Juan",
+          lastName: "Cruz",
+          profileImage: "/default-avatar.png",
+        },
+      },
+      description: "Thanks to my sponsor, I was able to buy new books 📚",
+      visibility: "sponsor",
+      createdAt: new Date().toISOString(),
+      images: [
+        {
+          url: "https://via.placeholder.com/400x200.png?text=Sample+Image",
+        },
+      ],
+      likes: [{ user: { _id: "12345" } }],
+    },
+  ]);
+
+  // Pagination placeholders
+  const totalPages = 1;
+  const currentPage = 1;
+
+  // useEffect(() => {
+  //   dispatch(getUserFeed(1));
+  // }, [dispatch]);
+
+  const handleLike = (postId) => {
+    setPosts((prev) =>
+      prev.map((post) =>
+        post._id === postId
+          ? {
+              ...post,
+              likes: post.likes.some((like) => like.user._id === user._id)
+                ? post.likes.filter((like) => like.user._id !== user._id) // unlike
+                : [...post.likes, { user: { _id: user._id } }], // like
+            }
+          : post
+      )
+    );
   };
 
-  const handleNewPost = async ({ description, visibility }) => {
-    try {
-      const res = await fetch(`${API}/posts`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ description, visibility }),
-      });
+  const handleLogout = () => {
+    // await dispatch(logout());
+    // navigate("/Login"); // Disabled redirect for now
+  };
 
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || "Failed to create post");
-      }
+  const handleNewPost = ({ description, visibility }) => {
+    const newPost = {
+      _id: Date.now().toString(),
+      author: user,
+      description,
+      visibility,
+      createdAt: new Date().toISOString(),
+      images: [],
+      likes: [],
+    };
 
-      setIsModalOpen(false);
-      dispatch(getUserFeed(1)); // refresh to show new post
-    } catch (error) {
-      console.error("Error creating post:", error);
-      alert(error.message);
-    }
+    setPosts((prev) => [newPost, ...prev]);
+    setIsModalOpen(false);
   };
 
   return (
@@ -82,8 +128,8 @@ function Feed() {
         </header>
 
         <main className="flex-1 overflow-y-auto px-6 py-6">
-          {loading && <p className="text-gray-500">Loading feed...</p>}
-          {error && <p className="text-red-500">{error}</p>}
+          {/* {loading && <p className="text-gray-500">Loading feed...</p>}
+          {error && <p className="text-red-500">{error}</p>} */}
 
           <div className="w-full max-w-md mx-auto space-y-6">
             {posts.map((post) => (
@@ -141,12 +187,7 @@ function Feed() {
                 <button
                   onClick={() => handleLike(post._id)}
                   className={`flex items-center space-x-1 transition ${
-                    post.likes?.some((like) => {
-                      const likeUserId =
-                        like.user?._id ||  // populated user object
-                        null;
-                      return likeUserId?.toString() === user._id?.toString();
-                    })
+                    post.likes?.some((like) => like.user._id === user._id)
                       ? "text-red-500"
                       : "text-gray-500 hover:text-red-500"
                   }`}
@@ -154,7 +195,6 @@ function Feed() {
                   <FaHeart />
                   <span>{post.likes?.length || 0}</span>
                 </button>
-
               </div>
             ))}
           </div>
@@ -164,7 +204,7 @@ function Feed() {
               {Array.from({ length: totalPages }, (_, idx) => (
                 <button
                   key={idx}
-                  onClick={() => dispatch(getUserFeed(idx + 1))}
+                  // onClick={() => dispatch(getUserFeed(idx + 1))}
                   className={`px-3 py-1 rounded ${
                     currentPage === idx + 1
                       ? "bg-blue-500 text-white"
@@ -189,7 +229,7 @@ function Feed() {
       <NewPostModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onPostCreated={() => dispatch(getUserFeed(1))} // reload posts after creation
+        onPostCreated={handleNewPost}
       />
     </div>
   );

@@ -1,21 +1,55 @@
 import { FaUserCircle } from "react-icons/fa";
-import React, { useEffect } from "react";
+import React/*, { useEffect }*/ from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+// import { useDispatch, useSelector } from "react-redux";
 import Sidebar from "../_components/Sidebar";
-import { getScholars } from "../_actions/user.actions";
+// import { getScholars } from "../_actions/user.actions";
 
 function Scholars() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   
-  // ✅ Get scholars data from Redux store
-  const { scholars, loading, error } = useSelector((state) => state.scholars);
+  // ✅ Get scholars data from Redux store (disabled)
+  // const { scholars, loading, error } = useSelector((state) => state.scholars);
 
-  // ✅ Fetch scholars when component mounts
-  useEffect(() => {
-    dispatch(getScholars());
-  }, [dispatch]);
+  // ✅ Fetch scholars when component mounts (disabled)
+  // useEffect(() => {
+  //   dispatch(getScholars());
+  // }, [dispatch]);
+
+  // 🔹 Dummy scholars list (since backend is disabled)
+  const scholars = [
+    {
+      _id: "1",
+      username: "juancruz",
+      scholarInfo: {
+        profileImage: null,
+        gwa: 1.5,
+        userLevel: "Incoming 4th Year College",
+      },
+    },
+    {
+      _id: "2",
+      username: "marias",
+      scholarInfo: {
+        profileImage: null,
+        gwa: 1.8,
+        userLevel: "3rd Year High School",
+      },
+    },
+    {
+      _id: "3",
+      username: "pedroreyes",
+      scholarInfo: {
+        profileImage: null,
+        gwa: 1.9,
+        userLevel: "2nd Year College",
+      },
+    },
+  ];
+
+  const loading = false;
+  const error = null;
 
   const handleCardClick = (scholarId) => {
     // Navigate to individual scholar profile
