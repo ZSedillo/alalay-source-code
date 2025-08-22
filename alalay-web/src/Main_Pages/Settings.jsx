@@ -120,11 +120,13 @@ function Settings() {
                 onChange={(e) => handleInputChange('yearLevel', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
               >
-                <option value="">Select Level</option>
-                <option value="high-school">High School</option>
-                <option value="undergraduate">Undergraduate</option>
-                <option value="graduate">Graduate</option>
-                <option value="phd">PhD</option>
+                  <option value="">Select year level</option>
+                  <option value="1st-Year">1st Year</option>
+                  <option value="2nd-Year">2nd Year</option>
+                  <option value="3rd-Year">3rd Year</option>
+                  <option value="4th-Year">4th Year</option>
+                  <option value="5th-Year">5th Year</option>
+                  <option value="Graduate">Graduate</option>
               </select>
             </div>
             <div>
