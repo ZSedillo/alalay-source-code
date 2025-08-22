@@ -79,29 +79,29 @@ function ScholarProfile() {
   const handleBack = () => navigate("/scholars");
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-[#f9fafb] to-[#f3f4f6]">
       {/* Fixed Sidebar */}
       <Sidebar />
 
       {/* Right section offset by the sidebar width */}
-      <div className="md:ml-56 flex flex-col min-h-screen">
+      <div className="md:ml-64 flex flex-col min-h-screen">
         {/* Header */}
-        <header className="sticky top-0 z-10 h-16 flex items-center px-6 border-b bg-white">
+        <header className="sticky top-0 z-10 h-20 flex items-center px-10 border-b bg-white shadow-sm">
           <button
             onClick={handleBack}
             className="mr-4 p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-full transition-colors"
           >
-            <FaArrowLeft size={20} />
+            <FaArrowLeft size={22} />
           </button>
-          <h1 className="text-xl font-bold text-gray-800">Scholar Profile</h1>
+          <h1 className="text-2xl font-bold text-[#8A1A1C]">Scholar Profile</h1>
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto px-6 py-8">
+        <main className="flex-1 overflow-y-auto px-8 py-10">
           {/* Loading */}
           {loading && (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8A1A1C]"></div>
             </div>
           )}
 
@@ -123,34 +123,37 @@ function ScholarProfile() {
           {/* Scholar Profile */}
           {!loading && !error && scholarProfile && (
             <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-2xl shadow-md p-8">
+              <div className="bg-white rounded-2xl shadow-xl p-10">
                 {/* Profile + Progress Circle */}
-                <div className="flex items-center justify-between gap-8 mb-8">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-10 mb-10">
                   {/* Left: Avatar + Info */}
                   <div className="flex items-center gap-8">
                     {/* Avatar */}
-                    {scholarProfile.profileImage ? (
-                      <img
-                        src={scholarProfile.profileImage}
-                        alt={scholarProfile.fullName}
-                        className="w-36 h-36 rounded-full object-cover border-4 border-gray-200 shadow"
-                      />
-                    ) : (
-                      <FaUserCircle className="w-36 h-36 text-gray-400" />
-                    )}
-
+                    <div className="relative">
+                      {scholarProfile.profileImage ? (
+                        <img
+                          src={scholarProfile.profileImage}
+                          alt={scholarProfile.fullName}
+                          className="w-36 h-36 rounded-full object-cover border-4 border-[#D5B527] shadow"
+                        />
+                      ) : (
+                        <FaUserCircle className="w-36 h-36 text-gray-400" />
+                      )}
+                      <span className="absolute bottom-2 right-2 bg-[#D5B527] text-white text-xs px-3 py-1 rounded-full shadow font-semibold">
+                        {scholarProfile.userLevel?.split(' ')[0] || "Scholar"}
+                      </span>
+                    </div>
                     {/* Info */}
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900">
+                      <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
                         {scholarProfile.fullName}
+                        <span className="ml-2 inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
+                          {scholarProfile.userLevel}
+                        </span>
                       </h2>
-                      <p className="text-gray-500">@{scholarProfile.username}</p>
-                      <span className="mt-2 inline-block px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-full">
-                        {scholarProfile.userLevel}
-                      </span>
-
+                      <p className="text-gray-500 text-lg mt-1">@{scholarProfile.username}</p>
                       {/* Bio */}
-                      <p className="mt-4 text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      <p className="mt-4 text-gray-700 leading-relaxed whitespace-pre-wrap text-base">
                         {scholarProfile.bio || (
                           <span className="text-gray-400 italic">
                             No bio available for this scholar.
@@ -159,33 +162,32 @@ function ScholarProfile() {
                       </p>
                     </div>
                   </div>
-
                   {/* Right: Donation Progress Circle */}
-                  <div className="w-24 h-24">
+                  <div className="w-28 h-28 flex flex-col items-center justify-center">
                     <CircularProgressbar
                       value={scholarProfile.donationProgress || 0}
                       text={`${scholarProfile.donationProgress || 0}%`}
                       styles={buildStyles({
-                        textSize: "14px",
-                        pathColor: "#8A1A1C",
-                        textColor: "#5C1213",
+                        textSize: "18px",
+                        pathColor: "#D5B527",
+                        textColor: "#8A1A1C",
                         trailColor: "#f1f1f1",
                       })}
                     />
+                    <span className="mt-2 text-xs text-gray-500 font-medium">Funding Progress</span>
                   </div>
                 </div>
 
                 {/* Stats Row */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-center mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-10">
                   <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow-sm">
                     <h3 className="text-sm font-medium text-gray-600">GWA</h3>
-                    <p className="text-2xl font-bold text-blue-700">
+                    <p className="text-3xl font-bold text-blue-700">
                       {scholarProfile.gwa
                         ? scholarProfile.gwa.toFixed(2)
                         : "N/A"}
                     </p>
                   </div>
-
                   <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow-sm">
                     <h3 className="text-sm font-medium text-gray-600">
                       Academic Level
@@ -194,7 +196,6 @@ function ScholarProfile() {
                       {scholarProfile.userLevel}
                     </p>
                   </div>
-
                   <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 shadow-sm">
                     <h3 className="text-sm font-medium text-gray-600">
                       Enrollment Status
@@ -206,7 +207,7 @@ function ScholarProfile() {
                 </div>
 
                 {/* Activities */}
-                <div className="mb-8">
+                <div className="mb-10">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
                     Activities
                   </h3>
@@ -216,7 +217,7 @@ function ScholarProfile() {
                       scholarProfile.activities.map((activity, index) => (
                         <li
                           key={index}
-                          className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-100"
+                          className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-100 text-gray-700"
                         >
                           {activity}
                         </li>
@@ -228,20 +229,20 @@ function ScholarProfile() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-center gap-4 mt-6">
-                  <button className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                <div className="flex flex-col md:flex-row justify-center gap-4 mt-6">
+                  <button className="flex items-center gap-2 px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-base shadow">
                     <FaDonate /> Donate
                   </button>
-                  <button className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  <button className="flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold text-base shadow">
                     <FaShareAlt /> Share
                   </button>
                 </div>
 
                 {/* Back Button */}
-                <div className="flex justify-center mt-6">
+                <div className="flex justify-center mt-8">
                   <button
                     onClick={handleBack}
-                    className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                    className="px-8 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold shadow"
                   >
                     Back to Scholars
                   </button>

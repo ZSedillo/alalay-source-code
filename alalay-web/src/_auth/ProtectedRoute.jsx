@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { logout } from './_actions/user.actions'; // adjust this path if needed
+import { logout } from '../_actions/user.actions'; // adjust this path if needed
 
 export default function ProtectedRoute({ children }) {
   const dispatch = useDispatch();
