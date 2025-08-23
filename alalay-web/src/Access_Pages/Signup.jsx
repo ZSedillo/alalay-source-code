@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, User, Mail, Phone, MapPin, Calendar, Upload, X } from "lucide-react";
 
@@ -30,6 +30,9 @@ function Signup() {
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [completionPercentage, setCompletionPercentage] = useState(0);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [modalCountdown, setModalCountdown] = useState(10);
+  const countdownRef = useRef();
 
   // Calculate completion percentage based on filled fields
   useEffect(() => {
@@ -42,6 +45,23 @@ function Signup() {
     const percentage = Math.round((filledFields / totalFields) * 100);
     setCompletionPercentage(percentage);
   }, [formData]);
+
+  useEffect(() => {
+    if (showSuccessModal) {
+      setModalCountdown(10);
+      countdownRef.current = setInterval(() => {
+        setModalCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdownRef.current);
+            navigate('/Login');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(countdownRef.current);
+    }
+  }, [showSuccessModal, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -130,9 +150,14 @@ function Signup() {
     if (validateStep(currentStep)) {
       // Here you would typically send the data to your backend
       console.log("Form submitted:", formData);
-      // Navigate to Feed page after successful signup
-      navigate('/Feed');
+      // Show modal instead of navigating immediately
+      setShowSuccessModal(true);
     }
+  };
+
+  const handleModalSignIn = () => {
+    setShowSuccessModal(false);
+    navigate('/Login');
   };
 
   const handleBackToSelection = () => {
@@ -519,27 +544,33 @@ function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] flex items-center justify-center p-2 sm:p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-4 sm:p-8 relative overflow-hidden">
         {/* Header with back button */}
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={handleBackToSelection}
-            className="text-gray-600 hover:text-gray-800 flex items-center"
-          >
-            ← Back to selection
-          </button>
-          <div className="text-center">
-            <h1 className="text-xl font-semibold text-gray-800">Student Registration</h1>
+        <div className="mb-6">
+          {/* On small screens, stack vertically; on sm+ screens, center with absolute back button */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center relative">
+            {/* Back button: top on mobile, left absolute on sm+ */}
+            <button
+              onClick={handleBackToSelection}
+              className="text-gray-600 hover:text-gray-800 flex items-center text-sm sm:text-base mb-2 sm:mb-0 sm:absolute sm:left-0"
+              style={{ minWidth: "fit-content" }}
+            >
+              ← Back to selection
+            </button>
+            <div className="flex-1 text-center">
+              <h1 className="text-lg sm:text-xl font-semibold text-gray-800">Student Registration</h1>
+            </div>
+            {/* Spacer for symmetry on sm+ */}
+            <div className="hidden sm:block sm:absolute sm:right-0 sm:w-20"></div>
           </div>
-          <div className="w-20"></div> {/* Spacer for balance */}
         </div>
 
         {/* Progress bar */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-600">Step {currentStep} of 4</span>
-            <span className="text-sm text-gray-500">{completionPercentage}% Complete</span>
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-2 gap-1">
+            <span className="text-xs sm:text-sm font-medium text-gray-600">Step {currentStep} of 4</span>
+            <span className="text-xs sm:text-sm text-gray-500">{completionPercentage}% Complete</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
@@ -549,15 +580,17 @@ function Signup() {
           </div>
         </div>
 
-        <div onSubmit={handleSubmit}>
-          {renderStepContent()}
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            {renderStepContent()}
+          </div>
 
-          <div className="flex justify-between mt-8">
+          <div className="flex flex-col sm:flex-row justify-between mt-8 gap-2">
             {currentStep > 1 && (
               <button
                 type="button"
                 onClick={handlePrev}
-                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm sm:text-base"
               >
                 Previous
               </button>
@@ -568,25 +601,24 @@ function Signup() {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="px-8 py-3 bg-[#D5B527] hover:bg-[#bfa021] text-white rounded-lg font-medium transition"
+                  className="px-8 py-3 bg-[#D5B527] hover:bg-[#bfa021] text-white rounded-lg font-medium transition text-sm sm:text-base"
                 >
                   Next
                 </button>
               ) : (
                 <button
-                  type="button"
-                  onClick={handleSubmit}
-                  className="px-8 py-3 bg-gradient-to-r from-[#8A1A1C] to-[#5C1213] text-white rounded-lg font-medium hover:opacity-90 transition"
+                  type="submit"
+                  className="px-8 py-3 bg-gradient-to-r from-[#8A1A1C] to-[#5C1213] text-white rounded-lg font-medium hover:opacity-90 transition text-sm sm:text-base"
                 >
                   Create Account
                 </button>
               )}
             </div>
           </div>
-        </div>
+        </form>
 
         <div className="mt-6 text-center">
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 text-xs sm:text-sm">
             Already have an account?{" "}
             <button 
               onClick={handleLoginRedirect}
@@ -596,6 +628,39 @@ function Signup() {
             </button>
           </p>
         </div>
+
+        {/* Success Modal */}
+        {showSuccessModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            style={{
+              background: "rgba(0,0,0,0.45)", // Proper opacity for overlay
+              backdropFilter: "blur(1.5px)"
+            }}
+          >
+            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center relative">
+              <div className="flex flex-col items-center">
+                <div className="mb-4">
+                  <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                    <circle cx="28" cy="28" r="28" fill="#D5B527"/>
+                    <path d="M18 29l7 7 13-13" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-[#8A1A1C] mb-2">Account Created!</h2>
+                <p className="text-gray-700 mb-4">Your account was successfully created.<br />You can now sign in and start your journey.</p>
+                <p className="text-gray-500 text-sm mb-6">
+                  Redirecting to sign in in <span className="font-semibold text-[#D5B527]">{modalCountdown}</span> seconds...
+                </p>
+                <button
+                  onClick={handleModalSignIn}
+                  className="w-full bg-gradient-to-r from-[#8A1A1C] to-[#5C1213] text-white py-2 rounded-lg font-semibold hover:opacity-90 transition"
+                >
+                  Sign In Now
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
