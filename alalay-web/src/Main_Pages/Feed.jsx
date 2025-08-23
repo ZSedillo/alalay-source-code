@@ -1,4 +1,4 @@
-import { FaHeart, FaPlus, FaComment, FaShare } from "react-icons/fa";
+import { FaHeart, FaPlus, FaComment, FaShare, FaBookmark, FaEllipsisV } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../_components/Sidebar";
@@ -10,6 +10,7 @@ function Feed() {
   const [expandedComments, setExpandedComments] = useState({});
   const [newComment, setNewComment] = useState({});
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all'); // all, students, sponsors, funding
 
   // Enhanced dummy logged-in user
   const user = {
@@ -98,21 +99,6 @@ function Feed() {
           text: "I studied Computer Science too! Feel free to reach out if you need any guidance.",
           donation: null,
           createdAt: "2025-01-22T12:00:00.000Z"
-        },
-        {
-          _id: "c4",
-          user: {
-            _id: "user4",
-            fullName: "Tech Mentor",
-            profileImage: null,
-            isAnonymous: false
-          },
-          text: "ML algorithms can be challenging at first, but you've got this!",
-          donation: {
-            amount: 500,
-            isAnonymous: false
-          },
-          createdAt: "2025-01-22T13:30:00.000Z"
         }
       ],
       fundings: [],
@@ -172,18 +158,6 @@ function Feed() {
             isAnonymous: true
           },
           createdAt: "2025-01-20T16:30:00.000Z"
-        },
-        {
-          _id: "c7",
-          user: {
-            _id: "user8",
-            fullName: "Dr. Rodriguez",
-            profileImage: null,
-            isAnonymous: false
-          },
-          text: "I work in healthcare tech. Would love to mentor you on this project. Send me a message!",
-          donation: null,
-          createdAt: "2025-01-20T17:15:00.000Z"
         }
       ],
       fundings: [
@@ -232,50 +206,31 @@ function Feed() {
           text: "This is amazing! Thank you for supporting Filipino students. 🙏",
           donation: null,
           createdAt: "2025-01-19T11:15:00.000Z"
-        },
-        {
-          _id: "c9",
-          user: {
-            _id: "user9",
-            fullName: "Carlos Mendoza",
-            profileImage: null,
-            isAnonymous: false
-          },
-          text: "When is the application deadline? I'm currently studying Engineering at UP Diliman.",
-          donation: null,
-          createdAt: "2025-01-19T12:30:00.000Z"
-        },
-        {
-          _id: "c10",
-          user: {
-            _id: "user10",
-            fullName: "Student Parent",
-            profileImage: null,
-            isAnonymous: false
-          },
-          text: "My daughter is interested in Computer Science. This would be perfect for her!",
-          donation: null,
-          createdAt: "2025-01-19T14:45:00.000Z"
         }
       ],
       fundings: [],
     }
   ]);
 
-  const totalPages = 1;
-  const currentPage = 1;
-
   useEffect(() => {
-    // Simulate loading
     setTimeout(() => {
       setLoading(false);
     }, 1000);
   }, []);
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return 'Today';
+    if (diffDays === 2) return 'Yesterday';
+    if (diffDays <= 7) return `${diffDays} days ago`;
+    
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric'
     });
   };
@@ -294,17 +249,12 @@ function Feed() {
           ? {
               ...post,
               likes: post.likes.includes(user._id)
-                ? post.likes.filter(id => id !== user._id) // unlike
-                : [...post.likes, user._id], // like
+                ? post.likes.filter(id => id !== user._id)
+                : [...post.likes, user._id],
             }
           : post
       )
     );
-  };
-
-  const handleLogout = () => {
-    // Logout logic here
-    console.log("Logout clicked");
   };
 
   const handleNewPost = (postData) => {
@@ -370,6 +320,19 @@ function Feed() {
     }));
   };
 
+  const getFilteredPosts = () => {
+    switch (filter) {
+      case 'students':
+        return posts.filter(post => post.author.userType === 'student');
+      case 'sponsors':
+        return posts.filter(post => post.author.userType === 'sponsor');
+      case 'funding':
+        return posts.filter(post => post.isFundingEnabled);
+      default:
+        return posts;
+    }
+  };
+
   const renderComments = (post) => {
     const comments = post.comments || [];
     const showExpanded = expandedComments[post._id];
@@ -380,8 +343,7 @@ function Feed() {
       <div className="mt-4 space-y-3">
         {displayComments.map((comment) => (
           <div key={comment._id} className="flex items-start space-x-3">
-            {/* Profile Image */}
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center flex-shrink-0">
               {comment.user.profileImage ? (
                 <img 
                   src={comment.user.profileImage} 
@@ -389,33 +351,31 @@ function Feed() {
                   className="w-full h-full rounded-full object-cover" 
                 />
               ) : (
-                <span className="text-xs font-medium text-gray-600">
+                <span className="text-xs font-semibold text-white">
                   {comment.user.isAnonymous ? '?' : comment.user.fullName.split(' ').map(n => n[0]).join('')}
                 </span>
               )}
             </div>
             
-            {/* Comment Content */}
-            <div className="flex-1 bg-gray-50 rounded-lg p-3">
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm font-medium text-gray-800">
-                    {comment.user.isAnonymous ? 'Anonymous' : comment.user.fullName}
-                  </span>
-                  {comment.donation && (
-                    <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-medium">
-                      {comment.donation.isAnonymous 
-                        ? `💰 ${formatCurrency(comment.donation.amount)}` 
-                        : `💰 Donated ${formatCurrency(comment.donation.amount)}`
-                      }
+            <div className="flex-1">
+              <div className="bg-gray-50 rounded-2xl px-4 py-3">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm font-semibold text-gray-800">
+                      {comment.user.isAnonymous ? 'Anonymous' : comment.user.fullName}
                     </span>
-                  )}
+                    {comment.donation && (
+                      <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-xs font-medium">
+                        💰 {formatCurrency(comment.donation.amount)}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-500">
+                    {formatDate(comment.createdAt)}
+                  </span>
                 </div>
-                <span className="text-xs text-gray-500">
-                  {new Date(comment.createdAt).toLocaleDateString()}
-                </span>
+                <p className="text-sm text-gray-700 leading-relaxed">{comment.text}</p>
               </div>
-              <p className="text-sm text-gray-700">{comment.text}</p>
             </div>
           </div>
         ))}
@@ -423,31 +383,31 @@ function Feed() {
         {hasMoreComments && (
           <button
             onClick={() => toggleComments(post._id)}
-            className="text-sm text-blue-600 hover:text-blue-800 font-medium ml-11"
+            className="text-sm text-[#8A1A1C] hover:text-[#5C1213] font-medium ml-11 transition-colors"
           >
-            {showExpanded ? 'Show less' : `Show ${comments.length - 2} more comments`}
+            {showExpanded ? 'Show less' : `View ${comments.length - 2} more comments`}
           </button>
         )}
 
-        {/* Add Comment Input */}
-        <div className="flex items-center space-x-3 mt-3">
-          <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-medium text-gray-600">
+        <div className="flex items-center space-x-3 mt-4">
+          <div className="w-8 h-8 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-semibold text-white">
               {user.fullName.split(' ').map(n => n[0]).join('')}
             </span>
           </div>
           <div className="flex-1 flex space-x-2">
             <input
               type="text"
-              placeholder="Add a comment..."
+              placeholder="Write a comment..."
               value={newComment[post._id] || ''}
               onChange={(e) => setNewComment(prev => ({ ...prev, [post._id]: e.target.value }))}
-              className="flex-1 bg-gray-50 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8A1A1C] focus:border-transparent transition-all"
               onKeyPress={(e) => e.key === 'Enter' && handleAddComment(post._id)}
             />
             <button
               onClick={() => handleAddComment(post._id)}
-              className="bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-600 transition-colors"
+              disabled={!newComment[post._id]?.trim()}
+              className="bg-[#8A1A1C] text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-[#5C1213] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Post
             </button>
@@ -457,150 +417,190 @@ function Feed() {
     );
   };
 
-  const renderPosts = () => (
-    <div className="space-y-6">
-      {posts.map((post) => (
-        <div key={post._id} className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                  {post.author.profilePicture ? (
-                    <img src={post.author.profilePicture} alt="Profile" className="w-full h-full rounded-full object-cover" />
-                  ) : (
-                    <span className="text-sm font-medium text-gray-600">
-                      {post.author.fullName.split(' ').map(n => n[0]).join('')}
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <p className="font-semibold text-gray-800">{post.author.fullName}</p>
-                    {post.author.isVerified && (
-                      <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-                        ✓
+  const renderPosts = () => {
+    const filteredPosts = getFilteredPosts();
+    
+    if (filteredPosts.length === 0) {
+      return (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
+          <div className="text-6xl mb-4">📝</div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">No posts found</h3>
+          <p className="text-gray-600 mb-6">
+            {filter === 'all' ? 'Be the first to share something with the community!' : `No ${filter} posts available at the moment.`}
+          </p>
+          {filter === 'all' && (
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-[#D5B527] hover:bg-[#bfa021] text-white px-6 py-3 rounded-xl font-medium transition-colors duration-200 inline-flex items-center space-x-2"
+            >
+              <FaPlus size={16} />
+              <span>Create Your First Post</span>
+            </button>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        {filteredPosts.map((post) => (
+          <article key={post._id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
+            {/* Post Header */}
+            <div className="p-6 pb-4">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
+                    {post.author.profilePicture ? (
+                      <img src={post.author.profilePicture} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                    ) : (
+                      <span className="text-sm font-semibold text-white">
+                        {post.author.fullName.split(' ').map(n => n[0]).join('')}
                       </span>
                     )}
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      post.author.userType === 'student' 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-orange-100 text-orange-800'
-                    }`}>
-                      {post.author.userType === 'student' ? '🎓 Student' : '🏢 Sponsor'}
-                    </span>
                   </div>
-                  <p className="text-sm text-gray-500">@{post.author.username} • {formatDate(post.createdAt)}</p>
+                  <div>
+                    <div className="flex items-center space-x-2 mb-1">
+                      <h3 className="font-semibold text-gray-800">{post.author.fullName}</h3>
+                      {post.author.isVerified && (
+                        <span className="bg-blue-500 text-white p-1 rounded-full">
+                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </span>
+                      )}
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        post.author.userType === 'student' 
+                          ? 'bg-blue-50 text-blue-700' 
+                          : 'bg-orange-50 text-orange-700'
+                      }`}>
+                        {post.author.userType === 'student' ? '🎓 Student' : '🏢 Sponsor'}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-500">
+                      <span>@{post.author.username}</span>
+                      <span>•</span>
+                      <span>{formatDate(post.createdAt)}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  {post.isFundingEnabled && (
+                    <div className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium border border-emerald-200">
+                      💰 Goal: {formatCurrency(post.fundingGoal)}
+                    </div>
+                  )}
+                  <span
+                    className={`px-3 py-1 text-xs rounded-full font-medium border ${
+                      post.visibility === "public"
+                        ? "bg-green-50 text-green-700 border-green-200"
+                        : "bg-purple-50 text-purple-700 border-purple-200"
+                    }`}
+                  >
+                    {post.visibility === "public" ? "🌍 Public" : "🔒 Private"}
+                  </span>
+                  <button className="p-1 text-gray-400 hover:text-gray-600 transition-colors">
+                    <FaEllipsisV size={14} />
+                  </button>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2">
-                {post.isFundingEnabled && (
-                  <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium">
-                    💰 Goal: {formatCurrency(post.fundingGoal)}
-                  </div>
-                )}
-                <span
-                  className={`px-3 py-1 text-xs rounded-full font-medium ${
-                    post.visibility === "public"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-purple-100 text-purple-700"
-                  }`}
-                >
-                  {post.visibility === "public" ? "🌍 Public" : "🔒 Sponsors Only"}
-                </span>
-              </div>
-            </div>
-            
-            <p className="text-gray-700 mb-4 leading-relaxed">{post.description}</p>
-            
-            {post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-4">
-                {post.tags.map((tag, index) => (
-                  <span key={index} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm">
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Image Section */}
-          {post.images && post.images.length > 0 ? (
-            <div className="w-full h-64 bg-gray-200 overflow-hidden">
-              <img
-                src={post.images[0].url}
-                alt="post"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ) : post.images.length === 0 && post.isFundingEnabled ? (
-            <div className="w-full h-48 bg-gradient-to-r from-green-50 to-blue-50 flex items-center justify-center text-gray-500 text-sm">
-              💰 Funding Request • Goal: {formatCurrency(post.fundingGoal)}
-            </div>
-          ) : null}
-          
-          {/* Action Bar */}
-          <div className="p-6 border-t bg-gray-50">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-6">
-                <button 
-                  onClick={() => handleLike(post._id)}
-                  className={`flex items-center space-x-2 transition-colors ${
-                    post.likes.includes(user._id)
-                      ? "text-red-500"
-                      : "text-gray-600 hover:text-red-500"
-                  }`}
-                >
-                  <FaHeart />
-                  <span className="text-sm font-medium">{post.likes.length}</span>
-                </button>
-                
-                <button 
-                  onClick={() => toggleComments(post._id)}
-                  className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors"
-                >
-                  <FaComment />
-                  <span className="text-sm font-medium">{post.comments.length}</span>
-                </button>
-                
-                <button className="flex items-center space-x-2 text-gray-600 hover:text-green-600 transition-colors">
-                  <FaShare />
-                  <span className="text-sm font-medium">Share</span>
-                </button>
-                
-                {post.isFundingEnabled && (
-                  <div className="flex items-center space-x-2 text-green-600">
-                    <span>💰</span>
-                    <span className="text-sm font-medium">
-                      {formatCurrency(post.fundings.reduce((sum, funding) => sum + funding.amount, 0))} raised
+              <p className="text-gray-700 mb-4 leading-relaxed">{post.description}</p>
+              
+              {post.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {post.tags.map((tag, index) => (
+                    <span key={index} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer">
+                      #{tag}
                     </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Image Section */}
+            {post.images && post.images.length > 0 ? (
+              <div className="relative">
+                <img
+                  src={post.images[0].url}
+                  alt="Post content"
+                  className="w-full h-80 object-cover"
+                />
+              </div>
+            ) : post.isFundingEnabled ? (
+              <div className="mx-6 mb-4 h-32 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-xl flex items-center justify-center text-emerald-700">
+                <div className="text-center">
+                  <div className="text-2xl mb-2">💰</div>
+                  <div className="font-medium">Funding Goal: {formatCurrency(post.fundingGoal)}</div>
+                  <div className="text-sm text-emerald-600">
+                    {formatCurrency(post.fundings.reduce((sum, funding) => sum + funding.amount, 0))} raised
                   </div>
-                )}
+                </div>
+              </div>
+            ) : null}
+            
+            {/* Action Bar */}
+            <div className="p-6 pt-4 border-t border-gray-50">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-6">
+                  <button 
+                    onClick={() => handleLike(post._id)}
+                    className={`flex items-center space-x-2 transition-colors group ${
+                      post.likes.includes(user._id)
+                        ? "text-red-500"
+                        : "text-gray-500 hover:text-red-500"
+                    }`}
+                  >
+                    <FaHeart className="group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-medium">{post.likes.length}</span>
+                  </button>
+                  
+                  <button 
+                    onClick={() => toggleComments(post._id)}
+                    className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors group"
+                  >
+                    <FaComment className="group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-medium">{post.comments.length}</span>
+                  </button>
+                  
+                  <button className="flex items-center space-x-2 text-gray-500 hover:text-green-500 transition-colors group">
+                    <FaShare className="group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-medium">Share</span>
+                  </button>
+                  
+                  <button className="flex items-center space-x-2 text-gray-500 hover:text-yellow-500 transition-colors group">
+                    <FaBookmark className="group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-medium">Save</span>
+                  </button>
+                </div>
+                
+                <div className="text-xs text-gray-400">
+                  {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                </div>
               </div>
               
-              <div className="text-xs text-gray-500">
-                {new Date(post.createdAt).toLocaleTimeString()}
-              </div>
+              {/* Comments Section */}
+              {(post.comments && post.comments.length > 0) || expandedComments[post._id] ? (
+                renderComments(post)
+              ) : null}
             </div>
-            
-            {/* Comments Section */}
-            {(post.comments && post.comments.length > 0) || expandedComments[post._id] ? (
-              renderComments(post)
-            ) : null}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+          </article>
+        ))}
+      </div>
+    );
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Sidebar />
-        <div className="ml-64 flex items-center justify-center h-screen">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8A1A1C] mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading feed...</p>
+        <div className="md:ml-64">
+          <div className="h-16 md:h-0" />
+          <div className="flex items-center justify-center h-96">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8A1A1C] mx-auto mb-4"></div>
+              <p className="text-gray-600 font-medium">Loading your feed...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -610,93 +610,76 @@ function Feed() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-
-      <div className="ml-64 h-screen flex flex-col">
-        {/* Header */}
-        <header className="bg-white shadow-sm px-8 py-6 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">Feed</h1>
-            <p className="text-gray-600 mt-1">Stay updated with the latest from students and sponsors</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="bg-[#D5B527] hover:bg-[#bfa021] text-white px-6 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2"
-            >
-              <FaPlus size={16} />
-              <span>Create Post</span>
-            </button>
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-            >
-              Logout
-            </button>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <main className="flex-1 overflow-y-auto px-8 py-6">
-          <div className="max-w-2xl mx-auto">
-            {/* Quick Stats Card */}
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-[#8A1A1C]">{posts.length}</div>
-                  <div className="text-sm text-gray-600">Posts Today</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-[#8A1A1C]">
-                    {posts.filter(p => p.author.userType === 'student').length}
-                  </div>
-                  <div className="text-sm text-gray-600">From Students</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-[#8A1A1C]">
-                    {posts.filter(p => p.isFundingEnabled).length}
-                  </div>
-                  <div className="text-sm text-gray-600">Funding Requests</div>
-                </div>
+      
+      <div className="md:ml-64">
+        {/* Mobile header spacing */}
+        <div className="h-16 md:h-0" />
+        
+        {/* Header Section */}
+        <div className="bg-white border-b border-gray-200 sticky top-[52px] md:top-0 z-30">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Feed</h1>
+                <p className="text-gray-600 mt-1">Stay connected with the BPI Alalay community</p>
               </div>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-[#D5B527] hover:bg-[#bfa021] text-white px-6 py-3 rounded-xl font-medium transition-colors duration-200 flex items-center justify-center space-x-2 shadow-sm"
+              >
+                <FaPlus size={16} />
+                <span>Create Post</span>
+              </button>
             </div>
 
-            {/* Posts */}
-            {renderPosts()}
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center space-x-2 mt-8">
-                {Array.from({ length: totalPages }, (_, idx) => (
-                  <button
-                    key={idx}
-                    className={`px-4 py-2 rounded-lg transition-colors ${
-                      currentPage === idx + 1
-                        ? "bg-[#8A1A1C] text-white"
-                        : "bg-white text-gray-600 hover:bg-gray-50"
-                    }`}
-                  >
-                    {idx + 1}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* Empty State */}
-            {posts.length === 0 && (
-              <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-                <div className="text-6xl mb-4">📝</div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">No posts yet</h3>
-                <p className="text-gray-600 mb-6">Be the first to share something with the community!</p>
+            {/* Filter Tabs */}
+            <div className="flex space-x-1 mt-6 bg-gray-100 rounded-xl p-1">
+              {[
+                { key: 'all', label: 'All Posts' },
+                { key: 'students', label: 'Students' },
+                { key: 'sponsors', label: 'Sponsors' },
+                { key: 'funding', label: 'Funding' }
+              ].map((tab) => (
                 <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="bg-[#D5B527] hover:bg-[#bfa021] text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-flex items-center space-x-2"
+                  key={tab.key}
+                  onClick={() => setFilter(tab.key)}
+                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    filter === tab.key
+                      ? 'bg-white text-[#8A1A1C] shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
                 >
-                  <FaPlus size={16} />
-                  <span>Create Your First Post</span>
+                  {tab.label}
                 </button>
-              </div>
-            )}
+              ))}
+            </div>
           </div>
+        </div>
+
+        {/* Main Content */}
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+          {/* Quick Stats */}
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="bg-white rounded-xl p-4 text-center border border-gray-100">
+              <div className="text-2xl font-bold text-[#8A1A1C] mb-1">{posts.length}</div>
+              <div className="text-sm text-gray-600">Total Posts</div>
+            </div>
+            <div className="bg-white rounded-xl p-4 text-center border border-gray-100">
+              <div className="text-2xl font-bold text-[#8A1A1C] mb-1">
+                {posts.filter(p => p.author.userType === 'student').length}
+              </div>
+              <div className="text-sm text-gray-600">From Students</div>
+            </div>
+            <div className="bg-white rounded-xl p-4 text-center border border-gray-100">
+              <div className="text-2xl font-bold text-[#8A1A1C] mb-1">
+                {posts.filter(p => p.isFundingEnabled).length}
+              </div>
+              <div className="text-sm text-gray-600">Funding Requests</div>
+            </div>
+          </div>
+
+          {/* Posts */}
+          {renderPosts()}
         </main>
       </div>
 
