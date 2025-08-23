@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaUserCircle, FaArrowLeft, FaShareAlt, FaDonate, FaMapMarkerAlt, FaCalendarAlt, FaGraduationCap, FaUniversity } from "react-icons/fa";
+import { FaUserCircle, FaArrowLeft, FaShareAlt, FaDonate, FaMapMarkerAlt, FaCalendarAlt, FaGraduationCap, FaUniversity, FaHeart, FaComment, FaBookmark, FaEllipsisV, FaShare, FaCheck } from "react-icons/fa";
 import Sidebar from "../_components/Sidebar";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import DonationModal from "../_components/DonationModal";
 
 function ScholarProfile() {
   const { scholarId } = useParams();
@@ -38,6 +39,9 @@ function ScholarProfile() {
         "Completed mid-term examinations",
         "Participated in coding bootcamp"
       ],
+      followers: 120,
+      following: 45,
+      scholarships: 3,
     },
     {
       _id: "2",
@@ -60,6 +64,9 @@ function ScholarProfile() {
         "Attended tutorial program",
         "Completed STEM research project"
       ],
+      followers: 80,
+      following: 30,
+      scholarships: 1,
     },
     {
       _id: "3",
@@ -82,7 +89,205 @@ function ScholarProfile() {
         "Presented in class debate",
         "Completed teaching internship"
       ],
+      followers: 60,
+      following: 22,
+      scholarships: 2,
     },
+  ];
+
+  // Dummy posts for the scholar
+  const samplePosts = [
+    {
+      _id: "sp1",
+      author: {
+        _id: "1",
+        fullName: "Juan Dela Cruz",
+        username: "juancruz",
+        userType: "student",
+        profilePicture: null,
+        isVerified: false,
+      },
+      description: "Thank you to everyone who supported my coding bootcamp journey! I learned so much about React and web development. 🚀",
+      visibility: "public",
+      createdAt: "2025-01-22T08:15:00.000Z",
+      images: [
+        {
+          url: "https://via.placeholder.com/600x300.png?text=Bootcamp+Journey"
+        }
+      ],
+      tags: ["coding", "bootcamp", "react"],
+      fundingGoal: null,
+      isFundingEnabled: false,
+      isActive: true,
+      likes: ["user1", "user2"],
+      comments: [
+        {
+          _id: "c1",
+          user: {
+            _id: "user1",
+            fullName: "Maria Santos",
+            profileImage: null,
+            isAnonymous: false
+          },
+          text: "Congrats Juan! Keep it up!",
+          donation: null,
+          createdAt: "2025-01-22T10:30:00.000Z"
+        }
+      ],
+      fundings: [],
+      totalDonations: 0,
+    },
+    {
+      _id: "sp2",
+      author: {
+        _id: "1",
+        fullName: "Juan Dela Cruz",
+        username: "juancruz",
+        userType: "student",
+        profilePicture: null,
+        isVerified: false,
+      },
+      description: "I'm raising funds for my final year project on AI for education. Any support would be greatly appreciated! 🙏",
+      visibility: "public",
+      createdAt: "2025-01-20T12:45:00.000Z",
+      images: [],
+      tags: ["funding", "AI", "education"],
+      fundingGoal: 20000,
+      isFundingEnabled: true,
+      isActive: true,
+      likes: ["user3"],
+      comments: [
+        {
+          _id: "c2",
+          user: {
+            _id: "user2",
+            fullName: "Anonymous Supporter",
+            profileImage: null,
+            isAnonymous: true
+          },
+          text: "Good luck on your project!",
+          donation: {
+            amount: 3000,
+            isAnonymous: true
+          },
+          createdAt: "2025-01-21T09:00:00.000Z"
+        },
+        {
+          _id: "c3",
+          user: {
+            _id: "user4",
+            fullName: "Dr. Smith",
+            profileImage: null,
+            isAnonymous: false
+          },
+          text: "Proud of your initiative!",
+          donation: {
+            amount: 2000,
+            isAnonymous: false
+          },
+          createdAt: "2025-01-21T10:00:00.000Z"
+        }
+      ],
+      fundings: [],
+      totalDonations: 5000, // 3000 + 2000
+    },
+    {
+      _id: "sp3",
+      author: {
+        _id: "1",
+        fullName: "Juan Dela Cruz",
+        username: "juancruz",
+        userType: "student",
+        profilePicture: null,
+        isVerified: false,
+      },
+      description: "I need help funding my thesis printing and binding. Every little bit counts. Thank you for your support! 📚",
+      visibility: "public",
+      createdAt: "2025-01-18T14:00:00.000Z",
+      images: [],
+      tags: ["thesis", "printing", "support"],
+      fundingGoal: 8000,
+      isFundingEnabled: true,
+      isActive: true,
+      likes: ["user5", "user6"],
+      comments: [
+        {
+          _id: "c4",
+          user: {
+            _id: "user7",
+            fullName: "Sponsor Org",
+            profileImage: null,
+            isAnonymous: false
+          },
+          text: "Here's some help for your thesis!",
+          donation: {
+            amount: 2500,
+            isAnonymous: false
+          },
+          createdAt: "2025-01-18T15:00:00.000Z"
+        }
+      ],
+      fundings: [],
+      totalDonations: 2500,
+    },
+    {
+      _id: "sp4",
+      author: {
+        _id: "1",
+        fullName: "Juan Dela Cruz",
+        username: "juancruz",
+        userType: "student",
+        profilePicture: null,
+        isVerified: false,
+      },
+      description: "Just finished my internship! Sharing some highlights and learnings from the experience.",
+      visibility: "public",
+      createdAt: "2025-01-15T10:00:00.000Z",
+      images: [
+        {
+          url: "https://via.placeholder.com/600x300.png?text=Internship+Highlights"
+        }
+      ],
+      tags: ["internship", "career", "learning"],
+      fundingGoal: 12000,
+      isFundingEnabled: true,
+      isActive: true,
+      likes: ["user8"],
+      comments: [
+        {
+          _id: "c5",
+          user: {
+            _id: "user9",
+            fullName: "Alumni Donor",
+            profileImage: null,
+            isAnonymous: false
+          },
+          text: "Congrats! Here's a little for your journey.",
+          donation: {
+            amount: 4000,
+            isAnonymous: false
+          },
+          createdAt: "2025-01-15T12:00:00.000Z"
+        },
+        {
+          _id: "c6",
+          user: {
+            _id: "user10",
+            fullName: "Anonymous",
+            profileImage: null,
+            isAnonymous: true
+          },
+          text: "Keep going!",
+          donation: {
+            amount: 1000,
+            isAnonymous: true
+          },
+          createdAt: "2025-01-15T13:00:00.000Z"
+        }
+      ],
+      fundings: [],
+      totalDonations: 5000, // 4000 + 1000
+    }
   ];
 
   useEffect(() => {
@@ -91,6 +296,49 @@ function ScholarProfile() {
       setScholarProfile(scholar || sampleScholars[0]);
       setLoading(false);
     }, 600);
+  }, [scholarId]);
+
+  // --- Posts state and donation modal logic ---
+  const [posts, setPosts] = useState([]);
+  const [expandedComments, setExpandedComments] = useState({});
+  const [newComment, setNewComment] = useState({});
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
+  const [selectedPostForDonation, setSelectedPostForDonation] = useState(null);
+
+  // Tabs
+  const [activeTab, setActiveTab] = useState("posts");
+  // Follow state
+  const [isFollowed, setIsFollowed] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [plusOne, setPlusOne] = useState(false);
+  const plusOneTimeout = useRef(null);
+
+  useEffect(() => {
+    if (scholarProfile) {
+      setFollowerCount(scholarProfile.followers || 0);
+      setIsFollowed(false); // reset follow state on profile change
+      setPlusOne(false);
+      if (plusOneTimeout.current) clearTimeout(plusOneTimeout.current);
+    }
+  }, [scholarProfile]);
+
+  const handleFollow = () => {
+    if (!isFollowed) {
+      setIsFollowed(true);
+      setFollowerCount((count) => count + 1);
+      setPlusOne(true);
+      if (plusOneTimeout.current) clearTimeout(plusOneTimeout.current);
+      plusOneTimeout.current = setTimeout(() => setPlusOne(false), 800);
+    } else {
+      setIsFollowed(false);
+      setFollowerCount((count) => (count > 0 ? count - 1 : 0));
+      setPlusOne(false);
+      if (plusOneTimeout.current) clearTimeout(plusOneTimeout.current);
+    }
+  };
+
+  useEffect(() => {
+    setPosts(samplePosts);
   }, [scholarId]);
 
   const handleBack = () => navigate("/scholars");
@@ -110,14 +358,578 @@ function ScholarProfile() {
     });
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays === 1) return 'Today';
+    if (diffDays === 2) return 'Yesterday';
+    if (diffDays <= 7) return `${diffDays} days ago`;
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const handleLike = (postId) => {
+    setPosts(prev =>
+      prev.map(post =>
+        post._id === postId
+          ? {
+              ...post,
+              likes: post.likes.includes("viewer")
+                ? post.likes.filter(id => id !== "viewer")
+                : [...post.likes, "viewer"]
+            }
+          : post
+      )
+    );
+  };
+
+  const toggleComments = (postId) => {
+    setExpandedComments(prev => ({
+      ...prev,
+      [postId]: !prev[postId]
+    }));
+  };
+
+  const handleAddComment = (postId) => {
+    const commentText = newComment[postId];
+    if (!commentText?.trim()) return;
+    const comment = {
+      _id: Date.now().toString(),
+      user: {
+        _id: "viewer",
+        fullName: "You",
+        profileImage: null,
+        isAnonymous: false
+      },
+      text: commentText,
+      donation: null,
+      createdAt: new Date().toISOString()
+    };
+    setPosts(prev => prev.map(post =>
+      post._id === postId
+        ? { ...post, comments: [...post.comments, comment] }
+        : post
+    ));
+    setNewComment(prev => ({ ...prev, [postId]: '' }));
+  };
+
+  const handleDonateClick = (post) => {
+    setSelectedPostForDonation(post);
+    setIsDonationModalOpen(true);
+  };
+
+  const handleDonationSuccess = (donationData) => {
+    setPosts(prev => prev.map(post => {
+      if (post._id === selectedPostForDonation._id) {
+        const newComment = {
+          _id: Date.now().toString(),
+          user: {
+            _id: donationData.isAnonymous ? 'anonymous' : "viewer",
+            fullName: donationData.isAnonymous ? 'Anonymous Supporter' : "You",
+            profileImage: null,
+            isAnonymous: donationData.isAnonymous
+          },
+          text: donationData.message || `Thank you for your support! 💖`,
+          donation: {
+            amount: donationData.amount,
+            isAnonymous: donationData.isAnonymous
+          },
+          createdAt: new Date().toISOString()
+        };
+        return {
+          ...post,
+          comments: [...post.comments, newComment],
+          totalDonations: (post.totalDonations || 0) + donationData.amount
+        };
+      }
+      return post;
+    }));
+    setIsDonationModalOpen(false);
+    setSelectedPostForDonation(null);
+  };
+
+  const renderComments = (post) => {
+    const comments = post.comments || [];
+    const showExpanded = expandedComments[post._id];
+    const displayComments = showExpanded ? comments : comments.slice(0, 2);
+    const hasMoreComments = comments.length > 2;
+    return (
+      <div className="mt-4 space-y-3">
+        {displayComments.map((comment) => (
+          <div key={comment._id} className="flex items-start space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center flex-shrink-0">
+              {comment.user.profileImage ? (
+                <img
+                  src={comment.user.profileImage}
+                  alt="Profile"
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                <span className="text-xs font-semibold text-white">
+                  {comment.user.isAnonymous ? '?' : comment.user.fullName.split(' ').map(n => n[0]).join('')}
+                </span>
+              )}
+            </div>
+            <div className="flex-1">
+              <div className="bg-gray-50 rounded-2xl px-4 py-3">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm font-semibold text-gray-800">
+                      {comment.user.isAnonymous ? 'Anonymous' : comment.user.fullName}
+                    </span>
+                    {comment.donation && (
+                      <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-xs font-medium">
+                        💰 {formatCurrency(comment.donation.amount)}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-500">
+                    {formatDate(comment.createdAt)}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">{comment.text}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+        {hasMoreComments && (
+          <button
+            onClick={() => toggleComments(post._id)}
+            className="text-sm text-[#8A1A1C] hover:text-[#5C1213] font-medium ml-11 transition-colors"
+          >
+            {showExpanded ? 'Show less' : `View ${comments.length - 2} more comments`}
+          </button>
+        )}
+        <div className="flex items-center space-x-3 mt-4">
+          <div className="w-8 h-8 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-semibold text-white">
+              {"You".split(' ').map(n => n[0]).join('')}
+            </span>
+          </div>
+          <div className="flex-1 flex space-x-2">
+            <input
+              type="text"
+              placeholder="Write a comment..."
+              value={newComment[post._id] || ''}
+              onChange={(e) => setNewComment(prev => ({ ...prev, [post._id]: e.target.value }))}
+              className="flex-1 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8A1A1C] focus:border-transparent transition-all"
+              onKeyPress={(e) => e.key === 'Enter' && handleAddComment(post._id)}
+            />
+            <button
+              onClick={() => handleAddComment(post._id)}
+              disabled={!newComment[post._id]?.trim()}
+              className="bg-[#8A1A1C] text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-[#5C1213] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Post
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderPosts = () => (
+    <div className="space-y-6">
+      {posts.map((post) => (
+        <article key={post._id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
+          {/* Post Header */}
+          <div className="p-4 sm:p-6 pb-4">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
+                  {scholarProfile.profileImage ? (
+                    <img src={scholarProfile.profileImage} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                  ) : (
+                    <span className="text-sm font-semibold text-white">
+                      {scholarProfile.fullName.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2 mb-1">
+                    <h3 className="font-semibold text-gray-800">{scholarProfile.fullName}</h3>
+                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                      🎓 Scholar
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-500">
+                    <span>@{scholarProfile.username}</span>
+                    <span>•</span>
+                    <span>{formatDate(post.createdAt)}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                {post.isFundingEnabled && (
+                  <div className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium border border-emerald-200">
+                    💰 Goal: {formatCurrency(post.fundingGoal)}
+                  </div>
+                )}
+                <span
+                  className={`px-3 py-1 text-xs rounded-full font-medium border ${
+                    post.visibility === "public"
+                      ? "bg-green-50 text-green-700 border-green-200"
+                      : "bg-purple-50 text-purple-700 border-purple-200"
+                  }`}
+                >
+                  {post.visibility === "public" ? "🌍 Public" : "🔒 Private"}
+                </span>
+                <button className="p-1 text-gray-400 hover:text-gray-600 transition-colors">
+                  <FaEllipsisV size={14} />
+                </button>
+              </div>
+            </div>
+            <p className="text-gray-700 mb-4 leading-relaxed">{post.description}</p>
+            {post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {post.tags.map((tag, index) => (
+                  <span key={index} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+            {/* Donation Progress Bar for Funding Posts */}
+            {post.isFundingEnabled && (
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-medium text-gray-700">
+                    {formatCurrency(post.totalDonations || 0)} raised
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    of {formatCurrency(post.fundingGoal)}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+                    style={{
+                      width: `${Math.min(((post.totalDonations || 0) / post.fundingGoal) * 100, 100)}%`
+                    }}
+                  ></div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {Math.round(((post.totalDonations || 0) / post.fundingGoal) * 100)}% funded
+                </div>
+              </div>
+            )}
+          </div>
+          {/* Image Section */}
+          {post.images && post.images.length > 0 ? (
+            <div className="relative">
+              <img
+                src={post.images[0].url}
+                alt="Post content"
+                className="w-full h-60 sm:h-80 object-cover"
+              />
+            </div>
+          ) : post.isFundingEnabled ? (
+            <div className="mx-4 sm:mx-6 mb-4 h-32 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-xl flex items-center justify-center text-emerald-700">
+              <div className="text-center">
+                <div className="text-2xl mb-2">💰</div>
+                <div className="font-medium">Funding Goal: {formatCurrency(post.fundingGoal)}</div>
+                <div className="text-sm text-emerald-600">
+                  {formatCurrency(post.totalDonations || 0)} raised
+                </div>
+              </div>
+            </div>
+          ) : null}
+          {/* Action Bar */}
+          <div className="p-4 sm:p-6 pt-4 border-t border-gray-50">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-6">
+                <button
+                  onClick={() => handleLike(post._id)}
+                  className={`flex items-center space-x-2 transition-colors group ${
+                    post.likes.includes("viewer")
+                      ? "text-red-500"
+                      : "text-gray-500 hover:text-red-500"
+                  }`}
+                >
+                  <FaHeart className="group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-medium">{post.likes.length}</span>
+                </button>
+                <button
+                  onClick={() => toggleComments(post._id)}
+                  className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors group"
+                >
+                  <FaComment className="group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-medium">{post.comments.length}</span>
+                </button>
+                <button className="flex items-center space-x-2 text-gray-500 hover:text-green-500 transition-colors group">
+                  <FaShare className="group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-medium hidden sm:inline">Share</span>
+                </button>
+                <button className="flex items-center space-x-2 text-gray-500 hover:text-yellow-500 transition-colors group">
+                  <FaBookmark className="group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-medium hidden sm:inline">Save</span>
+                </button>
+                {/* Donate Button */}
+                {(post.isFundingEnabled || post.author.userType === 'student') && (
+                  <button
+                    onClick={() => handleDonateClick(post)}
+                    className="flex items-center space-x-2 text-gray-500 hover:text-emerald-500 transition-colors group bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-full border border-emerald-200"
+                  >
+                    <FaDonate className="group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-medium">Donate</span>
+                  </button>
+                )}
+              </div>
+              <div className="text-xs text-gray-400">
+                {new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </div>
+            </div>
+            {/* Total Donations Display */}
+            {(post.totalDonations > 0) && (
+              <div className="mb-4 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-emerald-800">
+                    💰 Total donations received: {formatCurrency(post.totalDonations)}
+                  </span>
+                  <span className="text-xs text-emerald-600">
+                    Thank you to all supporters! 🙏
+                  </span>
+                </div>
+              </div>
+            )}
+            {/* Comments Section */}
+            {(post.comments && post.comments.length > 0) || expandedComments[post._id] ? (
+              renderComments(post)
+            ) : null}
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+
+  // --- Profile Header (like Profile.jsx) ---
+  const renderProfileHeader = () => (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      {/* Cover Photo */}
+      <div className="h-32 sm:h-48 bg-gradient-to-r from-[#8A1A1C] to-[#5C1213] relative">
+        {/* Profile Picture */}
+        <div className="absolute -bottom-12 left-4 sm:left-6">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center border-4 border-white shadow-lg">
+            {scholarProfile.profileImage ? (
+              <img src={scholarProfile.profileImage} alt="Profile" className="w-full h-full rounded-full object-cover" />
+            ) : (
+              <div className="w-full h-full rounded-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
+                <span className="text-lg sm:text-2xl font-bold text-white">
+                  {scholarProfile.fullName.split(' ').map(n => n[0]).join('')}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+        {/* Follow Button */}
+        <div className="absolute top-4 right-4 sm:bottom-4 sm:top-auto sm:right-6">
+          <button
+            onClick={handleFollow}
+            className={`px-5 py-2 rounded-xl font-medium flex items-center space-x-2 shadow-sm transition-colors duration-200 ${
+              isFollowed
+                ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                : "bg-[#D5B527] text-white hover:bg-[#bfa021]"
+            }`}
+          >
+            {isFollowed ? <FaCheck size={14} /> : <FaUserCircle size={14} />}
+            <span>{isFollowed ? "Followed" : "Follow"}</span>
+          </button>
+        </div>
+      </div>
+      {/* Profile Info */}
+      <div className="p-4 sm:p-6 pt-18 sm:pt-16">
+        {/* Basic Info */}
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
+            <div className="flex-1">
+              <div className="flex items-center flex-wrap gap-2 mb-2">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{scholarProfile.fullName}</h1>
+                <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium border border-blue-200">
+                  📚 Scholar
+                </span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600 mb-3">
+                <span>@{scholarProfile.username}</span>
+                <div className="flex items-center space-x-1">
+                  <FaMapMarkerAlt size={12} />
+                  <span>{scholarProfile.location}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <FaCalendarAlt size={12} />
+                  <span>Joined {formatDateLong(scholarProfile.joinedDate)}</span>
+                </div>
+              </div>
+              <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{scholarProfile.bio}</p>
+            </div>
+          </div>
+          {/* Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="text-center p-3 bg-gray-50 rounded-xl">
+              <div className="text-xl sm:text-2xl font-bold text-[#8A1A1C]">{posts.length}</div>
+              <div className="text-xs sm:text-sm text-gray-600">Posts</div>
+            </div>
+            <div className="text-center p-3 bg-gray-50 rounded-xl relative">
+              <div
+                className={`text-xl sm:text-2xl font-bold text-[#8A1A1C] transition-transform duration-300`}
+                style={plusOne ? { color: "#e11d48" } : undefined}
+              >
+                {followerCount}
+                {plusOne && (
+                  <span
+                    className="absolute left-1/2 -translate-x-1/2 font-bold text-base sm:text-lg animate-follower-plus"
+                    style={{
+                      top: '-1.5rem',
+                      color: "#e11d48",
+                      pointerEvents: 'none',
+                      transition: 'all 0.6s cubic-bezier(.4,2,.6,1)'
+                    }}
+                  >
+                    +1
+                  </span>
+                )}
+              </div>
+              <div className="text-xs sm:text-sm text-gray-600">Followers</div>
+              <style>
+                {`
+                  .animate-follower-plus {
+                    animation: followerPlusAnim 0.8s cubic-bezier(.4,2,.6,1);
+                  }
+                  @keyframes followerPlusAnim {
+                    0% {
+                      opacity: 0;
+                      transform: translate(-50%, 0) scale(0.7);
+                    }
+                    40% {
+                      opacity: 1;
+                      transform: translate(-50%, -10px) scale(1.2);
+                    }
+                    80% {
+                      opacity: 1;
+                      transform: translate(-50%, -20px) scale(1);
+                    }
+                    100% {
+                      opacity: 0;
+                      transform: translate(-50%, -30px) scale(0.8);
+                    }
+                  }
+                `}
+              </style>
+            </div>
+            <div className="text-center p-3 bg-gray-50 rounded-xl">
+              <div className="text-xl sm:text-2xl font-bold text-[#8A1A1C]">{scholarProfile.following || 0}</div>
+              <div className="text-xs sm:text-sm text-gray-600">Following</div>
+            </div>
+            <div className="text-center p-3 bg-gray-50 rounded-xl">
+              <div className="text-xl sm:text-2xl font-bold text-[#8A1A1C]">{scholarProfile.scholarships || 0}</div>
+              <div className="text-xs sm:text-sm text-gray-600">Scholarships</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // --- Academic Info Card (like Profile.jsx) ---
+  const renderAcademicInfo = () => (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 flex items-center">
+        🎓 Academic Information
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="p-3 bg-gray-50 rounded-xl">
+          <span className="text-xs sm:text-sm text-gray-600 block mb-1">Course</span>
+          <p className="font-medium text-gray-800">{scholarProfile.course}</p>
+        </div>
+        <div className="p-3 bg-gray-50 rounded-xl">
+          <span className="text-xs sm:text-sm text-gray-600 block mb-1">Academic Level</span>
+          <p className="font-medium text-gray-800">{scholarProfile.userLevel}</p>
+        </div>
+        <div className="p-3 bg-gray-50 rounded-xl">
+          <span className="text-xs sm:text-sm text-gray-600 block mb-1">University</span>
+          <p className="font-medium text-gray-800">{scholarProfile.university}</p>
+        </div>
+        <div className="p-3 bg-gray-50 rounded-xl">
+          <span className="text-xs sm:text-sm text-gray-600 block mb-1">GWA</span>
+          <p className="font-medium text-gray-800">{scholarProfile.gwa}</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  // --- Tab Navigation ---
+  const renderTabs = () => (
+    <div className="border-b border-gray-200 mt-8">
+      <nav className="flex space-x-1 sm:space-x-8 overflow-x-auto">
+        {[
+          {
+            id: 'posts',
+            name: 'Posts',
+            icon: '📝'
+          },
+          {
+            id: 'activity',
+            name: 'Activity',
+            icon: '📊'
+          },
+          {
+            id: 'achievements',
+            name: 'Achievements',
+            icon: '🏆'
+          }
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`py-3 px-3 sm:px-1 border-b-2 font-medium text-sm flex items-center space-x-2 whitespace-nowrap ${
+              activeTab === tab.id
+                ? 'border-[#D5B527] text-[#8A1A1C]'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <span>{tab.icon}</span>
+            <span>{tab.name}</span>
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+
+  // --- Tab Content ---
+  const renderTabContent = () => {
+    if (activeTab === "posts") return renderPosts();
+    if (activeTab === "activity") {
+      return (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+          <span className="text-4xl mb-4 block">📊</span>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Activity Timeline</h3>
+          <p className="text-gray-600">Recent activities and interactions will appear here.</p>
+        </div>
+      );
+    }
+    if (activeTab === "achievements") {
+      return (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+          <span className="text-4xl mb-4 block">🏆</span>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Achievements & Milestones</h3>
+          <p className="text-gray-600">Academic achievements and recognition will be displayed here.</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      
       <div className="md:ml-64">
         {/* Mobile header spacing */}
         <div className="h-16 md:h-0" />
-        
+
         {/* Header Section */}
         <div className="bg-white border-b border-gray-200 sticky top-[52px] md:top-0 z-30">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
@@ -170,202 +982,32 @@ function ScholarProfile() {
           {!loading && !error && scholarProfile && (
             <div className="space-y-6">
               {/* Profile Header */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                {/* Cover Photo */}
-                <div className="h-32 sm:h-48 bg-gradient-to-r from-[#8A1A1C] to-[#5C1213] relative">
-                  {/* Profile Picture */}
-                  <div className="absolute -bottom-12 left-4 sm:left-6">
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center border-4 border-white shadow-lg">
-                      {scholarProfile.profileImage ? (
-                        <img src={scholarProfile.profileImage} alt="Profile" className="w-full h-full rounded-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full rounded-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
-                          <span className="text-lg sm:text-2xl font-bold text-white">
-                            {scholarProfile.fullName.split(' ').map(n => n[0]).join('')}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Profile Info */}
-                <div className="p-4 sm:p-6 pt-18 sm:pt-16">
-                  <div className="mb-6">
-                    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between lg:space-x-8 mb-4">
-                      <div className="flex-1 mb-6 lg:mb-0">
-                        <div className="flex items-center flex-wrap gap-2 mb-2">
-                          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{scholarProfile.fullName}</h1>
-                          <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium border border-blue-200">
-                            📚 Scholar
-                          </span>
-                        </div>
-                        
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600 mb-3">
-                          <span>@{scholarProfile.username}</span>
-                          <div className="flex items-center space-x-1">
-                            <FaMapMarkerAlt size={12} />
-                            <span>{scholarProfile.location}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <FaCalendarAlt size={12} />
-                            <span>Joined {formatDateLong(scholarProfile.joinedDate)}</span>
-                          </div>
-                        </div>
-                        
-                        <p className="text-gray-700 leading-relaxed text-sm sm:text-base mb-4">{scholarProfile.bio}</p>
-                        
-                        {/* Academic Info */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                          <div className="flex items-center space-x-2 text-gray-600">
-                            <FaGraduationCap size={14} />
-                            <span>{scholarProfile.course}</span>
-                          </div>
-                          <div className="flex items-center space-x-2 text-gray-600">
-                            <FaUniversity size={14} />
-                            <span className="line-clamp-1">{scholarProfile.university}</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Progress Circle - Desktop */}
-                      <div className="hidden lg:flex lg:flex-col lg:items-center lg:justify-center lg:flex-shrink-0">
-                        <div className="w-28 h-28 mb-2">
-                          <CircularProgressbar
-                            value={scholarProfile.donationProgress || 0}
-                            text={`${scholarProfile.donationProgress || 0}%`}
-                            styles={buildStyles({
-                              textSize: "18px",
-                              pathColor: "#D5B527",
-                              textColor: "#8A1A1C",
-                              trailColor: "#f1f1f1",
-                            })}
-                          />
-                        </div>
-                        <span className="text-xs text-gray-500 font-medium text-center">Funding Progress</span>
-                        <div className="text-center mt-2">
-                          <p className="text-xs text-gray-600">{formatCurrency(scholarProfile.totalFunding)}</p>
-                          <p className="text-xs text-gray-500">of {formatCurrency(scholarProfile.targetFunding)}</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                      <div className="text-center p-3 bg-gray-50 rounded-xl">
-                        <div className="text-xl sm:text-2xl font-bold text-[#8A1A1C]">{scholarProfile.gwa.toFixed(2)}</div>
-                        <div className="text-xs sm:text-sm text-gray-600">GWA</div>
-                      </div>
-                      <div className="text-center p-3 bg-gray-50 rounded-xl">
-                        <div className="text-xl sm:text-2xl font-bold text-[#8A1A1C]">{scholarProfile.userLevel.split(' ')[0]}</div>
-                        <div className="text-xs sm:text-sm text-gray-600">Year Level</div>
-                      </div>
-                      <div className="text-center p-3 bg-gray-50 rounded-xl">
-                        <div className="text-lg sm:text-xl font-bold text-emerald-600">{scholarProfile.status}</div>
-                        <div className="text-xs sm:text-sm text-gray-600">Status</div>
-                      </div>
-                      <div className="text-center p-3 bg-gray-50 rounded-xl">
-                        <div className="text-xl sm:text-2xl font-bold text-[#8A1A1C]">{scholarProfile.donationProgress}%</div>
-                        <div className="text-xs sm:text-sm text-gray-600">Progress</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {renderProfileHeader()}
 
-              {/* Progress Circle - Mobile */}
-              <div className="lg:hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4 text-center">Funding Progress</h2>
-                <div className="flex justify-center items-center space-x-8">
-                  <div className="w-24 h-24">
-                    <CircularProgressbar
-                      value={scholarProfile.donationProgress || 0}
-                      text={`${scholarProfile.donationProgress || 0}%`}
-                      styles={buildStyles({
-                        textSize: "18px",
-                        pathColor: "#D5B527",
-                        textColor: "#8A1A1C",
-                        trailColor: "#f1f1f1",
-                      })}
-                    />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-lg font-bold text-gray-800">{formatCurrency(scholarProfile.totalFunding)}</p>
-                    <p className="text-sm text-gray-500">of {formatCurrency(scholarProfile.targetFunding)} target</p>
-                    <p className="text-xs text-emerald-600 mt-1">
-                      {formatCurrency(scholarProfile.targetFunding - scholarProfile.totalFunding)} remaining
-                    </p>
-                  </div>
-                </div>
-              </div>
+              {/* Academic Info */}
+              {renderAcademicInfo()}
 
-              {/* Academic Details */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                  📚 Academic Information
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-3 bg-gray-50 rounded-xl">
-                    <span className="text-xs sm:text-sm text-gray-600 block mb-1">Course</span>
-                    <p className="font-medium text-gray-800">{scholarProfile.course}</p>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded-xl">
-                    <span className="text-xs sm:text-sm text-gray-600 block mb-1">Academic Level</span>
-                    <p className="font-medium text-gray-800">{scholarProfile.userLevel}</p>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded-xl sm:col-span-2">
-                    <span className="text-xs sm:text-sm text-gray-600 block mb-1">Institution</span>
-                    <p className="font-medium text-gray-800">{scholarProfile.university}</p>
-                  </div>
-                </div>
-              </div>
+              {/* Tab Navigation */}
+              {renderTabs()}
 
-              {/* Activities */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                  🏃‍♂️ Recent Activities
-                </h2>
-                <div className="space-y-3">
-                  {scholarProfile.activities && scholarProfile.activities.length > 0 ? (
-                    scholarProfile.activities.map((activity, index) => (
-                      <div
-                        key={index}
-                        className="flex items-start space-x-3 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition-colors"
-                      >
-                        <div className="w-2 h-2 bg-[#D5B527] rounded-full mt-2 flex-shrink-0"></div>
-                        <p className="text-sm text-gray-700 flex-1">{activity}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-400 italic text-center py-8">No recent activities available.</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
-                <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-                  <button className="flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium transition-colors shadow-sm">
-                    <FaDonate size={16} />
-                    <span>Donate Now</span>
-                  </button>
-                  <button className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors shadow-sm">
-                    <FaShareAlt size={16} />
-                    <span>Share Profile</span>
-                  </button>
-                  <button
-                    onClick={handleBack}
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-medium transition-colors shadow-sm"
-                  >
-                    <FaArrowLeft size={16} />
-                    <span>Back to Scholars</span>
-                  </button>
-                </div>
+              {/* Tab Content */}
+              <div className="mt-6">
+                {renderTabContent()}
               </div>
             </div>
           )}
         </main>
       </div>
+      {/* Donation Modal */}
+      <DonationModal
+        isOpen={isDonationModalOpen}
+        onClose={() => {
+          setIsDonationModalOpen(false);
+          setSelectedPostForDonation(null);
+        }}
+        post={selectedPostForDonation}
+        onDonationSuccess={handleDonationSuccess}
+      />
     </div>
   );
 }

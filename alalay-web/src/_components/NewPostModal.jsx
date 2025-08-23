@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../_actions/post.actions";
-import { FaTimes, FaImage, FaDollarSign, FaEye, FaEyeSlash, FaPlus, FaMinus } from "react-icons/fa";
+import { FaTimes, FaImage, FaDollarSign, FaEye, FaEyeSlash, FaPlus, FaMinus, FaGlobe, FaLock } from "react-icons/fa";
 
 function NewPostModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -44,6 +44,18 @@ function NewPostModal({ isOpen, onClose }) {
       setErrors({});
       setIsSubmitting(false);
     }
+  }, [isOpen]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -131,14 +143,12 @@ function NewPostModal({ isOpen, onClose }) {
     setIsSubmitting(true);
 
     try {
-      // Log user ID when submitting the form
       console.log("Submitting post for User ID:", user._id);
 
       const formDataToSend = new FormData();
       formDataToSend.append("description", formData.caption);
       formDataToSend.append("visibility", formData.audience);
       
-      // Add funding information
       if (formData.isFundingEnabled) {
         formDataToSend.append("isFundingEnabled", "true");
         formDataToSend.append("fundingGoal", formData.fundingGoal);
@@ -146,24 +156,20 @@ function NewPostModal({ isOpen, onClose }) {
         formDataToSend.append("isFundingEnabled", "false");
       }
 
-      // Add tags
       if (formData.tags.length > 0) {
         formDataToSend.append("tags", JSON.stringify(formData.tags));
       }
       
-      // Add user ID to form data if needed for debugging
       if (user._id) {
         formDataToSend.append("userId", user._id);
       }
       
-      // Add photos
       formData.photos.forEach(photo => {
         formDataToSend.append("images", photo);
       });
 
-      await dispatch(createPost(formDataToSend, user?.token)); // Redux action
+      await dispatch(createPost(formDataToSend, user?.token));
 
-      // Reset form after successful submission
       setFormData({
         caption: "",
         audience: "public",
@@ -192,308 +198,385 @@ function NewPostModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 p-4">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Blurred backdrop */}
+      <div 
+        className="absolute inset-0 backdrop-blur-md bg-black/30"
+        onClick={onClose}
+      />
+      
+      {/* Modal container */}
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-hidden border border-gray-200">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-800">Create New Post</h2>
+        <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-red-50 to-rose-50 border-b border-red-100">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Create New Post</h2>
+            <p className="text-sm text-gray-600 mt-1">Share your story with the community</p>
+          </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-gray-200 rounded-xl transition-all duration-200 group"
             disabled={isSubmitting}
           >
-            <FaTimes className="text-gray-500" />
+            <FaTimes className="text-gray-500 group-hover:text-gray-700 w-5 h-5" />
           </button>
         </div>
 
-        {/* User Info and Audience */}
-        <div className="px-6 py-4 border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                <span className="text-sm font-medium text-gray-600">
-                  {user?.scholarInfo?.firstName?.[0]}{user?.scholarInfo?.lastName?.[0]}
-                </span>
-              </div>
-              <div>
-                <span className="font-medium text-gray-800">
-                  {user?.scholarInfo?.firstName} {user?.scholarInfo?.lastName}
-                </span>
-                <div className="text-sm text-gray-500">@{user?.username || 'username'}</div>
-              </div>
-            </div>
-            <select
-              name="audience"
-              value={formData.audience}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              disabled={isSubmitting}
-            >
-              <option value="public">🌍 Public</option>
-              <option value="sponsors">🔒 Sponsors Only</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Caption */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              What's on your mind? *
-            </label>
-            <textarea
-              name="caption"
-              value={formData.caption}
-              onChange={handleInputChange}
-              placeholder="Share your thoughts, updates, or requests with the community..."
-              rows={4}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none ${
-                errors.caption ? 'border-red-500' : 'border-gray-300'
-              }`}
-              disabled={isSubmitting}
-            />
-            {errors.caption && (
-              <p className="text-red-500 text-sm mt-1">{errors.caption}</p>
-            )}
-            <div className="text-right text-sm text-gray-500 mt-1">
-              {formData.caption.length}/500
-            </div>
-          </div>
-
-          {/* Tags */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tags (Optional)
-            </label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {formData.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center space-x-2"
-                >
-                  <span>#{tag}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="text-blue-600 hover:text-blue-800"
-                    disabled={isSubmitting}
-                  >
-                    <FaMinus size={10} />
-                  </button>
-                </span>
-              ))}
-            </div>
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                placeholder="Add a tag..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                onKeyPress={(e) => e.key === 'Enter' && handleAddTag(e)}
-                disabled={isSubmitting}
-              />
-              <button
-                type="button"
-                onClick={handleAddTag}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center space-x-1"
-                disabled={isSubmitting || !newTag.trim()}
-              >
-                <FaPlus size={12} />
-                <span>Add</span>
-              </button>
-            </div>
-            <p className="text-gray-500 text-xs mt-1">
-              Suggested: #study #project #funding #achievement #help
-            </p>
-          </div>
-
-          {/* Images */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Images (Optional)
-            </label>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              {formData.previews.map((preview, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={preview}
-                    alt={`Upload ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-lg border border-gray-300"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemovePhoto(index)}
-                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
-                    disabled={isSubmitting}
-                  >
-                    <FaTimes size={12} />
-                  </button>
-                </div>
-              ))}
-            </div>
-            {formData.photos.length < 4 && (
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-gray-400 transition-colors"
-                disabled={isSubmitting}
-              >
-                <div className="text-center">
-                  <FaImage className="text-gray-400 text-2xl mb-2 mx-auto" />
-                  <p className="text-gray-500 text-sm">Click to add images</p>
-                  <p className="text-gray-400 text-xs">Up to 4 images</p>
-                </div>
-              </button>
-            )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handlePhotoUpload}
-              className="hidden"
-              disabled={isSubmitting}
-            />
-          </div>
-
-          {/* Funding Options */}
-          <div className="border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center space-x-3 mb-4">
-              <input
-                type="checkbox"
-                id="fundingEnabled"
-                name="isFundingEnabled"
-                checked={formData.isFundingEnabled}
-                onChange={handleInputChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                disabled={isSubmitting}
-              />
-              <label htmlFor="fundingEnabled" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                <FaDollarSign className="text-green-600" />
-                <span>Enable funding for this post</span>
-              </label>
-            </div>
-            
-            {formData.isFundingEnabled && (
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Funding Goal (PHP) *
-                  </label>
-                  <input
-                    type="number"
-                    name="fundingGoal"
-                    value={formData.fundingGoal}
-                    onChange={handleInputChange}
-                    placeholder="25000"
-                    min="1"
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.fundingGoal ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    disabled={isSubmitting}
-                  />
-                  {errors.fundingGoal && (
-                    <p className="text-red-500 text-sm mt-1">{errors.fundingGoal}</p>
-                  )}
-                  {formData.fundingGoal && !errors.fundingGoal && (
-                    <p className="text-green-600 text-sm mt-1">
-                      Goal: {formatCurrency(formData.fundingGoal)}
-                    </p>
-                  )}
-                </div>
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <p className="text-blue-800 text-sm">
-                    💡 <strong>Tip:</strong> Be specific about what the funding will be used for. 
-                    This helps sponsors understand how their contribution will make an impact.
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Preview */}
-          {formData.caption && (
-            <div className="border border-gray-200 rounded-lg p-4">
-              <h3 className="font-medium text-gray-800 mb-3">Preview</h3>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-gray-600">
-                      {user?.scholarInfo?.firstName?.[0]}{user?.scholarInfo?.lastName?.[0]}
-                    </span>
-                  </div>
-                  <div>
-                    <div className="font-medium text-gray-800">
-                      {user?.scholarInfo?.firstName} {user?.scholarInfo?.lastName}
-                    </div>
-                    <div className="text-sm text-gray-500">Just now</div>
-                  </div>
-                  <span className={`px-2 py-1 text-xs rounded-full font-medium ${
-                    formData.audience === 'public' 
-                      ? 'bg-green-100 text-green-700' 
-                      : 'bg-purple-100 text-purple-700'
-                  }`}>
-                    {formData.audience === 'public' ? '🌍 Public' : '🔒 Sponsors Only'}
+        {/* Scrollable content */}
+        <div className="overflow-y-auto max-h-[calc(95vh-88px)]">
+          {/* User Info and Audience */}
+          <div className="px-8 py-6 bg-white border-b border-gray-50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-lg font-bold text-white">
+                    {user?.scholarInfo?.firstName?.[0]}{user?.scholarInfo?.lastName?.[0]}
                   </span>
                 </div>
-                <p className="text-gray-700 mb-2">{formData.caption}</p>
-                {formData.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {formData.tags.map((tag, index) => (
-                      <span key={index} className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-sm">
-                        #{tag}
-                      </span>
-                    ))}
+                <div>
+                  <div className="font-semibold text-gray-900 text-lg">
+                    {user?.scholarInfo?.firstName} {user?.scholarInfo?.lastName}
                   </div>
-                )}
-                {formData.isFundingEnabled && formData.fundingGoal && (
-                  <div className="bg-green-100 text-green-800 px-3 py-2 rounded-lg text-sm font-medium inline-block">
-                    💰 Funding Goal: {formatCurrency(formData.fundingGoal)}
-                  </div>
-                )}
+                  <div className="text-sm text-gray-500">@{user?.username || 'username'}</div>
+                </div>
+              </div>
+              
+              <div className="relative">
+                <select
+                  name="audience"
+                  value={formData.audience}
+                  onChange={handleInputChange}
+                  className="appearance-none bg-white border-2 border-red-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D5B527] focus:border-[#D5B527] transition-all duration-200 cursor-pointer hover:border-red-300"
+                  disabled={isSubmitting}
+                >
+                  <option value="public">🌍 Public</option>
+                  <option value="sponsors">🔒 Sponsors Only</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
             </div>
-          )}
+          </div>
 
-          {/* Error Message */}
-          {errors.submit && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-red-800 text-sm">{errors.submit}</p>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="px-8 py-6 space-y-8">
+            {/* Caption */}
+            <div className="space-y-3">
+              <label className="block text-sm font-semibold text-gray-900">
+                What's on your mind? <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <textarea
+                  name="caption"
+                  value={formData.caption}
+                  onChange={handleInputChange}
+                  placeholder="Share your thoughts, updates, milestones, or requests with the community..."
+                  rows={5}
+                  maxLength={500}
+                  className={`w-full px-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-[#D5B527] focus:border-[#D5B527] resize-none transition-all duration-200 text-gray-900 placeholder-gray-400 ${
+                    errors.caption ? 'border-red-300 bg-red-50' : 'border-red-200 hover:border-red-300'
+                  }`}
+                  disabled={isSubmitting}
+                />
+                <div className="absolute bottom-3 right-3 text-xs text-gray-400">
+                  {formData.caption.length}/500
+                </div>
+              </div>
+              {errors.caption && (
+                <div className="flex items-center space-x-2 text-red-600 text-sm">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <span>{errors.caption}</span>
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Tags */}
+            <div className="space-y-4">
+              <label className="block text-sm font-semibold text-gray-900">
+                Tags
+              </label>
+              
+              {formData.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="bg-gradient-to-r from-[#D5B527] to-[#E6C547] text-white px-4 py-2 rounded-full text-sm font-medium flex items-center space-x-2 border border-[#D5B527]"
+                    >
+                      <span>#{tag}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTag(tag)}
+                        className="text-white hover:text-gray-200 transition-colors"
+                        disabled={isSubmitting}
+                      >
+                        <FaTimes size={10} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              
+              <div className="flex space-x-3">
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    placeholder="Add a tag (e.g., study, project, funding)..."
+                    className="w-full px-4 py-3 border-2 border-red-200 rounded-xl focus:ring-2 focus:ring-[#D5B527] focus:border-[#D5B527] text-sm transition-all duration-200 hover:border-red-300"
+                    onKeyPress={(e) => e.key === 'Enter' && handleAddTag(e)}
+                    disabled={isSubmitting}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddTag}
+                  className="bg-gradient-to-r from-[#D5B527] to-[#E6C547] text-white px-6 py-3 rounded-xl hover:from-[#bfa021] hover:to-[#D5B527] transition-all duration-200 text-sm font-medium flex items-center space-x-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isSubmitting || !newTag.trim()}
+                >
+                  <FaPlus size={12} />
+                  <span>Add</span>
+                </button>
+              </div>
+              
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                <p className="text-red-800 text-sm">
+                  <span className="font-medium">💡 Suggested tags:</span> #study #project #funding #achievement #help #milestone #scholarship
+                </p>
+              </div>
+            </div>
+
+            {/* Images */}
+            <div className="space-y-4">
+              <label className="block text-sm font-semibold text-gray-900">
+                Images
+              </label>
+              
+              {formData.previews.length > 0 && (
+                <div className="grid grid-cols-2 gap-4">
+                  {formData.previews.map((preview, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={preview}
+                        alt={`Upload ${index + 1}`}
+                        className="w-full h-40 object-cover rounded-xl border-2 border-gray-200 shadow-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePhoto(index)}
+                        className="absolute top-3 right-3 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all duration-200 opacity-0 group-hover:opacity-100 shadow-lg"
+                        disabled={isSubmitting}
+                      >
+                        <FaTimes size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {formData.photos.length < 4 && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                                      className="w-full h-40 border-2 border-dashed border-red-300 rounded-xl flex items-center justify-center hover:border-[#D5B527] hover:bg-red-50 transition-all duration-200 group"
+                  disabled={isSubmitting}
+                >
+                  <div className="text-center">
+                    <FaImage className="text-red-400 group-hover:text-[#D5B527] text-3xl mb-3 mx-auto transition-colors duration-200" />
+                    <p className="text-red-600 group-hover:text-[#D5B527] font-medium">Click to add images</p>
+                    <p className="text-gray-400 text-sm mt-1">Up to 4 images • JPG, PNG, GIF</p>
+                  </div>
+                </button>
+              )}
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handlePhotoUpload}
+                className="hidden"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            {/* Funding Options */}
+            <div className="border-2 border-red-200 rounded-xl p-6 space-y-4">
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="fundingEnabled"
+                  name="isFundingEnabled"
+                  checked={formData.isFundingEnabled}
+                  onChange={handleInputChange}
+                  className="w-5 h-5 text-[#D5B527] border-2 border-red-300 rounded focus:ring-[#D5B527] focus:ring-2"
+                  disabled={isSubmitting}
+                />
+                <label htmlFor="fundingEnabled" className="flex items-center space-x-3 text-base font-semibold text-gray-900 cursor-pointer">
+                  <FaDollarSign className="text-green-600 w-5 h-5" />
+                  <span>Enable funding for this post</span>
+                </label>
+              </div>
+              
+              {formData.isFundingEnabled && (
+                <div className="space-y-4 pt-4 border-t border-red-200">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-3">
+                      Funding Goal (PHP) <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="fundingGoal"
+                      value={formData.fundingGoal}
+                      onChange={handleInputChange}
+                      placeholder="25000"
+                      min="1"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#D5B527] focus:border-[#D5B527] transition-all duration-200 text-lg font-medium ${
+                        errors.fundingGoal ? 'border-red-300 bg-red-50' : 'border-red-200 hover:border-red-300'
+                      }`}
+                      disabled={isSubmitting}
+                    />
+                    {errors.fundingGoal && (
+                      <div className="flex items-center space-x-2 text-red-600 text-sm mt-2">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        <span>{errors.fundingGoal}</span>
+                      </div>
+                    )}
+                    {formData.fundingGoal && !errors.fundingGoal && (
+                      <div className="bg-green-50 border border-green-200 rounded-xl p-3 mt-3">
+                        <p className="text-green-800 font-medium">
+                          🎯 Target: {formatCurrency(formData.fundingGoal)}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-xl p-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="text-red-600 mt-0.5">💡</div>
+                      <div>
+                        <p className="text-red-900 font-medium text-sm">Pro Tip</p>
+                        <p className="text-red-800 text-sm mt-1">
+                          Be specific about what the funding will be used for. This helps sponsors understand how their contribution will make an impact on your educational journey.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Preview */}
+            {formData.caption && (
+              <div className="border-2 border-red-200 rounded-xl p-6 bg-gradient-to-br from-red-50 to-rose-50">
+                <h3 className="font-bold text-gray-900 mb-4 flex items-center space-x-2">
+                  <FaEye className="text-[#8A1A1C]" />
+                  <span>Post Preview</span>
+                </h3>
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center">
+                      <span className="text-sm font-bold text-white">
+                        {user?.scholarInfo?.firstName?.[0]}{user?.scholarInfo?.lastName?.[0]}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-gray-900">
+                        {user?.scholarInfo?.firstName} {user?.scholarInfo?.lastName}
+                      </div>
+                      <div className="text-sm text-gray-500">Just now</div>
+                    </div>
+                    <span className={`px-3 py-1 text-xs rounded-full font-semibold border ${
+                      formData.audience === 'public' 
+                        ? 'bg-green-100 text-green-700 border-green-200' 
+                        : 'bg-purple-100 text-purple-700 border-purple-200'
+                    }`}>
+                      {formData.audience === 'public' ? (
+                        <><FaGlobe className="inline mr-1" /> Public</>
+                      ) : (
+                        <><FaLock className="inline mr-1" /> Sponsors Only</>
+                      )}
+                    </span>
+                  </div>
+                  
+                  <p className="text-gray-800 mb-3 leading-relaxed">{formData.caption}</p>
+                  
+                  {formData.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {formData.tags.map((tag, index) => (
+                        <span key={index} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {formData.isFundingEnabled && formData.fundingGoal && (
+                    <div className="bg-gradient-to-r from-green-100 to-emerald-100 border border-green-200 text-green-800 px-4 py-3 rounded-xl text-sm font-semibold inline-block">
+                      💰 Funding Goal: {formatCurrency(formData.fundingGoal)}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {errors.submit && (
+              <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+                <div className="flex items-center space-x-3">
+                  <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-red-800 font-medium">{errors.submit}</p>
+                </div>
+              </div>
+            )}
+          </form>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+          <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-red-50 to-rose-50 border-t border-red-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200 hover:bg-gray-200 rounded-xl"
               disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
+              onClick={handleSubmit}
               disabled={isSubmitting || !formData.caption.trim()}
-              className={`px-8 py-3 rounded-lg font-medium transition-colors ${
+              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl ${
                 isSubmitting || !formData.caption.trim()
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#D5B527] hover:bg-[#bfa021] text-white'
+                  : 'bg-gradient-to-r from-[#D5B527] to-[#E6C547] hover:from-[#bfa021] hover:to-[#D5B527] text-white'
               }`}
             >
               {isSubmitting ? (
-                <div className="flex items-center space-x-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                  <span>Creating Post...</span>
-                </div>
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                  <span>Publishing Post...</span>
+                </>
               ) : (
-                'Post'
+                <>
+                  <span>Publish Post</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                </>
               )}
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

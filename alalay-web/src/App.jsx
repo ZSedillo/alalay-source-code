@@ -11,11 +11,14 @@ import SponsorSignup from './Access_Pages/SponsorSignup';
 import Feed from './Main_Pages/Feed';
 import Scholars from './Main_Pages/Scholars';
 import ScholarProfile from './Main_Pages/ScholarProfile'; 
+import SponsorProfile from './Main_Pages/SponsorProfile';
+
 import Profile from './Main_Pages/Profile';
 import Settings from './Main_Pages/Settings';
 
 import ProtectedRoute from './_auth/ProtectedRoute';
 import PaymentError from './_components/PaymentFailure';
+import DonationModal from './_components/DonationModal';
 
 function App() {
   // const dispatch = useDispatch();
@@ -46,6 +49,9 @@ function App() {
         <Route path="/Scholars" element={<Scholars />} />
         {/* ✅ FIXED: Change this route to use :scholarId parameter */}
         <Route path="/Scholars/:scholarId" element={<ScholarProfile />} />
+        <Route path="/sponsors/:sponsorId" element={<SponsorProfile />} />
+        
+        {/* Protected Profile and Settings Routes */}
         <Route path="/Settings" element={<Settings />} />
         <Route path="/Profile" element={<Profile />} />
 
@@ -56,8 +62,14 @@ function App() {
           <PaymentError isOpen={true} onClose={() => {}} />
           }
           />
-        
-        {/* Fallback route */}
+        <Route
+          path="/donation-modal"
+          element={
+          <DonationModal isOpen={true} onClose={() => {}} />
+          }
+          />
+
+
       </Routes>
     </Router>
   );

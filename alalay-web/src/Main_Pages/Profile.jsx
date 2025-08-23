@@ -32,7 +32,7 @@ function Profile() {
       "year": "3rd Year",
       "fieldOfStudy": "Computer Science",
       "university": "BPI University",
-      "gpa": "3.8",
+      "gwa": "3.8",
       "expectedGraduation": "2026-05-15"
     },
     
@@ -477,8 +477,8 @@ function Profile() {
           <p className="font-medium text-gray-800">{user.academicInfo.university}</p>
         </div>
         <div className="p-3 bg-gray-50 rounded-xl">
-          <span className="text-xs sm:text-sm text-gray-600 block mb-1">GPA</span>
-          <p className="font-medium text-gray-800">{user.academicInfo.gpa}</p>
+          <span className="text-xs sm:text-sm text-gray-600 block mb-1">GWA</span>
+          <p className="font-medium text-gray-800">{user.academicInfo.gwa}</p>
         </div>
         <div className="p-3 bg-gray-50 rounded-xl">
           <span className="text-xs sm:text-sm text-gray-600 block mb-1">Expected Graduation</span>
@@ -814,7 +814,8 @@ function Profile() {
           {/* Academic/Company Info */}
           <div className="mt-6">
             {user.userType === 'student' && user.academicInfo && renderStudentInfo()}
-            {user.userType === 'sponsor' && user.sponsorInfo && renderSponsorInfo()}
+            {/* Removed sponsor info card here */}
+            {/* {user.userType === 'sponsor' && user.sponsorInfo && renderSponsorInfo()} */}
           </div>
           
           {/* Tab Navigation */}

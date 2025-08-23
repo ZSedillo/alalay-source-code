@@ -1,12 +1,15 @@
-import { FaHeart, FaPlus, FaComment, FaShare, FaBookmark, FaEllipsisV } from "react-icons/fa";
+import { FaHeart, FaPlus, FaComment, FaShare, FaBookmark, FaEllipsisV, FaDonate, FaUserCircle } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../_components/Sidebar";
 import NewPostModal from "../_components/NewPostModal";
+import DonationModal from "../_components/DonationModal";
 
 function Feed() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
+  const [selectedPostForDonation, setSelectedPostForDonation] = useState(null);
   const [expandedComments, setExpandedComments] = useState({});
   const [newComment, setNewComment] = useState({});
   const [loading, setLoading] = useState(true);
@@ -102,6 +105,7 @@ function Feed() {
         }
       ],
       fundings: [],
+      totalDonations: 3500, // Sum of all donations received
     },
     {
       _id: "p2",
@@ -168,6 +172,7 @@ function Feed() {
           createdAt: "2025-01-20T14:20:00.000Z"
         }
       ],
+      totalDonations: 18000, // Sum of all donations received
     },
     {
       _id: "p3",
@@ -209,6 +214,314 @@ function Feed() {
         }
       ],
       fundings: [],
+      totalDonations: 0,
+    },
+    // --- Additional sample posts from ScholarProfile reference ---
+    {
+      _id: "p4",
+      author: {
+        _id: "1",
+        fullName: "Juan Dela Cruz",
+        username: "juancruz",
+        userType: "student",
+        profilePicture: null,
+        isVerified: false,
+        scholarInfo: {
+          firstName: "Juan",
+          lastName: "Dela Cruz",
+          profileImage: null,
+        },
+      },
+      description: "I'm raising funds for my final year project on AI for education. Any support would be greatly appreciated! 🙏",
+      visibility: "public",
+      createdAt: "2025-01-20T12:45:00.000Z",
+      updatedAt: "2025-01-20T12:45:00.000Z",
+      images: [],
+      tags: ["funding", "AI", "education"],
+      fundingGoal: 20000,
+      isFundingEnabled: true,
+      isActive: true,
+      likes: ["user3"],
+      comments: [
+        {
+          _id: "c2",
+          user: {
+            _id: "user2",
+            fullName: "Anonymous Supporter",
+            profileImage: null,
+            isAnonymous: true
+          },
+          text: "Good luck on your project!",
+          donation: {
+            amount: 3000,
+            isAnonymous: true
+          },
+          createdAt: "2025-01-21T09:00:00.000Z"
+        },
+        {
+          _id: "c3",
+          user: {
+            _id: "user4",
+            fullName: "Dr. Smith",
+            profileImage: null,
+            isAnonymous: false
+          },
+          text: "Proud of your initiative!",
+          donation: {
+            amount: 2000,
+            isAnonymous: false
+          },
+          createdAt: "2025-01-21T10:00:00.000Z"
+        }
+      ],
+      fundings: [],
+      totalDonations: 5000,
+    },
+    {
+      _id: "p5",
+      author: {
+        _id: "1",
+        fullName: "Juan Dela Cruz",
+        username: "juancruz",
+        userType: "student",
+        profilePicture: null,
+        isVerified: false,
+        scholarInfo: {
+          firstName: "Juan",
+          lastName: "Dela Cruz",
+          profileImage: null,
+        },
+      },
+      description: "I need help funding my thesis printing and binding. Every little bit counts. Thank you for your support! 📚",
+      visibility: "public",
+      createdAt: "2025-01-18T14:00:00.000Z",
+      updatedAt: "2025-01-18T14:00:00.000Z",
+      images: [],
+      tags: ["thesis", "printing", "support"],
+      fundingGoal: 8000,
+      isFundingEnabled: true,
+      isActive: true,
+      likes: ["user5", "user6"],
+      comments: [
+        {
+          _id: "c4",
+          user: {
+            _id: "user7",
+            fullName: "Sponsor Org",
+            profileImage: null,
+            isAnonymous: false
+          },
+          text: "Here's some help for your thesis!",
+          donation: {
+            amount: 2500,
+            isAnonymous: false
+          },
+          createdAt: "2025-01-18T15:00:00.000Z"
+        }
+      ],
+      fundings: [],
+      totalDonations: 2500,
+    },
+    {
+      _id: "p6",
+      author: {
+        _id: "1",
+        fullName: "Juan Dela Cruz",
+        username: "juancruz",
+        userType: "student",
+        profilePicture: null,
+        isVerified: false,
+        scholarInfo: {
+          firstName: "Juan",
+          lastName: "Dela Cruz",
+          profileImage: null,
+        },
+      },
+      description: "Just finished my internship! Sharing some highlights and learnings from the experience.",
+      visibility: "public",
+      createdAt: "2025-01-15T10:00:00.000Z",
+      updatedAt: "2025-01-15T10:00:00.000Z",
+      images: [
+        {
+          url: "https://via.placeholder.com/600x300.png?text=Internship+Highlights"
+        }
+      ],
+      tags: ["internship", "career", "learning"],
+      fundingGoal: 12000,
+      isFundingEnabled: true,
+      isActive: true,
+      likes: ["user8"],
+      comments: [
+        {
+          _id: "c5",
+          user: {
+            _id: "user9",
+            fullName: "Alumni Donor",
+            profileImage: null,
+            isAnonymous: false
+          },
+          text: "Congrats! Here's a little for your journey.",
+          donation: {
+            amount: 4000,
+            isAnonymous: false
+          },
+          createdAt: "2025-01-15T12:00:00.000Z"
+        },
+        {
+          _id: "c6",
+          user: {
+            _id: "user10",
+            fullName: "Anonymous",
+            profileImage: null,
+            isAnonymous: true
+          },
+          text: "Keep going!",
+          donation: {
+            amount: 1000,
+            isAnonymous: true
+          },
+          createdAt: "2025-01-15T13:00:00.000Z"
+        }
+      ],
+      fundings: [],
+      totalDonations: 5000,
+    },
+    {
+      _id: "p7",
+      author: {
+        _id: "2",
+        fullName: "Maria Santos",
+        username: "marias",
+        userType: "student",
+        profilePicture: null,
+        isVerified: false,
+        scholarInfo: {
+          firstName: "Maria",
+          lastName: "Santos",
+          profileImage: null,
+        },
+      },
+      description: "Participated in the National Science Fair and won 2nd place! Thank you for all the support. 🏅",
+      visibility: "public",
+      createdAt: "2025-01-10T09:00:00.000Z",
+      updatedAt: "2025-01-10T09:00:00.000Z",
+      images: [
+        {
+          url: "https://via.placeholder.com/600x300.png?text=Science+Fair+Award"
+        }
+      ],
+      tags: ["science", "award", "fair"],
+      fundingGoal: null,
+      isFundingEnabled: false,
+      isActive: true,
+      likes: ["user11", "user12", "user13"],
+      comments: [
+        {
+          _id: "c7",
+          user: {
+            _id: "user14",
+            fullName: "Coach Lee",
+            profileImage: null,
+            isAnonymous: false
+          },
+          text: "Proud of you Maria!",
+          donation: null,
+          createdAt: "2025-01-10T10:00:00.000Z"
+        }
+      ],
+      fundings: [],
+      totalDonations: 0,
+    },
+    {
+      _id: "p8",
+      author: {
+        _id: "3",
+        fullName: "Pedro Reyes",
+        username: "pedroreyes",
+        userType: "student",
+        profilePicture: null,
+        isVerified: false,
+        scholarInfo: {
+          firstName: "Pedro",
+          lastName: "Reyes",
+          profileImage: null,
+        },
+      },
+      description: "Submitted my thesis proposal! Hoping to get approval and start my research soon.",
+      visibility: "public",
+      createdAt: "2025-01-08T11:30:00.000Z",
+      updatedAt: "2025-01-08T11:30:00.000Z",
+      images: [],
+      tags: ["thesis", "proposal", "research"],
+      fundingGoal: 10000,
+      isFundingEnabled: true,
+      isActive: true,
+      likes: ["user15"],
+      comments: [
+        {
+          _id: "c8",
+          user: {
+            _id: "user16",
+            fullName: "Prof. Cruz",
+            profileImage: null,
+            isAnonymous: false
+          },
+          text: "Best of luck on your thesis journey!",
+          donation: {
+            amount: 2000,
+            isAnonymous: false
+          },
+          createdAt: "2025-01-08T12:00:00.000Z"
+        }
+      ],
+      fundings: [],
+      totalDonations: 2000,
+    },
+    {
+      _id: "p9",
+      author: {
+        _id: "2",
+        fullName: "Maria Santos",
+        username: "marias",
+        userType: "student",
+        profilePicture: null,
+        isVerified: false,
+        scholarInfo: {
+          firstName: "Maria",
+          lastName: "Santos",
+          profileImage: null,
+        },
+      },
+      description: "Attended a coding bootcamp and learned a lot about React and web development. 🚀",
+      visibility: "public",
+      createdAt: "2025-01-05T15:00:00.000Z",
+      updatedAt: "2025-01-05T15:00:00.000Z",
+      images: [
+        {
+          url: "https://via.placeholder.com/600x300.png?text=Coding+Bootcamp"
+        }
+      ],
+      tags: ["coding", "bootcamp", "react"],
+      fundingGoal: null,
+      isFundingEnabled: false,
+      isActive: true,
+      likes: ["user17", "user18"],
+      comments: [
+        {
+          _id: "c9",
+          user: {
+            _id: "user19",
+            fullName: "Mentor Ana",
+            profileImage: null,
+            isAnonymous: false
+          },
+          text: "Great job Maria! Keep learning.",
+          donation: null,
+          createdAt: "2025-01-05T16:00:00.000Z"
+        }
+      ],
+      fundings: [],
+      totalDonations: 0,
     }
   ]);
 
@@ -257,6 +570,47 @@ function Feed() {
     );
   };
 
+  const handleDonateClick = (post) => {
+    // Only allow donations to student posts or posts with funding enabled
+    if (post.author.userType === 'student' || post.isFundingEnabled) {
+      setSelectedPostForDonation(post);
+      setIsDonationModalOpen(true);
+    }
+  };
+
+  const handleDonationSuccess = (donationData) => {
+    // Update the post with the new donation
+    setPosts(prev => prev.map(post => {
+      if (post._id === selectedPostForDonation._id) {
+        const newComment = {
+          _id: Date.now().toString(),
+          user: {
+            _id: donationData.isAnonymous ? 'anonymous' : user._id,
+            fullName: donationData.isAnonymous ? 'Anonymous Supporter' : user.fullName,
+            profileImage: donationData.isAnonymous ? null : user.profilePicture,
+            isAnonymous: donationData.isAnonymous
+          },
+          text: donationData.message || `Thank you for your support! 💖`,
+          donation: {
+            amount: donationData.amount,
+            isAnonymous: donationData.isAnonymous
+          },
+          createdAt: new Date().toISOString()
+        };
+
+        return {
+          ...post,
+          comments: [...post.comments, newComment],
+          totalDonations: (post.totalDonations || 0) + donationData.amount
+        };
+      }
+      return post;
+    }));
+
+    setIsDonationModalOpen(false);
+    setSelectedPostForDonation(null);
+  };
+
   const handleNewPost = (postData) => {
     const newPost = {
       _id: Date.now().toString(),
@@ -281,6 +635,7 @@ function Feed() {
       likes: [],
       comments: [],
       fundings: [],
+      totalDonations: 0,
     };
 
     setPosts((prev) => [newPost, ...prev]);
@@ -331,6 +686,10 @@ function Feed() {
       default:
         return posts;
     }
+  };
+
+  const canReceiveDonations = (post) => {
+    return post.author.userType === 'student' || post.isFundingEnabled;
   };
 
   const renderComments = (post) => {
@@ -417,9 +776,19 @@ function Feed() {
     );
   };
 
+  const handleProfileClick = (post) => {
+    if (post.author.userType === "student") {
+      // Go to ScholarProfile with scholarId (use author._id)
+      navigate(`/scholars/${post.author._id}`);
+    } else if (post.author.userType === "sponsor") {
+      // Go to SponsorProfile with sponsorId (use author._id)
+      navigate(`/sponsors/${post.author._id}`);
+    }
+  };
+
   const renderPosts = () => {
     const filteredPosts = getFilteredPosts();
-    
+
     if (filteredPosts.length === 0) {
       return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
@@ -448,7 +817,12 @@ function Feed() {
             {/* Post Header */}
             <div className="p-6 pb-4">
               <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-3">
+                {/* Make user area clickable */}
+                <div
+                  className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-lg px-1 py-1 transition"
+                  onClick={() => handleProfileClick(post)}
+                  title={`View ${post.author.userType === "student" ? "Scholar" : "Sponsor"} Profile`}
+                >
                   <div className="w-12 h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
                     {post.author.profilePicture ? (
                       <img src={post.author.profilePicture} alt="Profile" className="w-full h-full rounded-full object-cover" />
@@ -483,7 +857,6 @@ function Feed() {
                     </div>
                   </div>
                 </div>
-                
                 <div className="flex items-center space-x-2">
                   {post.isFundingEnabled && (
                     <div className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium border border-emerald-200">
@@ -514,6 +887,31 @@ function Feed() {
                       #{tag}
                     </span>
                   ))}
+                </div>
+              )}
+
+              {/* Donation Progress Bar for Funding Posts */}
+              {post.isFundingEnabled && (
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-gray-700">
+                      {formatCurrency(post.totalDonations || 0)} raised
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      of {formatCurrency(post.fundingGoal)}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+                      style={{ 
+                        width: `${Math.min(((post.totalDonations || 0) / post.fundingGoal) * 100, 100)}%` 
+                      }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {Math.round(((post.totalDonations || 0) / post.fundingGoal) * 100)}% funded
+                  </div>
                 </div>
               )}
             </div>
@@ -572,12 +970,37 @@ function Feed() {
                     <FaBookmark className="group-hover:scale-110 transition-transform" />
                     <span className="text-sm font-medium">Save</span>
                   </button>
+
+                  {/* Donate Button - Only show for students or funding-enabled posts */}
+                  {canReceiveDonations(post) && post.author._id !== user._id && (
+                    <button 
+                      onClick={() => handleDonateClick(post)}
+                      className="flex items-center space-x-2 text-gray-500 hover:text-emerald-500 transition-colors group bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-full border border-emerald-200"
+                    >
+                      <FaDonate className="group-hover:scale-110 transition-transform" />
+                      <span className="text-sm font-medium">Donate</span>
+                    </button>
+                  )}
                 </div>
                 
                 <div className="text-xs text-gray-400">
                   {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                 </div>
               </div>
+              
+              {/* Total Donations Display */}
+              {(post.totalDonations > 0) && (
+                <div className="mb-4 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-emerald-800">
+                      💰 Total donations received: {formatCurrency(post.totalDonations)}
+                    </span>
+                    <span className="text-xs text-emerald-600">
+                      Thank you to all supporters! 🙏
+                    </span>
+                  </div>
+                </div>
+              )}
               
               {/* Comments Section */}
               {(post.comments && post.comments.length > 0) || expandedComments[post._id] ? (
@@ -688,6 +1111,17 @@ function Feed() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onPostCreated={handleNewPost}
+      />
+
+      {/* Donation Modal */}
+      <DonationModal
+        isOpen={isDonationModalOpen}
+        onClose={() => {
+          setIsDonationModalOpen(false);
+          setSelectedPostForDonation(null);
+        }}
+        post={selectedPostForDonation}
+        onDonationSuccess={handleDonationSuccess}
       />
     </div>
   );
