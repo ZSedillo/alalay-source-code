@@ -8,39 +8,31 @@ function Sidebar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Check if mobile view
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  // Close drawer on route change (mobile)
   useEffect(() => {
-    if (isMobile) {
-      setDrawerOpen(false);
-    }
+    if (isMobile) setDrawerOpen(false);
   }, [location.pathname, isMobile]);
 
-  // Prevent body scroll when drawer is open on mobile
   useEffect(() => {
     if (drawerOpen && isMobile) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
-    
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [drawerOpen, isMobile]);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setDrawerOpen(false);
     navigate("/Login");
   };
@@ -54,9 +46,7 @@ function Sidebar() {
 
   const handleNavigate = (path) => {
     navigate(path);
-    if (isMobile) {
-      setDrawerOpen(false);
-    }
+    if (isMobile) setDrawerOpen(false);
   };
 
   return (
@@ -67,7 +57,7 @@ function Sidebar() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setDrawerOpen(true)}
-              className="p-1 rounded-md hover:bg-white/10 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/20"
+              className="p-1 rounded-md hover:bg-white/10 transition-colors"
               aria-label="Open navigation menu"
             >
               <Menu className="w-6 h-6" />
@@ -77,22 +67,20 @@ function Sidebar() {
         </div>
       </header>
 
-      {/* Mobile Drawer Overlay */}
-      {drawerOpen && isMobile && (
-        <div className="fixed inset-0 z-50 md:hidden">
+      {/* Mobile Drawer */}
+      {isMobile && (
+        <div className={`fixed inset-0 z-50 md:hidden transition-opacity duration-300 ${drawerOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
           {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setDrawerOpen(false)}
-            aria-hidden="true"
           />
-          
+
           {/* Drawer */}
-          <div className={`
-            absolute left-0 top-0 h-full w-80 max-w-[85vw] bg-gradient-to-b from-[#8A1A1C] to-[#5C1213] 
-            text-white shadow-2xl transform transition-transform duration-300 ease-out
-            ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}
-          `}>
+          <div
+            className={`absolute left-0 top-0 h-full w-72 bg-gradient-to-b from-[#8A1A1C] to-[#5C1213] text-white shadow-2xl transform transition-transform duration-300 ease-in-out
+              ${drawerOpen ? "translate-x-0" : "-translate-x-full"}`}
+          >
             <div className="flex flex-col h-full">
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/20">
@@ -102,7 +90,7 @@ function Sidebar() {
                 </div>
                 <button
                   onClick={() => setDrawerOpen(false)}
-                  className="p-2 rounded-full hover:bg-white/10 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/20"
+                  className="p-2 rounded-full hover:bg-white/10 transition-colors"
                   aria-label="Close navigation menu"
                 >
                   <X className="w-5 h-5" />
@@ -115,18 +103,15 @@ function Sidebar() {
                   {navItems.map((item, index) => {
                     const isActive = location.pathname === item.path;
                     return (
-                      <li key={index}>
+                      <li key={index} className="relative">
                         <button
                           onClick={() => handleNavigate(item.path)}
-                          className={`
-                            w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left
-                            transition-all duration-200 transform hover:scale-[1.02]
-                            ${isActive 
-                              ? "bg-white/20 font-semibold shadow-lg" 
-                              : "hover:bg-white/10 active:bg-white/15"
-                            }
-                          `}
+                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200
+                            ${isActive ? "bg-white/20 font-semibold" : "hover:bg-white/10"}`}
                         >
+                          {isActive && (
+                            <span className="absolute left-0 top-0 bottom-0 w-1 bg-[#D5B527] rounded-r-md" />
+                          )}
                           <span className={isActive ? "text-[#D5B527]" : ""}>
                             {item.icon}
                           </span>
@@ -138,16 +123,13 @@ function Sidebar() {
                 </ul>
               </nav>
 
-              {/* Logout Button */}
+              {/* Logout */}
               <div className="p-4 border-t border-white/20">
                 <button
                   onClick={handleLogout}
-                  className="
-                    w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl
                     bg-[#D5B527] hover:bg-[#bfa021] text-black font-semibold
-                    transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg
-                    focus:outline-none focus:ring-2 focus:ring-[#D5B527]/50
-                  "
+                    transition-transform duration-200 hover:scale-[1.02] hover:shadow-lg"
                 >
                   <LogOut className="w-5 h-5" />
                   Logout
@@ -159,36 +141,27 @@ function Sidebar() {
       )}
 
       {/* Desktop Sidebar */}
-      <aside className="
-        hidden md:flex fixed left-0 top-0 h-full w-64 z-40
-        bg-gradient-to-b from-[#8A1A1C] to-[#5C1213] text-white
-        shadow-2xl flex-col justify-between
-      ">
-        {/* Header */}
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 z-40 bg-gradient-to-b from-[#8A1A1C] to-[#5C1213] text-white shadow-2xl flex-col justify-between">
         <div>
           <div className="p-6 border-b border-white/20">
             <h2 className="text-2xl font-bold tracking-wide">BPI Alalay</h2>
             <p className="text-sm text-gray-200 mt-1">Your trusted partner</p>
           </div>
 
-          {/* Navigation */}
           <nav className="px-4 py-6">
             <ul className="space-y-2">
               {navItems.map((item, index) => {
                 const isActive = location.pathname === item.path;
                 return (
-                  <li key={index}>
+                  <li key={index} className="relative">
                     <button
                       onClick={() => handleNavigate(item.path)}
-                      className={`
-                        w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left
-                        transition-all duration-200 transform hover:scale-[1.02]
-                        ${isActive 
-                          ? "bg-white/20 font-semibold shadow-lg" 
-                          : "hover:bg-white/10 active:bg-white/15"
-                        }
-                      `}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200
+                        ${isActive ? "bg-white/20 font-semibold" : "hover:bg-white/10"}`}
                     >
+                      {isActive && (
+                        <span className="absolute left-0 top-0 bottom-0 w-1 bg-[#D5B527] rounded-r-md" />
+                      )}
                       <span className={isActive ? "text-[#D5B527]" : ""}>
                         {item.icon}
                       </span>
@@ -201,16 +174,12 @@ function Sidebar() {
           </nav>
         </div>
 
-        {/* Logout Button */}
         <div className="p-4">
           <button
             onClick={handleLogout}
-            className="
-              w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl
               bg-[#D5B527] hover:bg-[#bfa021] text-black font-semibold
-              transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg
-              focus:outline-none focus:ring-2 focus:ring-[#D5B527]/50
-            "
+              transition-transform duration-200 hover:scale-[1.02] hover:shadow-lg"
           >
             <LogOut className="w-5 h-5" />
             Logout
