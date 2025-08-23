@@ -150,8 +150,6 @@ function Signup() {
     if (validateStep(currentStep)) {
       // Here you would typically send the data to your backend
       console.log("Form submitted:", formData);
-      // Show modal instead of navigating immediately
-      setShowSuccessModal(true);
     }
   };
 
@@ -547,23 +545,17 @@ function Signup() {
     <div className="min-h-screen bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] flex items-center justify-center p-2 sm:p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-4 sm:p-8 relative overflow-hidden">
         {/* Header with back button */}
-        <div className="mb-6">
-          {/* On small screens, stack vertically; on sm+ screens, center with absolute back button */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center relative">
-            {/* Back button: top on mobile, left absolute on sm+ */}
-            <button
-              onClick={handleBackToSelection}
-              className="text-gray-600 hover:text-gray-800 flex items-center text-sm sm:text-base mb-2 sm:mb-0 sm:absolute sm:left-0"
-              style={{ minWidth: "fit-content" }}
-            >
-              ← Back to selection
-            </button>
-            <div className="flex-1 text-center">
-              <h1 className="text-lg sm:text-xl font-semibold text-gray-800">Student Registration</h1>
-            </div>
-            {/* Spacer for symmetry on sm+ */}
-            <div className="hidden sm:block sm:absolute sm:right-0 sm:w-20"></div>
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-2">
+          <button
+            onClick={handleBackToSelection}
+            className="text-gray-600 hover:text-gray-800 flex items-center text-sm sm:text-base"
+          >
+            ← Back to selection
+          </button>
+          <div className="text-center flex-1">
+            <h1 className="text-lg sm:text-xl font-semibold text-gray-800">Student Registration</h1>
           </div>
+          <div className="w-20 hidden sm:block"></div> {/* Spacer for balance */}
         </div>
 
         {/* Progress bar */}
@@ -608,6 +600,7 @@ function Signup() {
               ) : (
                 <button
                   type="submit"
+                  onClick={() => setShowSuccessModal(true)}
                   className="px-8 py-3 bg-gradient-to-r from-[#8A1A1C] to-[#5C1213] text-white rounded-lg font-medium hover:opacity-90 transition text-sm sm:text-base"
                 >
                   Create Account
