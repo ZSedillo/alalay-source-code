@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { FaTimes, FaHeart, FaEyeSlash, FaEye, FaUser, FaComment, FaDollarSign, FaLock, FaShieldAlt } from "react-icons/fa";
+import { FaTimes, FaHeart, FaEyeSlash, FaEye, FaUser, FaComment, FaDollarSign, FaLock, FaShieldAlt, FaUniversity } from "react-icons/fa";
 
 function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, currentAmount, scholarAvatar }) {
   const [formData, setFormData] = useState({
     amount: "",
     isAnonymous: false,
     comment: "",
-    paymentMethod: "card"
+    paymentMethod: "bpi"
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
@@ -22,7 +22,7 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
         amount: "",
         isAnonymous: false,
         comment: "",
-        paymentMethod: "card"
+        paymentMethod: "bpi"
       });
       setErrors({});
       setIsSubmitting(false);
@@ -239,7 +239,7 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="px-8 py-6 space-y-8">
+          <div className="px-8 py-6 space-y-8">
             {/* Donation Amount */}
             <div className="space-y-4">
               <label className="block text-sm font-semibold text-gray-900">
@@ -361,6 +361,28 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
                 Payment Method
               </label>
               <div className="grid grid-cols-1 gap-3">
+                {/* BPI Bank - Primary Payment Method */}
+                <label className="flex items-center space-x-3 p-4 border-2 border-[#8B1538] bg-gradient-to-r from-[#8B1538]/5 to-[#8B1538]/10 rounded-xl cursor-pointer hover:border-[#8B1538]/70 transition-all duration-200 relative">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="bpi"
+                    checked={formData.paymentMethod === 'bpi'}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 text-[#8B1538] border-[#8B1538] focus:ring-[#8B1538]"
+                    disabled={isSubmitting}
+                  />
+                  <FaUniversity className="text-[#8B1538] w-5 h-5" />
+                  <div className="flex-1">
+                    <div className="font-semibold text-gray-900 flex items-center space-x-2">
+                      <span>BPI Bank Transfer</span>
+                      <span className="px-2 py-1 bg-[#8B1538] text-white text-xs rounded-full font-medium">RECOMMENDED</span>
+                    </div>
+                    <div className="text-sm text-gray-600">Primary payment method - Fast and secure bank transfer</div>
+                  </div>
+                </label>
+                
+                {/* Other Payment Methods */}
                 <label className="flex items-center space-x-3 p-4 border-2 border-red-200 rounded-xl cursor-pointer hover:border-[#D5B527] transition-all duration-200">
                   <input
                     type="radio"
@@ -396,8 +418,60 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
                     <div className="text-sm text-gray-600">Pay using your GCash account</div>
                   </div>
                 </label>
+
+                <label className="flex items-center space-x-3 p-4 border-2 border-red-200 rounded-xl cursor-pointer hover:border-[#D5B527] transition-all duration-200">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="paymaya"
+                    checked={formData.paymentMethod === 'paymaya'}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 text-[#D5B527] border-red-300 focus:ring-[#D5B527]"
+                    disabled={isSubmitting}
+                  />
+                  <div className="w-5 h-5 bg-green-500 rounded flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">P</span>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900">PayMaya</div>
+                    <div className="text-sm text-gray-600">Pay using your Maya account</div>
+                  </div>
+                </label>
+
+                <label className="flex items-center space-x-3 p-4 border-2 border-red-200 rounded-xl cursor-pointer hover:border-[#D5B527] transition-all duration-200">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="other_bank"
+                    checked={formData.paymentMethod === 'other_bank'}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 text-[#D5B527] border-red-300 focus:ring-[#D5B527]"
+                    disabled={isSubmitting}
+                  />
+                  <FaUniversity className="text-gray-600 w-5 h-5" />
+                  <div>
+                    <div className="font-medium text-gray-900">Other Philippine Banks</div>
+                    <div className="text-sm text-gray-600">BDO, Metrobank, Unionbank, and others</div>
+                  </div>
+                </label>
               </div>
             </div>
+
+            {/* BPI-specific information when selected */}
+            {formData.paymentMethod === 'bpi' && (
+              <div className="bg-gradient-to-r from-[#8B1538]/10 to-[#8B1538]/5 border border-[#8B1538]/20 rounded-xl p-4">
+                <div className="flex items-start space-x-3">
+                  <FaUniversity className="text-[#8B1538] w-5 h-5 mt-0.5" />
+                  <div>
+                    <div className="text-[#8B1538] font-semibold text-sm">BPI Bank Transfer</div>
+                    <div className="text-gray-700 text-sm mt-1">
+                      After clicking "Donate", you'll be redirected to BPI's secure online banking system to complete your donation. 
+                      The transaction will be processed instantly and you'll receive an immediate confirmation.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Security Notice */}
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
@@ -423,7 +497,7 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
                 </div>
               </div>
             )}
-          </form>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-red-50 to-rose-50 border-t border-red-100">

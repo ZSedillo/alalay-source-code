@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaHeart, FaComment, FaShare, FaBookmark, FaEllipsisV, FaEdit, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { FaHeart, FaComment, FaShare, FaBookmark, FaEllipsisV, FaEdit, FaCalendarAlt, FaMapMarkerAlt, FaPlus } from "react-icons/fa";
 import Sidebar from "../_components/Sidebar";
+import NewPostModal from "../_components/NewPostModal";
 
 function Profile() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ function Profile() {
   const [loading, setLoading] = useState(true);
   const [expandedComments, setExpandedComments] = useState({});
   const [newComment, setNewComment] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Sample user data - in real app this would come from API/database
   const sampleUserData = {
@@ -253,8 +255,10 @@ function Profile() {
     // Simulate API call
     setTimeout(() => {
       // For demo, randomly choose between student and sponsor
-      const isStudent = Math.random() > 0.5;
-      setUser(isStudent ? sampleUserData : sampleSponsorData);
+      // const isStudent = Math.random() > 0.5;
+      // setUser(isStudent ? sampleUserData : sampleSponsorData);
+      setUser(sampleUserData);
+      // setUser(sampleSponsorData);
       setPosts(samplePosts);
       setLoading(false);
     }, 1000);
@@ -563,7 +567,7 @@ function Profile() {
             
             <div className="flex-1">
               <div className="bg-gray-50 rounded-2xl px-4 py-3">
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1 gap-1">
                   <div className="flex items-center space-x-2">
                     <span className="text-sm font-semibold text-gray-800">
                       {comment.user.isAnonymous ? 'Anonymous' : comment.user.fullName}
@@ -621,76 +625,131 @@ function Profile() {
     );
   };
 
-  const renderPosts = () => (
+  const renderPosts = () => {
+  if (!posts.length) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
+        <div className="text-6xl mb-4">📝</div>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">
+          No posts yet
+        </h3>
+        <p className="text-gray-600 mb-6">
+          Share your first update with the community!
+        </p>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-[#D5B527] hover:bg-[#bfa021] text-white px-6 py-3 rounded-xl font-medium transition-colors duration-200 inline-flex items-center space-x-2"
+        >
+          <FaPlus size={16} />
+          <span>Create Your First Post</span>
+        </button>
+      </div>
+    );
+  }
+
+  return (
     <div className="space-y-6">
       {posts.map((post) => (
-        <article key={post._id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
-          {/* Post Header */}
-          <div className="p-4 sm:p-6 pb-4">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
-                  {user.profilePicture ? (
-                    <img src={user.profilePicture} alt="Profile" className="w-full h-full rounded-full object-cover" />
-                  ) : (
-                    <span className="text-sm font-semibold text-white">
-                      {user.fullName.split(' ').map(n => n[0]).join('')}
+        <article
+          key={post._id}
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200"
+        >
+        {/* ---------- Post Header (Profile version) ---------- */}
+        <div className="p-4 sm:p-6 pb-4">
+          <div className="flex items-start justify-between gap-3">
+            {/* Left: avatar + name */}
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex-shrink-0 flex items-center justify-center">
+                {user.profilePicture ? (
+                  <img
+                    src={user.profilePicture}
+                    alt="Profile"
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="text-sm font-semibold text-white">
+                    {user.fullName
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')}
+                  </span>
+                )}
+              </div>
+
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-semibold text-gray-800 text-sm sm:text-base truncate">
+                    {user.fullName}
+                  </h3>
+                  {user.isVerified && (
+                    <span className="bg-blue-500 text-white p-0.5 rounded-full">
+                      <svg
+                        className="w-2.5 h-2.5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
                     </span>
                   )}
                 </div>
-                <div>
-                  <div className="flex items-center space-x-2 mb-1">
-                    <h3 className="font-semibold text-gray-800">{user.fullName}</h3>
-                    {user.isVerified && (
-                      <span className="bg-blue-500 text-white p-1 rounded-full">
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                    )}
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      user.userType === 'student' 
-                        ? 'bg-blue-50 text-blue-700' 
-                        : 'bg-orange-50 text-orange-700'
-                    }`}>
-                      {user.userType === 'student' ? '🎓 Student' : '🏢 Sponsor'}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-500">
-                    <span>@{user.username}</span>
-                    <span>•</span>
-                    <span>{formatDate(post.createdAt)}</span>
-                  </div>
+
+                <div className="text-xs text-gray-500 mt-0.5">
+                  @{user.username} · {formatDate(post.createdAt)}
                 </div>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                {post.isFundingEnabled && (
-                  <div className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium border border-emerald-200">
-                    💰 Goal: {formatCurrency(post.fundingGoal)}
-                  </div>
-                )}
+
                 <span
-                  className={`px-3 py-1 text-xs rounded-full font-medium border ${
-                    post.visibility === "public"
-                      ? "bg-green-50 text-green-700 border-green-200"
-                      : "bg-purple-50 text-purple-700 border-purple-200"
+                  className={`inline-block mt-0.5 px-1.5 py-0.5 rounded-full text-xs font-medium ${
+                    user.userType === 'student'
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'bg-orange-50 text-orange-700'
                   }`}
                 >
-                  {post.visibility === "public" ? "🌍 Public" : "🔒 Private"}
+                  {user.userType === 'student' ? '🎓 Student' : '🏢 Sponsor'}
                 </span>
-                <button className="p-1 text-gray-400 hover:text-gray-600 transition-colors">
-                  <FaEllipsisV size={14} />
-                </button>
               </div>
             </div>
-            
-            <p className="text-gray-700 mb-4 leading-relaxed">{post.description}</p>
-            
+
+        {/* Right: goal + visibility */}
+          <div className="relative flex flex-col items-end gap-1.5 flex-shrink-0 text-right pr-7 pt-1">
+            <button className="absolute top-0 right-0 p-1 text-gray-400 hover:text-gray-600">
+              <FaEllipsisV size={14} />
+            </button>
+
+            {post.isFundingEnabled && (
+              <div className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full text-xs font-medium border border-emerald-200">
+                Goal: {formatCurrency(post.fundingGoal)}
+              </div>
+            )}
+
+            <span
+              className={`px-2 py-0.5 text-xs rounded-full font-medium border ${
+                post.visibility === 'public'
+                  ? 'bg-green-50 text-green-700 border-green-200'
+                  : 'bg-purple-50 text-purple-700 border-purple-200'
+              }`}
+            >
+              {post.visibility === 'public' ? '🌍 Public' : '🔒 Private'}
+            </span>
+          </div>
+        </div>
+
+            {/* ---------- Post body ---------- */}
+            <p className="text-gray-700 mt-3 mb-3 text-sm sm:text-base leading-relaxed">
+              {post.description}
+            </p>
+
             {post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-4">
-                {post.tags.map((tag, index) => (
-                  <span key={index} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer">
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {post.tags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs sm:text-sm font-medium"
+                  >
                     #{tag}
                   </span>
                 ))}
@@ -698,12 +757,12 @@ function Profile() {
             )}
           </div>
 
-          {/* Image Section */}
-          {post.images && post.images.length > 0 ? (
+          {/* ---------- Image / Funding banner ---------- */}
+          {post.images?.length ? (
             <div className="relative">
               <img
                 src={post.images[0].url}
-                alt="Post content"
+                alt="Post"
                 className="w-full h-60 sm:h-80 object-cover"
               />
             </div>
@@ -711,63 +770,72 @@ function Profile() {
             <div className="mx-4 sm:mx-6 mb-4 h-32 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-xl flex items-center justify-center text-emerald-700">
               <div className="text-center">
                 <div className="text-2xl mb-2">💰</div>
-                <div className="font-medium">Funding Goal: {formatCurrency(post.fundingGoal)}</div>
+                <div className="font-medium">
+                  Funding Goal: {formatCurrency(post.fundingGoal)}
+                </div>
                 <div className="text-sm text-emerald-600">
-                  {formatCurrency(post.fundings.reduce((sum, funding) => sum + funding.amount, 0))} raised
+                  {formatCurrency(
+                    post.fundings.reduce((sum, f) => sum + f.amount, 0)
+                  )}{' '}
+                  raised
                 </div>
               </div>
             </div>
           ) : null}
-          
-          {/* Action Bar */}
+
+          {/* ---------- Action bar ---------- */}
           <div className="p-4 sm:p-6 pt-4 border-t border-gray-50">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-6">
-                <button 
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4 sm:space-x-6">
+                <button
                   onClick={() => handleLike(post._id)}
-                  className={`flex items-center space-x-2 transition-colors group ${
+                  className={`flex items-center space-x-1.5 sm:space-x-2 transition-colors group ${
                     post.likes.includes(user._id)
-                      ? "text-red-500"
-                      : "text-gray-500 hover:text-red-500"
+                      ? 'text-red-500'
+                      : 'text-gray-500 hover:text-red-500'
                   }`}
                 >
                   <FaHeart className="group-hover:scale-110 transition-transform" />
                   <span className="text-sm font-medium">{post.likes.length}</span>
                 </button>
-                
-                <button 
+
+                <button
                   onClick={() => toggleComments(post._id)}
-                  className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors group"
+                  className="flex items-center space-x-1.5 sm:space-x-2 text-gray-500 hover:text-blue-500 transition-colors group"
                 >
                   <FaComment className="group-hover:scale-110 transition-transform" />
                   <span className="text-sm font-medium">{post.comments.length}</span>
                 </button>
-                
-                <button className="flex items-center space-x-2 text-gray-500 hover:text-green-500 transition-colors group">
+
+                <button className="flex items-center space-x-1.5 sm:space-x-2 text-gray-500 hover:text-green-500 transition-colors group">
                   <FaShare className="group-hover:scale-110 transition-transform" />
                   <span className="text-sm font-medium hidden sm:inline">Share</span>
                 </button>
-                
-                <button className="flex items-center space-x-2 text-gray-500 hover:text-yellow-500 transition-colors group">
+
+                <button className="flex items-center space-x-1.5 sm:space-x-2 text-gray-500 hover:text-yellow-500 transition-colors group">
                   <FaBookmark className="group-hover:scale-110 transition-transform" />
                   <span className="text-sm font-medium hidden sm:inline">Save</span>
                 </button>
               </div>
-              
-              <div className="text-xs text-gray-400">
-                {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+
+              {/* Time stamp (mobile only) */}
+              <div className="text-xs text-gray-400 sm:hidden">
+                {new Date(post.createdAt).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
               </div>
             </div>
-            
-            {/* Comments Section */}
-            {(post.comments && post.comments.length > 0) || expandedComments[post._id] ? (
-              renderComments(post)
-            ) : null}
+
+            {/* ---------- Comments section ---------- */}
+            {(post.comments?.length > 0 || expandedComments[post._id]) &&
+              renderComments(post)}
           </div>
         </article>
       ))}
     </div>
   );
+};
 
   if (loading) {
     return (
@@ -807,6 +875,12 @@ function Profile() {
         </div>
 
         {/* Main Content */}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-[#D5B527] hover:bg-[#bfa021] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-40 flex items-center justify-center group"
+        >
+          <FaPlus size={20} className="group-hover:rotate-90 transition-transform duration-200" />
+        </button>
         <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           {/* Profile Header */}
           {renderProfileHeader()}
@@ -863,6 +937,15 @@ function Profile() {
             )}
           </div>
         </main>
+        {/* Create Post Modal */}
+        <NewPostModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onPostCreated={(newPost) => {
+            // prepend to user’s posts
+            setPosts(prev => [{ ...newPost, author: user._id }, ...prev]);
+          }}
+        />
       </div>
     </div>
   );

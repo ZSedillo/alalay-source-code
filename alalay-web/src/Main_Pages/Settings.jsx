@@ -1,22 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../_components/Sidebar";
-import { 
-  User, 
-  Shield, 
-  Bell, 
-  Lock, 
-  Settings as SettingsIcon,
-  Save,
-  Eye,
-  EyeOff,
-  Check,
-  X,
-  AlertTriangle,
-  Camera,
-  Edit2,
-  Trash2
-} from "lucide-react";
+import { User, Shield, Bell, Lock, Settings as SettingsIcon, Save, Eye, EyeOff, Check, X, AlertTriangle, Camera, Edit2, Trash2} from "lucide-react";
 
 function Settings() {
   const navigate = useNavigate();
@@ -31,9 +16,9 @@ function Settings() {
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     // Profile settings
-    username: 'juancruz',
-    email: 'juan.delacruz@email.com',
-    fullName: 'Juan Dela Cruz',
+    username: 'maria_s',
+    email: 'maria.santos@email.com',
+    fullName: 'Maria Santos',
     phone: '+63 912 345 6789',
     bio: 'Computer Science student passionate about technology and education.',
     profileImage: null,

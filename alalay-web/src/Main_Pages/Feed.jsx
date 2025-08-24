@@ -18,13 +18,13 @@ function Feed() {
   // Enhanced dummy logged-in user
   const user = {
     _id: "12345",
-    fullName: "Zandro Sedillo",
-    username: "zandro_s",
+    fullName: "Maria Santos",
+    username: "Maria_s",
     profilePicture: null,
     userType: "student",
     scholarInfo: {
-      firstName: "Zandro",
-      lastName: "Sedillo",
+      firstName: "Maria",
+      lastName: "Santos",
       profileImage: null,
     },
   };
@@ -718,7 +718,7 @@ function Feed() {
             
             <div className="flex-1">
               <div className="bg-gray-50 rounded-2xl px-4 py-3">
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1 gap-1">
                   <div className="flex items-center space-x-2">
                     <span className="text-sm font-semibold text-gray-800">
                       {comment.user.isAnonymous ? 'Anonymous' : comment.user.fullName}
@@ -772,6 +772,7 @@ function Feed() {
             </button>
           </div>
         </div>
+
       </div>
     );
   };
@@ -815,106 +816,116 @@ function Feed() {
         {filteredPosts.map((post) => (
           <article key={post._id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
             {/* Post Header */}
-            <div className="p-6 pb-4">
-              <div className="flex items-start justify-between mb-4">
-                {/* Make user area clickable */}
-                <div
-                  className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-lg px-1 py-1 transition"
-                  onClick={() => handleProfileClick(post)}
-                  title={`View ${post.author.userType === "student" ? "Scholar" : "Sponsor"} Profile`}
-                >
-                  <div className="w-12 h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
-                    {post.author.profilePicture ? (
-                      <img src={post.author.profilePicture} alt="Profile" className="w-full h-full rounded-full object-cover" />
-                    ) : (
-                      <span className="text-sm font-semibold text-white">
-                        {post.author.fullName.split(' ').map(n => n[0]).join('')}
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <div className="flex items-center space-x-2 mb-1">
-                      <h3 className="font-semibold text-gray-800">{post.author.fullName}</h3>
-                      {post.author.isVerified && (
-                        <span className="bg-blue-500 text-white p-1 rounded-full">
-                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        </span>
-                      )}
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        post.author.userType === 'student' 
-                          ? 'bg-blue-50 text-blue-700' 
-                          : 'bg-orange-50 text-orange-700'
-                      }`}>
-                        {post.author.userType === 'student' ? '🎓 Student' : '🏢 Sponsor'}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <span>@{post.author.username}</span>
-                      <span>•</span>
-                      <span>{formatDate(post.createdAt)}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  {post.isFundingEnabled && (
-                    <div className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium border border-emerald-200">
-                      💰 Goal: {formatCurrency(post.fundingGoal)}
-                    </div>
-                  )}
-                  <span
-                    className={`px-3 py-1 text-xs rounded-full font-medium border ${
-                      post.visibility === "public"
-                        ? "bg-green-50 text-green-700 border-green-200"
-                        : "bg-purple-50 text-purple-700 border-purple-200"
-                    }`}
-                  >
-                    {post.visibility === "public" ? "🌍 Public" : "🔒 Private"}
-                  </span>
-                  <button className="p-1 text-gray-400 hover:text-gray-600 transition-colors">
-                    <FaEllipsisV size={14} />
-                  </button>
-                </div>
-              </div>
-              
-              <p className="text-gray-700 mb-4 leading-relaxed">{post.description}</p>
-              
-              {post.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {post.tags.map((tag, index) => (
-                    <span key={index} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
+          <div className="p-4 sm:p-6 pb-4">
+            {/* ---------- Author row ---------- */}
+            <div className="flex items-start justify-between gap-3">
 
-              {/* Donation Progress Bar for Funding Posts */}
-              {post.isFundingEnabled && (
-                <div className="mb-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-gray-700">
-                      {formatCurrency(post.totalDonations || 0)} raised
+              {/* Left: avatar + name */}
+              <div
+                className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 rounded-lg px-2 py-1 transition min-w-0"
+                onClick={() => handleProfileClick(post)}
+                title={`View ${post.author.userType === "student" ? "Scholar" : "Sponsor"} Profile`}
+              >
+                
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex-shrink-0 flex items-center justify-center">
+                  {post.author.profilePicture ? (
+                    <img
+                      src={post.author.profilePicture}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-sm font-semibold text-white">
+                      {post.author.fullName
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </span>
-                    <span className="text-sm text-gray-500">
-                      of {formatCurrency(post.fundingGoal)}
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
-                      style={{ 
-                        width: `${Math.min(((post.totalDonations || 0) / post.fundingGoal) * 100, 100)}%` 
-                      }}
-                    ></div>
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {Math.round(((post.totalDonations || 0) / post.fundingGoal) * 100)}% funded
-                  </div>
+                  )}
                 </div>
+
+          <div className="min-w-0">
+            {/* just name + verified check */}
+            <div className="flex items-center gap-1.5">
+              <h3 className="font-semibold text-gray-800 text-sm sm:text-base truncate">
+                {post.author.fullName}
+              </h3>
+
+              {post.author.isVerified && (
+                <span className="bg-blue-500 text-white p-0.5 rounded-full">
+                  <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </span>
               )}
             </div>
+
+            {/* @handle & date */}
+            <div className="text-xs text-gray-500 mt-0.5">
+              @{post.author.username} · {formatDate(post.createdAt)}
+            </div>
+
+            {/* badge now under @handle & date */}
+            <span
+              className={`inline-block mt-0.5 px-1.5 py-0.5 rounded-full text-xs font-medium ${
+                post.author.userType === "student"
+                  ? "bg-blue-50 text-blue-700"
+                  : "bg-orange-50 text-orange-700"
+              }`}
+            >
+              {post.author.userType === "student" ? "🎓 Student" : "🏢 Sponsor"}
+            </span>
+          </div>
+
+              </div>
+
+              {/* Right: goal + visibility (stacks vertically on small screens) */}
+              <div className="relative flex flex-col items-end gap-1.5 flex-shrink-0 text-right pr-7 pt-1">
+                {/* 3-dot pinned to the absolute top-right */}
+                <button className="absolute top-0 right-0 p-1 text-gray-400 hover:text-gray-600">
+                  <FaEllipsisV size={14} />
+                </button>
+
+                {post.isFundingEnabled && (
+                  <div className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full text-xs font-medium border border-emerald-200">
+                    Goal: {formatCurrency(post.fundingGoal)}
+                  </div>
+                )}
+
+                <span
+                  className={`px-2 py-0.5 text-xs rounded-full font-medium border ${
+                    post.visibility === "public"
+                      ? "bg-green-50 text-green-700 border-green-200"
+                      : "bg-purple-50 text-purple-700 border-purple-200"
+                  }`}
+                >
+                  {post.visibility === "public" ? "🌍 Public" : "🔒 Private"}
+                </span>
+              </div>
+            </div>
+
+            {/* ---------- Post body ---------- */}
+            <p className="text-gray-700 mt-3 mb-3 text-sm sm:text-base leading-relaxed">
+              {post.description}
+            </p>
+
+            {post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {post.tags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs sm:text-sm font-medium"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
 
             {/* Image Section */}
             {post.images && post.images.length > 0 ? (
@@ -939,7 +950,7 @@ function Feed() {
             
             {/* Action Bar */}
             <div className="p-6 pt-4 border-t border-gray-50">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-4">
                 <div className="flex items-center space-x-6">
                   <button 
                     onClick={() => handleLike(post._id)}
@@ -976,10 +987,12 @@ function Feed() {
                   {canReceiveDonations(post) && post.author._id !== user._id && (
                     <button 
                       onClick={() => handleDonateClick(post)}
-                      className="flex items-center space-x-2 text-gray-500 hover:text-emerald-500 transition-colors group bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-full border border-emerald-200"
+                      className="flex items-center space-x-1 sm:space-x-2 text-gray-500 hover:text-emerald-500
+                                transition-colors group bg-emerald-50 hover:bg-emerald-100
+                                px-2 sm:px-3 py-1.5 rounded-full border border-emerald-200"
                     >
                       <FaDonate className="group-hover:scale-110 transition-transform" />
-                      <span className="text-sm font-medium">Donate</span>
+                      <span className="text-xs sm:text-sm font-medium hidden sm:inline">Donate</span>
                     </button>
                   )}
                 </div>
@@ -991,15 +1004,13 @@ function Feed() {
               
               {/* Total Donations Display */}
               {(post.totalDonations > 0) && (
-                <div className="mb-4 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-emerald-800">
-                      💰 Total donations received: {formatCurrency(post.totalDonations)}
-                    </span>
-                    <span className="text-xs text-emerald-600">
-                      Thank you to all supporters! 🙏
-                    </span>
-                  </div>
+                <div className="mb-4 p-3 bg-emerald-50 rounded-lg border border-emerald-200 sm:flex sm:items-center sm:justify-between gap-2">
+                   <p className="text-sm font-semibold text-emerald-800">
+                     💰 {formatCurrency(post.totalDonations)} raised
+                   </p>
+                   <p className="text-xs text-emerald-600 mt-1 sm:mt-0">
+                    Thanks to all supporters 🙏
+                   </p>
                 </div>
               )}
               
@@ -1008,6 +1019,7 @@ function Feed() {
                 renderComments(post)
               ) : null}
             </div>
+
           </article>
         ))}
       </div>

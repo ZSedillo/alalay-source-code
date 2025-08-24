@@ -15,85 +15,157 @@ function ScholarProfile() {
   const [error] = useState(null);
 
   // Dummy scholars list with more complete data
-  const sampleScholars = [
-    {
-      _id: "1",
-      fullName: "Juan Dela Cruz",
-      username: "juancruz",
-      profileImage: null,
-      userLevel: "Incoming 4th Year College",
-      bio: "I am passionate about technology and education. Hoping to inspire others through my journey and make a positive impact in the field of computer science!",
-      donationProgress: 65,
-      gwa: 1.75,
-      status: "Active",
-      course: "Computer Science",
-      university: "BPI University",
-      location: "Quezon City, Metro Manila, PH",
-      joinedDate: "2023-08-15",
-      totalFunding: 15000,
-      targetFunding: 30000,
-      activities: [
-        "Attended scholarship orientation",
-        "Submitted enrollment form",
-        "Received book allowance",
-        "Completed mid-term examinations",
-        "Participated in coding bootcamp"
-      ],
-      followers: 120,
-      following: 45,
-      scholarships: 3,
-    },
-    {
-      _id: "2",
-      fullName: "Maria Santos",
-      username: "marias",
-      profileImage: null,
-      userLevel: "3rd Year High School",
-      bio: "Loves science and math. Dreaming to be an engineer someday and contribute to building a better Philippines!",
-      donationProgress: 45,
-      gwa: 1.90,
-      status: "Active",
-      course: "STEM Track",
-      university: "Manila Science High School",
-      location: "Manila, Metro Manila, PH",
-      joinedDate: "2023-06-01",
-      totalFunding: 8000,
-      targetFunding: 18000,
-      activities: [
-        "Won 2nd place in Science Fair", 
-        "Attended tutorial program",
-        "Completed STEM research project"
-      ],
-      followers: 80,
-      following: 30,
-      scholarships: 1,
-    },
-    {
-      _id: "3",
-      fullName: "Pedro Reyes",
-      username: "pedroreyes",
-      profileImage: null,
-      userLevel: "2nd Year College",
-      bio: "Future teacher with a passion for literature and education. Committed to shaping young minds and promoting literacy.",
-      donationProgress: 80,
-      gwa: 1.65,
-      status: "Active",
-      course: "Bachelor of Secondary Education",
-      university: "Philippine Normal University",
-      location: "Taguig, Metro Manila, PH",
-      joinedDate: "2022-09-12",
-      totalFunding: 24000,
-      targetFunding: 30000,
-      activities: [
-        "Submitted thesis proposal", 
-        "Presented in class debate",
-        "Completed teaching internship"
-      ],
-      followers: 60,
-      following: 22,
-      scholarships: 2,
-    },
-  ];
+const sampleScholars = [
+  {
+    _id: "1",
+    fullName: "Juan Dela Cruz",
+    username: "juancruz",
+    profileImage: null,
+    userLevel: "Incoming 4th Year College",
+    bio: "Passionate about technology and education…",
+    donationProgress: 65,
+    gwa: 1.75,
+    status: "Active",
+    course: "Computer Science",
+    university: "BPI University",
+    location: "Quezon City, Metro Manila, PH",
+    joinedDate: "2023-08-15",
+    totalFunding: 15000,
+    targetFunding: 30000,
+    activities: [
+      "Attended scholarship orientation",
+      "Submitted enrollment form",
+      "Received book allowance",
+      "Completed mid-term examinations",
+      "Participated in coding bootcamp"
+    ],
+    followers: 120,
+    following: 45,
+    scholarships: 3,
+  },
+  {
+    _id: "2",
+    fullName: "Maria Santos",
+    username: "marias",
+    profileImage: null,
+    userLevel: "3rd Year High School",
+    bio: "Loves science and math…",
+    donationProgress: 45,
+    gwa: 1.90,
+    status: "Active",
+    course: "STEM Track",
+    university: "Manila Science High School",
+    location: "Manila, Metro Manila, PH",
+    joinedDate: "2023-06-01",
+    totalFunding: 8000,
+    targetFunding: 18000,
+    activities: [
+      "Won 2nd place in Science Fair",
+      "Attended tutorial program",
+      "Completed STEM research project"
+    ],
+    followers: 80,
+    following: 30,
+    scholarships: 1,
+  },
+  {
+    _id: "3",
+    fullName: "Pedro Reyes",
+    username: "pedroreyes",
+    profileImage: null,
+    userLevel: "2nd Year College",
+    bio: "Future teacher with a passion for literature…",
+    donationProgress: 80,
+    gwa: 1.65,
+    status: "Active",
+    course: "Bachelor of Secondary Education",
+    university: "Philippine Normal University",
+    location: "Taguig, Metro Manila, PH",
+    joinedDate: "2022-09-12",
+    totalFunding: 24000,
+    targetFunding: 30000,
+    activities: [
+      "Submitted thesis proposal",
+      "Presented in class debate",
+      "Completed teaching internship"
+    ],
+    followers: 60,
+    following: 22,
+    scholarships: 2,
+  },
+  {
+    _id: "4",
+    fullName: "Anna Lim",
+    username: "annalim",
+    profileImage: null,
+    userLevel: "1st Year College",
+    bio: "Engineering student eager to innovate.",
+    donationProgress: 30,
+    gwa: 1.60,
+    status: "Active",
+    course: "Engineering",
+    university: "UP Diliman",
+    location: "Quezon City, Metro Manila, PH",
+    joinedDate: "2024-01-10",
+    totalFunding: 10000,
+    targetFunding: 25000,
+    activities: [
+      "Joined engineering club",
+      "Completed CAD training"
+    ],
+    followers: 55,
+    following: 20,
+    scholarships: 1,
+  },
+  {
+    _id: "5",
+    fullName: "Carlos Mendez",
+    username: "carlosmendez",
+    profileImage: null,
+    userLevel: "4th Year High School",
+    bio: "Humanities lover aiming to become a lawyer.",
+    donationProgress: 50,
+    gwa: 1.70,
+    status: "Active",
+    course: "HUMSS Track",
+    university: "Ateneo High School",
+    location: "Makati, Metro Manila, PH",
+    joinedDate: "2023-11-05",
+    totalFunding: 12000,
+    targetFunding: 20000,
+    activities: [
+      "Won debate championship",
+      "Published school paper article"
+    ],
+    followers: 90,
+    following: 35,
+    scholarships: 2,
+  },
+  {
+    _id: "6",
+    fullName: "Sophia Tan",
+    username: "sophiatan",
+    profileImage: null,
+    userLevel: "3rd Year College",
+    bio: "Future doctor committed to serving rural communities.",
+    donationProgress: 75,
+    gwa: 1.40,
+    status: "Active",
+    course: "Medicine",
+    university: "UST Faculty of Medicine",
+    location: "Manila, Metro Manila, PH",
+    joinedDate: "2021-06-20",
+    totalFunding: 50000,
+    targetFunding: 60000,
+    activities: [
+      "Completed clinical rotation",
+      "Volunteered in medical mission"
+    ],
+    followers: 200,
+    following: 60,
+    scholarships: 3,
+  },
+];
 
   // Dummy posts for the scholar
   const samplePosts = [
@@ -290,13 +362,14 @@ function ScholarProfile() {
     }
   ];
 
-  useEffect(() => {
-    const scholar = sampleScholars.find((s) => s._id === scholarId);
-    setTimeout(() => {
-      setScholarProfile(scholar || sampleScholars[0]);
-      setLoading(false);
-    }, 600);
-  }, [scholarId]);
+useEffect(() => {
+  const scholar = sampleScholars.find((s) => String(s._id) === String(scholarId));
+  // If we have a match, use it; otherwise keep loading=false and scholarProfile=null
+  if (scholar) {
+    setScholarProfile(scholar);
+  }
+  setLoading(false);
+}, [scholarId]);
 
   // --- Posts state and donation modal logic ---
   const [posts, setPosts] = useState([]);
@@ -464,10 +537,10 @@ function ScholarProfile() {
           <div key={comment._id} className="flex items-start space-x-3">
             <div className="w-8 h-8 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center flex-shrink-0">
               {comment.user.profileImage ? (
-                <img
-                  src={comment.user.profileImage}
-                  alt="Profile"
-                  className="w-full h-full rounded-full object-cover"
+                <img 
+                  src={comment.user.profileImage} 
+                  alt="Profile" 
+                  className="w-full h-full rounded-full object-cover" 
                 />
               ) : (
                 <span className="text-xs font-semibold text-white">
@@ -475,9 +548,10 @@ function ScholarProfile() {
                 </span>
               )}
             </div>
+            
             <div className="flex-1">
               <div className="bg-gray-50 rounded-2xl px-4 py-3">
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1 gap-1">
                   <div className="flex items-center space-x-2">
                     <span className="text-sm font-semibold text-gray-800">
                       {comment.user.isAnonymous ? 'Anonymous' : comment.user.fullName}
@@ -497,6 +571,7 @@ function ScholarProfile() {
             </div>
           </div>
         ))}
+
         {hasMoreComments && (
           <button
             onClick={() => toggleComments(post._id)}
@@ -505,10 +580,11 @@ function ScholarProfile() {
             {showExpanded ? 'Show less' : `View ${comments.length - 2} more comments`}
           </button>
         )}
+
         <div className="flex items-center space-x-3 mt-4">
           <div className="w-8 h-8 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-xs font-semibold text-white">
-              {"You".split(' ').map(n => n[0]).join('')}
+              {"Maria Santos".split(' ').map(n => n[0]).join('')}
             </span>
           </div>
           <div className="flex-1 flex space-x-2">
@@ -529,6 +605,7 @@ function ScholarProfile() {
             </button>
           </div>
         </div>
+
       </div>
     );
   };
@@ -539,39 +616,86 @@ function ScholarProfile() {
         <article key={post._id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
           {/* Post Header */}
           <div className="p-4 sm:p-6 pb-4">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
-                  {scholarProfile.profileImage ? (
-                    <img src={scholarProfile.profileImage} alt="Profile" className="w-full h-full rounded-full object-cover" />
+            {/* ---------- Author row ---------- */}
+            <div className="flex items-start justify-between gap-3">
+
+              {/* Left: avatar + name */}
+              <div
+                className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 rounded-lg px-2 py-1 transition min-w-0"
+                onClick={() => handleProfileClick(post)}
+                title={`View ${post.author.userType === "student" ? "Scholar" : "Sponsor"} Profile`}
+              >
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex-shrink-0 flex items-center justify-center">
+                  {post.author.profilePicture ? (
+                    <img
+                      src={post.author.profilePicture}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover"
+                    />
                   ) : (
                     <span className="text-sm font-semibold text-white">
-                      {scholarProfile.fullName.split(' ').map(n => n[0]).join('')}
+                      {post.author.fullName
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </span>
                   )}
                 </div>
-                <div>
-                  <div className="flex items-center space-x-2 mb-1">
-                    <h3 className="font-semibold text-gray-800">{scholarProfile.fullName}</h3>
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                      🎓 Scholar
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-500">
-                    <span>@{scholarProfile.username}</span>
-                    <span>•</span>
-                    <span>{formatDate(post.createdAt)}</span>
-                  </div>
-                </div>
+
+          <div className="min-w-0">
+            {/* just name + verified check */}
+            <div className="flex items-center gap-1.5">
+              <h3 className="font-semibold text-gray-800 text-sm sm:text-base truncate">
+                {post.author.fullName}
+              </h3>
+
+              {post.author.isVerified && (
+                <span className="bg-blue-500 text-white p-0.5 rounded-full">
+                  <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </span>
+              )}
+            </div>
+
+            {/* @handle & date */}
+            <div className="text-xs text-gray-500 mt-0.5">
+              @{post.author.username} · {formatDate(post.createdAt)}
+            </div>
+
+            {/* badge now under @handle & date */}
+            <span
+              className={`inline-block mt-0.5 px-1.5 py-0.5 rounded-full text-xs font-medium ${
+                post.author.userType === "student"
+                  ? "bg-blue-50 text-blue-700"
+                  : "bg-orange-50 text-orange-700"
+              }`}
+            >
+              {post.author.userType === "student" ? "🎓 Student" : "🏢 Sponsor"}
+            </span>
+          </div>
+
               </div>
-              <div className="flex items-center space-x-2">
+
+              {/* Right: goal + visibility (stacks vertically on small screens) */}
+              <div className="relative flex flex-col items-end gap-1.5 flex-shrink-0 text-right pr-7 pt-1">
+                {/* 3-dot pinned to the absolute top-right */}
+                <button className="absolute top-0 right-0 p-1 text-gray-400 hover:text-gray-600">
+                  <FaEllipsisV size={14} />
+                </button>
+
                 {post.isFundingEnabled && (
-                  <div className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium border border-emerald-200">
-                    💰 Goal: {formatCurrency(post.fundingGoal)}
+                  <div className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full text-xs font-medium border border-emerald-200">
+                    Goal: {formatCurrency(post.fundingGoal)}
                   </div>
                 )}
+
                 <span
-                  className={`px-3 py-1 text-xs rounded-full font-medium border ${
+                  className={`px-2 py-0.5 text-xs rounded-full font-medium border ${
                     post.visibility === "public"
                       ? "bg-green-50 text-green-700 border-green-200"
                       : "bg-purple-50 text-purple-700 border-purple-200"
@@ -579,43 +703,24 @@ function ScholarProfile() {
                 >
                   {post.visibility === "public" ? "🌍 Public" : "🔒 Private"}
                 </span>
-                <button className="p-1 text-gray-400 hover:text-gray-600 transition-colors">
-                  <FaEllipsisV size={14} />
-                </button>
               </div>
             </div>
-            <p className="text-gray-700 mb-4 leading-relaxed">{post.description}</p>
+
+            {/* ---------- Post body ---------- */}
+            <p className="text-gray-700 mt-3 mb-3 text-sm sm:text-base leading-relaxed">
+              {post.description}
+            </p>
+
             {post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-4">
-                {post.tags.map((tag, index) => (
-                  <span key={index} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer">
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {post.tags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs sm:text-sm font-medium"
+                  >
                     #{tag}
                   </span>
                 ))}
-              </div>
-            )}
-            {/* Donation Progress Bar for Funding Posts */}
-            {post.isFundingEnabled && (
-              <div className="mb-4">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium text-gray-700">
-                    {formatCurrency(post.totalDonations || 0)} raised
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    of {formatCurrency(post.fundingGoal)}
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
-                    style={{
-                      width: `${Math.min(((post.totalDonations || 0) / post.fundingGoal) * 100, 100)}%`
-                    }}
-                  ></div>
-                </div>
-                <div className="text-xs text-gray-500 mt-1">
-                  {Math.round(((post.totalDonations || 0) / post.fundingGoal) * 100)}% funded
-                </div>
               </div>
             )}
           </div>
@@ -641,7 +746,7 @@ function ScholarProfile() {
           ) : null}
           {/* Action Bar */}
           <div className="p-4 sm:p-6 pt-4 border-t border-gray-50">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-4">
               <div className="flex items-center space-x-6">
                 <button
                   onClick={() => handleLike(post._id)}
@@ -651,56 +756,58 @@ function ScholarProfile() {
                       : "text-gray-500 hover:text-red-500"
                   }`}
                 >
-                  <FaHeart className="group-hover:scale-110 transition-transform" />
-                  <span className="text-sm font-medium">{post.likes.length}</span>
-                </button>
-                <button
-                  onClick={() => toggleComments(post._id)}
-                  className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors group"
-                >
-                  <FaComment className="group-hover:scale-110 transition-transform" />
-                  <span className="text-sm font-medium">{post.comments.length}</span>
-                </button>
-                <button className="flex items-center space-x-2 text-gray-500 hover:text-green-500 transition-colors group">
-                  <FaShare className="group-hover:scale-110 transition-transform" />
-                  <span className="text-sm font-medium hidden sm:inline">Share</span>
-                </button>
-                <button className="flex items-center space-x-2 text-gray-500 hover:text-yellow-500 transition-colors group">
-                  <FaBookmark className="group-hover:scale-110 transition-transform" />
-                  <span className="text-sm font-medium hidden sm:inline">Save</span>
-                </button>
+                    <FaHeart className="group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-medium">{post.likes.length}</span>
+                  </button>
+                  <button 
+                    onClick={() => toggleComments(post._id)}
+                    className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors group"
+                  >
+                    <FaComment className="group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-medium">{post.comments.length}</span>
+                  </button>
+                  
+                  <button className="flex items-center space-x-2 text-gray-500 hover:text-green-500 transition-colors group">
+                    <FaShare className="group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-medium">Share</span>
+                  </button>
+                  
+                  <button className="flex items-center space-x-2 text-gray-500 hover:text-yellow-500 transition-colors group">
+                    <FaBookmark className="group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-medium">Save</span>
+                  </button>
                 {/* Donate Button */}
                 {(post.isFundingEnabled || post.author.userType === 'student') && (
-                  <button
-                    onClick={() => handleDonateClick(post)}
-                    className="flex items-center space-x-2 text-gray-500 hover:text-emerald-500 transition-colors group bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-full border border-emerald-200"
-                  >
-                    <FaDonate className="group-hover:scale-110 transition-transform" />
-                    <span className="text-sm font-medium">Donate</span>
-                  </button>
+                    <button 
+                      onClick={() => handleDonateClick(post)}
+                      className="flex items-center space-x-1 sm:space-x-2 text-gray-500 hover:text-emerald-500
+                                transition-colors group bg-emerald-50 hover:bg-emerald-100
+                                px-2 sm:px-3 py-1.5 rounded-full border border-emerald-200"
+                    >
+                      <FaDonate className="group-hover:scale-110 transition-transform" />
+                      <span className="text-xs sm:text-sm font-medium hidden sm:inline">Donate</span>
+                    </button>
                 )}
               </div>
-              <div className="text-xs text-gray-400">
-                {new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </div>
+                <div className="text-xs text-gray-400">
+                  {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                </div>
             </div>
             {/* Total Donations Display */}
             {(post.totalDonations > 0) && (
-              <div className="mb-4 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-emerald-800">
-                    💰 Total donations received: {formatCurrency(post.totalDonations)}
-                  </span>
-                  <span className="text-xs text-emerald-600">
-                    Thank you to all supporters! 🙏
-                  </span>
+                <div className="mb-4 p-3 bg-emerald-50 rounded-lg border border-emerald-200 sm:flex sm:items-center sm:justify-between gap-2">
+                   <p className="text-sm font-semibold text-emerald-800">
+                     💰 {formatCurrency(post.totalDonations)} raised
+                   </p>
+                   <p className="text-xs text-emerald-600 mt-1 sm:mt-0">
+                    Thanks to all supporters 🙏
+                   </p>
                 </div>
-              </div>
             )}
             {/* Comments Section */}
-            {(post.comments && post.comments.length > 0) || expandedComments[post._id] ? (
-              renderComments(post)
-            ) : null}
+              {(post.comments && post.comments.length > 0) || expandedComments[post._id] ? (
+                renderComments(post)
+              ) : null}
           </div>
         </article>
       ))}

@@ -212,54 +212,55 @@ function NewPostModal({ isOpen, onClose }) {
         <div className="overflow-y-auto max-h-[calc(95vh-88px)]">
           {/* User Info and Audience - Fixed responsive layout */}
           <div className="px-4 sm:px-8 py-6 bg-white border-b border-gray-50">
-            {/* User Info */}
-            <div className="flex items-center space-x-3 sm:space-x-4 mb-4 sm:mb-0">
+
+        {/* User row + audience buttons — wider desktop spacing */}
+        <div className="px-4 sm:px-8 py-6 bg-white border-b border-gray-50">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* Avatar + name */}
+            <div className="flex items-center space-x-3 sm:space-x-4">
               <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
                 <span className="text-sm sm:text-lg font-bold text-white">
                   {user?.scholarInfo?.firstName?.[0]}
                   {user?.scholarInfo?.lastName?.[0]}
                 </span>
               </div>
-              <div className="min-w-0 flex-1">
+              <div>
                 <div className="font-semibold text-gray-900 text-base sm:text-lg truncate">
                   {user?.scholarInfo?.firstName} {user?.scholarInfo?.lastName}
                 </div>
-                <div className="text-sm text-gray-500 truncate">
+                <div className="text-xs sm:text-sm text-gray-500 truncate">
                   @{user?.username || "username"}
                 </div>
               </div>
             </div>
 
-            {/* Audience Selector - Separate row on mobile */}
-            <div className="flex justify-start sm:justify-end">
-              <div className="relative">
-                <select
-                  name="audience"
-                  value={formData.audience}
-                  onChange={handleInputChange}
-                  className="appearance-none bg-white border-2 border-red-200 rounded-xl px-3 sm:px-4 py-2 sm:py-3 pr-8 sm:pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D5B527] focus:border-[#D5B527] transition-all duration-200 cursor-pointer hover:border-red-300"
+            {/* Audience buttons — now separated */}
+            <div className="flex space-x-2">
+              {[
+                { value: "public", label: "Public", icon: FaGlobe },
+                { value: "sponsors", label: "Sponsors Only", icon: FaLock }
+              ].map(({ value, label, icon: Icon }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() =>
+                    setFormData((prev) => ({ ...prev, audience: value }))
+                  }
                   disabled={isSubmitting}
+                  className={`flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border-2
+                    ${formData.audience === value
+                      ? "bg-gradient-to-r from-[#D5B527] to-[#E6C547] text-white border-[#D5B527] shadow-md"
+                      : "bg-white text-gray-700 border-gray-300 hover:border-[#D5B527] hover:text-[#D5B527] focus:ring-2 focus:ring-offset-1 focus:ring-[#D5B527]"
+                    }`}
                 >
-                  <option value="public">🌍 Public</option>
-                  <option value="sponsors">🔒 Sponsors Only</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3 pointer-events-none">
-                  <svg
-                    className="w-4 h-4 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </div>
-              </div>
+                  <Icon size={14} />
+                  <span>{label}</span>
+                </button>
+              ))}
             </div>
+          </div>
+        </div>
+
           </div>
 
           {/* Form */}
