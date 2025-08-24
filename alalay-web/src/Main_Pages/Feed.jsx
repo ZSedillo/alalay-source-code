@@ -970,6 +970,7 @@ function Feed() {
                     <FaBookmark className="group-hover:scale-110 transition-transform" />
                     <span className="text-sm font-medium">Save</span>
                   </button>
+                  
 
                   {/* Donate Button - Only show for students or funding-enabled posts */}
                   {canReceiveDonations(post) && post.author._id !== user._id && (
@@ -1039,46 +1040,50 @@ function Feed() {
         <div className="h-16 md:h-0" />
         
         {/* Header Section */}
-        <div className="bg-white border-b border-gray-200 sticky top-[52px] md:top-0 z-30">
+        <div className="bg-white border-b border-gray-200">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col gap-4">
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Feed</h1>
                 <p className="text-gray-600 mt-1">Stay connected with the BPI Alalay community</p>
               </div>
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-[#D5B527] hover:bg-[#bfa021] text-white px-6 py-3 rounded-xl font-medium transition-colors duration-200 flex items-center justify-center space-x-2 shadow-sm"
-              >
-                <FaPlus size={16} />
-                <span>Create Post</span>
-              </button>
-            </div>
-
-            {/* Filter Tabs */}
-            <div className="flex space-x-1 mt-6 bg-gray-100 rounded-xl p-1">
-              {[
-                { key: 'all', label: 'All Posts' },
-                { key: 'students', label: 'Students' },
-                { key: 'sponsors', label: 'Sponsors' },
-                { key: 'funding', label: 'Funding' }
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setFilter(tab.key)}
-                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    filter === tab.key
-                      ? 'bg-white text-[#8A1A1C] shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
             </div>
           </div>
         </div>
 
+
+    {/* Sticky Filter Tabs */}
+    <div className="bg-white border-b border-gray-200 sticky top-[52px] md:top-0 z-30">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
+        <div className="flex space-x-1 bg-gray-100 rounded-xl p-1">
+          {[
+            { key: 'all', label: 'All Posts' },
+            { key: 'students', label: 'Students' },
+            { key: 'sponsors', label: 'Sponsors' },
+            { key: 'funding', label: 'Funding' }
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setFilter(tab.key)}
+              className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filter === tab.key
+                  ? 'bg-white text-[#8A1A1C] shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <button
+      onClick={() => setIsModalOpen(true)}
+      className="fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-[#D5B527] hover:bg-[#bfa021] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-40 flex items-center justify-center group"
+    >
+      <FaPlus size={20} className="group-hover:rotate-90 transition-transform duration-200" />
+    </button>
         {/* Main Content */}
         <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
           {/* Quick Stats */}

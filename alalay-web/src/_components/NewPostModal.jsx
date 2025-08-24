@@ -191,9 +191,9 @@ function NewPostModal({ isOpen, onClose }) {
       {/* Modal container */}
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-hidden border border-gray-200">
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-red-50 to-rose-50 border-b border-red-100">
+        <div className="flex items-center justify-between px-4 sm:px-8 py-6 bg-gradient-to-r from-red-50 to-rose-50 border-b border-red-100">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Create New Post</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Create New Post</h2>
             <p className="text-sm text-gray-600 mt-1">
               Share your story with the community
             </p>
@@ -210,38 +210,40 @@ function NewPostModal({ isOpen, onClose }) {
 
         {/* Scrollable content */}
         <div className="overflow-y-auto max-h-[calc(95vh-88px)]">
-          {/* User Info and Audience */}
-          <div className="px-8 py-6 bg-white border-b border-gray-50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center shadow-lg">
-                  <span className="text-lg font-bold text-white">
-                    {user?.scholarInfo?.firstName?.[0]}
-                    {user?.scholarInfo?.lastName?.[0]}
-                  </span>
+          {/* User Info and Audience - Fixed responsive layout */}
+          <div className="px-4 sm:px-8 py-6 bg-white border-b border-gray-50">
+            {/* User Info */}
+            <div className="flex items-center space-x-3 sm:space-x-4 mb-4 sm:mb-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                <span className="text-sm sm:text-lg font-bold text-white">
+                  {user?.scholarInfo?.firstName?.[0]}
+                  {user?.scholarInfo?.lastName?.[0]}
+                </span>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold text-gray-900 text-base sm:text-lg truncate">
+                  {user?.scholarInfo?.firstName} {user?.scholarInfo?.lastName}
                 </div>
-                <div>
-                  <div className="font-semibold text-gray-900 text-lg">
-                    {user?.scholarInfo?.firstName} {user?.scholarInfo?.lastName}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    @{user?.username || "username"}
-                  </div>
+                <div className="text-sm text-gray-500 truncate">
+                  @{user?.username || "username"}
                 </div>
               </div>
+            </div>
 
+            {/* Audience Selector - Separate row on mobile */}
+            <div className="flex justify-start sm:justify-end">
               <div className="relative">
                 <select
                   name="audience"
                   value={formData.audience}
                   onChange={handleInputChange}
-                  className="appearance-none bg-white border-2 border-red-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D5B527] focus:border-[#D5B527] transition-all duration-200 cursor-pointer hover:border-red-300"
+                  className="appearance-none bg-white border-2 border-red-200 rounded-xl px-3 sm:px-4 py-2 sm:py-3 pr-8 sm:pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D5B527] focus:border-[#D5B527] transition-all duration-200 cursor-pointer hover:border-red-300"
                   disabled={isSubmitting}
                 >
                   <option value="public">🌍 Public</option>
                   <option value="sponsors">🔒 Sponsors Only</option>
                 </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3 pointer-events-none">
                   <svg
                     className="w-4 h-4 text-gray-400"
                     fill="none"
@@ -261,7 +263,7 @@ function NewPostModal({ isOpen, onClose }) {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="px-8 py-6 space-y-8">
+          <form onSubmit={handleSubmit} className="px-4 sm:px-8 py-6 space-y-6 sm:space-y-8">
             {/* Caption */}
             <div className="space-y-3">
               <label className="block text-sm font-semibold text-gray-900">
@@ -275,7 +277,7 @@ function NewPostModal({ isOpen, onClose }) {
                   placeholder="Share your thoughts, updates, milestones, or requests with the community..."
                   rows={5}
                   maxLength={500}
-                  className={`w-full px-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-[#D5B527] focus:border-[#D5B527] resize-none transition-all duration-200 text-gray-900 placeholder-gray-400 ${
+                  className={`w-full px-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-[#D5B527] focus:border-[#D5B527] resize-none transition-all duration-200 text-gray-900 placeholder-gray-400 text-sm sm:text-base ${
                     errors.caption
                       ? "border-red-300 bg-red-50"
                       : "border-red-200 hover:border-red-300"
@@ -289,7 +291,7 @@ function NewPostModal({ isOpen, onClose }) {
               {errors.caption && (
                 <div className="flex items-center space-x-2 text-red-600 text-sm">
                   <svg
-                    className="w-4 h-4"
+                    className="w-4 h-4 flex-shrink-0"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -315,7 +317,7 @@ function NewPostModal({ isOpen, onClose }) {
                   {formData.tags.map((tag, index) => (
                     <span
                       key={index}
-                      className="bg-gradient-to-r from-[#D5B527] to-[#E6C547] text-white px-4 py-2 rounded-full text-sm font-medium flex items-center space-x-2 border border-[#D5B527]"
+                      className="bg-gradient-to-r from-[#D5B527] to-[#E6C547] text-white px-3 sm:px-4 py-2 rounded-full text-sm font-medium flex items-center space-x-2 border border-[#D5B527]"
                     >
                       <span>#{tag}</span>
                       <button
@@ -332,7 +334,7 @@ function NewPostModal({ isOpen, onClose }) {
                 </div>
               )}
 
-              <div className="flex space-x-3">
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
                 <div className="flex-1 relative">
                   <input
                     type="text"
@@ -347,7 +349,7 @@ function NewPostModal({ isOpen, onClose }) {
                 <button
                   type="button"
                   onClick={handleAddTag}
-                  className="bg-gradient-to-r from-[#D5B527] to-[#E6C547] text-white px-6 py-3 rounded-xl hover:from-[#bfa021] hover:to-[#D5B527] transition-all duration-200 text-sm font-medium flex items-center space-x-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-gradient-to-r from-[#D5B527] to-[#E6C547] text-white px-6 py-3 rounded-xl hover:from-[#bfa021] hover:to-[#D5B527] transition-all duration-200 text-sm font-medium flex items-center justify-center space-x-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={isSubmitting || !newTag.trim()}
                 >
                   <FaPlus size={12} />
@@ -370,7 +372,7 @@ function NewPostModal({ isOpen, onClose }) {
               </label>
 
               {formData.previews.length > 0 && (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {formData.previews.map((preview, index) => (
                     <div key={index} className="relative group">
                       <img
@@ -423,15 +425,15 @@ function NewPostModal({ isOpen, onClose }) {
             </div>
 
             {/* Funding Options */}
-            <div className="border-2 border-red-200 rounded-xl p-6 space-y-4">
-              <div className="flex items-center space-x-3">
+            <div className="border-2 border-red-200 rounded-xl p-4 sm:p-6 space-y-4">
+              <div className="flex items-start sm:items-center space-x-3">
                 <input
                   type="checkbox"
                   id="fundingEnabled"
                   name="isFundingEnabled"
                   checked={formData.isFundingEnabled}
                   onChange={handleInputChange}
-                  className="w-5 h-5 text-[#D5B527] border-2 border-red-300 rounded focus:ring-[#D5B527] focus:ring-2"
+                  className="w-5 h-5 text-[#D5B527] border-2 border-red-300 rounded focus:ring-[#D5B527] focus:ring-2 mt-0.5 sm:mt-0"
                   disabled={isSubmitting}
                 />
                 <label
@@ -466,7 +468,7 @@ function NewPostModal({ isOpen, onClose }) {
                     {errors.fundingGoal && (
                       <div className="flex items-center space-x-2 text-red-600 text-sm mt-2">
                         <svg
-                          className="w-4 h-4"
+                          className="w-4 h-4 flex-shrink-0"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -509,46 +511,50 @@ function NewPostModal({ isOpen, onClose }) {
 
             {/* Preview */}
             {formData.caption && (
-              <div className="border-2 border-red-200 rounded-xl p-6 bg-gradient-to-br from-red-50 to-rose-50">
+              <div className="border-2 border-red-200 rounded-xl p-4 sm:p-6 bg-gradient-to-br from-red-50 to-rose-50">
                 <h3 className="font-bold text-gray-900 mb-4 flex items-center space-x-2">
                   <FaEye className="text-[#8A1A1C]" />
                   <span>Post Preview</span>
                 </h3>
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center">
-                      <span className="text-sm font-bold text-white">
+                <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100">
+                  <div className="flex items-start space-x-3 sm:space-x-4 mb-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs sm:text-sm font-bold text-white">
                         {user?.scholarInfo?.firstName?.[0]}
                         {user?.scholarInfo?.lastName?.[0]}
                       </span>
                     </div>
-                    <div className="flex-1">
-                      <div className="font-semibold text-gray-900">
-                        {user?.scholarInfo?.firstName}{" "}
-                        {user?.scholarInfo?.lastName}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <div>
+                          <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                            {user?.scholarInfo?.firstName}{" "}
+                            {user?.scholarInfo?.lastName}
+                          </div>
+                          <div className="text-xs sm:text-sm text-gray-500">Just now</div>
+                        </div>
+                        <span
+                          className={`px-2 sm:px-3 py-1 text-xs rounded-full font-semibold border self-start ${
+                            formData.audience === "public"
+                              ? "bg-green-100 text-green-700 border-green-200"
+                              : "bg-purple-100 text-purple-700 border-purple-200"
+                          }`}
+                        >
+                          {formData.audience === "public" ? (
+                            <>
+                              <FaGlobe className="inline mr-1" size={10} /> Public
+                            </>
+                          ) : (
+                            <>
+                              <FaLock className="inline mr-1" size={10} /> Sponsors Only
+                            </>
+                          )}
+                        </span>
                       </div>
-                      <div className="text-sm text-gray-500">Just now</div>
                     </div>
-                    <span
-                      className={`px-3 py-1 text-xs rounded-full font-semibold border ${
-                        formData.audience === "public"
-                          ? "bg-green-100 text-green-700 border-green-200"
-                          : "bg-purple-100 text-purple-700 border-purple-200"
-                      }`}
-                    >
-                      {formData.audience === "public" ? (
-                        <>
-                          <FaGlobe className="inline mr-1" /> Public
-                        </>
-                      ) : (
-                        <>
-                          <FaLock className="inline mr-1" /> Sponsors Only
-                        </>
-                      )}
-                    </span>
                   </div>
 
-                  <p className="text-gray-800 mb-3 leading-relaxed">
+                  <p className="text-gray-800 mb-3 leading-relaxed text-sm sm:text-base">
                     {formData.caption}
                   </p>
 
@@ -557,7 +563,7 @@ function NewPostModal({ isOpen, onClose }) {
                       {formData.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium"
+                          className="bg-gray-100 text-gray-700 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium"
                         >
                           #{tag}
                         </span>
@@ -566,7 +572,7 @@ function NewPostModal({ isOpen, onClose }) {
                   )}
 
                   {formData.isFundingEnabled && formData.fundingGoal && (
-                    <div className="bg-gradient-to-r from-green-100 to-emerald-100 border border-green-200 text-green-800 px-4 py-3 rounded-xl text-sm font-semibold inline-block">
+                    <div className="bg-gradient-to-r from-green-100 to-emerald-100 border border-green-200 text-green-800 px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold inline-block">
                       Funding Goal: {formatCurrency(formData.fundingGoal)}
                     </div>
                   )}
@@ -579,7 +585,7 @@ function NewPostModal({ isOpen, onClose }) {
               <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
                 <div className="flex items-center space-x-3">
                   <svg
-                    className="w-5 h-5 text-red-500"
+                    className="w-5 h-5 text-red-500 flex-shrink-0"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -596,11 +602,11 @@ function NewPostModal({ isOpen, onClose }) {
           </form>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-red-50 to-rose-50 border-t border-red-100">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 sm:px-8 py-6 bg-gradient-to-r from-red-50 to-rose-50 border-t border-red-100 gap-3 sm:gap-0">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200 hover:bg-gray-200 rounded-xl"
+              className="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200 hover:bg-gray-200 rounded-xl order-2 sm:order-1"
               disabled={isSubmitting}
             >
               Cancel
@@ -609,7 +615,7 @@ function NewPostModal({ isOpen, onClose }) {
               type="submit"
               onClick={handleSubmit}
               disabled={isSubmitting || !formData.caption.trim()}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl ${
+              className={`px-6 sm:px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl order-1 sm:order-2 ${
                 isSubmitting || !formData.caption.trim()
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-gradient-to-r from-[#D5B527] to-[#E6C547] hover:from-[#bfa021] hover:to-[#D5B527] text-white"
@@ -645,14 +651,14 @@ function NewPostModal({ isOpen, onClose }) {
 
       {/* Success Toast (no emojis) */}
       {successMessage && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           {/* Blurred background */}
           <div className="absolute inset-0 backdrop-blur-sm bg-black/40" />
 
           {/* Success Card */}
-          <div className="relative bg-white px-8 py-6 rounded-2xl shadow-2xl border border-green-200 flex items-center space-x-4 animate-fadeIn">
-            <CheckCircle className="w-8 h-8 text-green-600" />
-            <span className="text-lg font-semibold text-gray-900">{successMessage}</span>
+          <div className="relative bg-white px-6 sm:px-8 py-6 rounded-2xl shadow-2xl border border-green-200 flex items-center space-x-4 animate-fadeIn max-w-sm">
+            <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 flex-shrink-0" />
+            <span className="text-base sm:text-lg font-semibold text-gray-900">{successMessage}</span>
           </div>
         </div>
       )}
