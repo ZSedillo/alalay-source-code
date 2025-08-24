@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, User, Mail, Phone, MapPin, Calendar, Upload, X } from "lucide-react";
+import { Eye, EyeOff, User, Mail, Phone, MapPin, Calendar, Upload, X, Camera, FileText, CheckCircle } from "lucide-react";
 
 function Signup() {
   const navigate = useNavigate();
@@ -32,6 +32,16 @@ function Signup() {
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [modalCountdown, setModalCountdown] = useState(10);
+  const [verificationStatus, setVerificationStatus] = useState({
+    idDocument: false,
+    studentId: false,
+    faceVerification: false
+  });
+  const [isVerifying, setIsVerifying] = useState({
+    idDocument: false,
+    studentId: false,
+    faceVerification: false
+  });
   const countdownRef = useRef();
 
   // Calculate completion percentage based on filled fields
@@ -137,12 +147,30 @@ function Signup() {
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, 4));
+      setCurrentStep(prev => Math.min(prev + 1, 5));
     }
   };
 
   const handlePrev = () => {
     setCurrentStep(prev => Math.max(prev - 1, 1));
+  };
+
+  const simulateVerification = (documentType) => {
+    setIsVerifying(prev => ({
+      ...prev,
+      [documentType]: true
+    }));
+    
+    setTimeout(() => {
+      setVerificationStatus(prev => ({
+        ...prev,
+        [documentType]: true
+      }));
+      setIsVerifying(prev => ({
+        ...prev,
+        [documentType]: false
+      }));
+    }, 2000); // Simulate 2 second verification process
   };
 
   const handleSubmit = (e) => {
@@ -476,6 +504,141 @@ function Signup() {
       case 4:
         return (
           <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">AI Document Verification</h2>
+            
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
+              <p className="text-blue-800 text-sm">
+                <FileText className="inline w-4 h-4 mr-1" />
+                Please verify your identity by scanning the required documents. Our AI system will automatically validate your information.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {/* Government ID Verification */}
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <FileText className="w-5 h-5 text-gray-600 mr-2" />
+                    <span className="font-medium">Government ID</span>
+                    {verificationStatus.idDocument && (
+                      <CheckCircle className="w-5 h-5 text-green-500 ml-2" />
+                    )}
+                  </div>
+                  <span className={`px-2 py-1 text-xs rounded ${
+                    verificationStatus.idDocument 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    {verificationStatus.idDocument ? 'Verified' : 'Required'}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mb-3">Scan your valid government-issued ID (Driver's License, Passport, etc.)</p>
+                <button
+                  type="button"
+                  onClick={() => simulateVerification('idDocument')}
+                  disabled={verificationStatus.idDocument || isVerifying.idDocument}
+                  className={`w-full flex items-center justify-center py-2 px-4 rounded-lg transition ${
+                    verificationStatus.idDocument
+                      ? 'bg-green-500 text-white cursor-not-allowed'
+                      : isVerifying.idDocument
+                      ? 'bg-gray-400 text-white cursor-not-allowed'
+                      : 'bg-[#D5B527] hover:bg-[#bfa021] text-white'
+                  }`}
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  {isVerifying.idDocument ? 'Scanning...' : verificationStatus.idDocument ? 'Verified' : 'Scan Document'}
+                </button>
+              </div>
+
+              {/* Student ID Verification */}
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <FileText className="w-5 h-5 text-gray-600 mr-2" />
+                    <span className="font-medium">Student ID</span>
+                    {verificationStatus.studentId && (
+                      <CheckCircle className="w-5 h-5 text-green-500 ml-2" />
+                    )}
+                  </div>
+                  <span className={`px-2 py-1 text-xs rounded ${
+                    verificationStatus.studentId 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    {verificationStatus.studentId ? 'Verified' : 'Required'}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mb-3">Scan your current school/university ID card</p>
+                <button
+                  type="button"
+                  onClick={() => simulateVerification('studentId')}
+                  disabled={verificationStatus.studentId || isVerifying.studentId}
+                  className={`w-full flex items-center justify-center py-2 px-4 rounded-lg transition ${
+                    verificationStatus.studentId
+                      ? 'bg-green-500 text-white cursor-not-allowed'
+                      : isVerifying.studentId
+                      ? 'bg-gray-400 text-white cursor-not-allowed'
+                      : 'bg-[#D5B527] hover:bg-[#bfa021] text-white'
+                  }`}
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  {isVerifying.studentId ? 'Scanning...' : verificationStatus.studentId ? 'Verified' : 'Scan Student ID'}
+                </button>
+              </div>
+
+              {/* Face Verification */}
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <User className="w-5 h-5 text-gray-600 mr-2" />
+                    <span className="font-medium">Face Verification</span>
+                    {verificationStatus.faceVerification && (
+                      <CheckCircle className="w-5 h-5 text-green-500 ml-2" />
+                    )}
+                  </div>
+                  <span className={`px-2 py-1 text-xs rounded ${
+                    verificationStatus.faceVerification 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    {verificationStatus.faceVerification ? 'Verified' : 'Required'}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mb-3">Take a selfie to verify your identity matches your documents</p>
+                <button
+                  type="button"
+                  onClick={() => simulateVerification('faceVerification')}
+                  disabled={verificationStatus.faceVerification || isVerifying.faceVerification}
+                  className={`w-full flex items-center justify-center py-2 px-4 rounded-lg transition ${
+                    verificationStatus.faceVerification
+                      ? 'bg-green-500 text-white cursor-not-allowed'
+                      : isVerifying.faceVerification
+                      ? 'bg-gray-400 text-white cursor-not-allowed'
+                      : 'bg-[#D5B527] hover:bg-[#bfa021] text-white'
+                  }`}
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  {isVerifying.faceVerification ? 'Processing...' : verificationStatus.faceVerification ? 'Verified' : 'Take Selfie'}
+                </button>
+              </div>
+            </div>
+
+            {/* Verification Summary */}
+            {Object.values(verificationStatus).every(status => status === true) && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-6">
+                <div className="flex items-center">
+                  <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+                  <span className="text-green-800 font-medium">All documents verified successfully!</span>
+                </div>
+                <p className="text-green-700 text-sm mt-1">You can now proceed to the final step.</p>
+              </div>
+            )}
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Profile Picture & Review</h2>
             
             <div className="text-center">
@@ -561,7 +724,7 @@ function Signup() {
         {/* Progress bar */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-2 gap-1">
-            <span className="text-xs sm:text-sm font-medium text-gray-600">Step {currentStep} of 4</span>
+            <span className="text-xs sm:text-sm font-medium text-gray-600">Step {currentStep} of 5</span>
             <span className="text-xs sm:text-sm text-gray-500">{completionPercentage}% Complete</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -597,6 +760,19 @@ function Signup() {
                 >
                   Next
                 </button>
+              ) : currentStep === 4 ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={!Object.values(verificationStatus).every(status => status === true)}
+                  className={`px-8 py-3 rounded-lg font-medium transition text-sm sm:text-base ${
+                    Object.values(verificationStatus).every(status => status === true)
+                      ? 'bg-[#D5B527] hover:bg-[#bfa021] text-white'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  Next
+                </button>
               ) : (
                 <button
                   type="submit"
@@ -627,7 +803,7 @@ function Signup() {
           <div
             className="fixed inset-0 z-50 flex items-center justify-center"
             style={{
-              background: "rgba(0,0,0,0.45)", // Proper opacity for overlay
+              background: "rgba(0,0,0,0.45)",
               backdropFilter: "blur(1.5px)"
             }}
           >

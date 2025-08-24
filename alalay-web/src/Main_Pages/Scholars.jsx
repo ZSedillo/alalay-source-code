@@ -98,7 +98,7 @@ function Scholars() {
         <div className="h-16 md:h-0" />
         
         {/* Header Section */}
-        <div className="bg-white border-b border-gray-200 sticky top-[52px] md:top-0 z-30">
+        <div className="bg-white border-b border-gray-200 top-[52px] md:top-0 z-30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
             <div className="flex items-center justify-between">
               <div>
