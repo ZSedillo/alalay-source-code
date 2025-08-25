@@ -15,6 +15,12 @@ function Profile() {
   const [expandedComments, setExpandedComments] = useState({});
   const [newComment, setNewComment] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showGradeModal, setShowGradeModal] = useState(false);
+  const [pendingGrades, setPendingGrades] = useState([]);   // already sent for review
+  const [newGradeForm, setNewGradeForm] = useState({ subject: '', grade: '' });
+  const [rows, setRows] = useState([]);
+  const [selectedSemester, setSelectedSemester] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Sample user data - in real app this would come from API/database
   const sampleUserData = {
@@ -482,10 +488,171 @@ function Profile() {
           <span className="text-xs sm:text-sm text-gray-600 block mb-1">University</span>
           <p className="font-medium text-gray-800">{user.academicInfo.university}</p>
         </div>
-        <div className="p-3 bg-gray-50 rounded-xl">
-          <span className="text-xs sm:text-sm text-gray-600 block mb-1">GWA</span>
-          <p className="font-medium text-gray-800">{user.academicInfo.gwa}</p>
+
+<div className="p-3 bg-gray-50 rounded-xl flex items-center justify-between">
+  <div>
+    <span className="text-xs sm:text-sm text-gray-600 block mb-1">GWA</span>
+    <p className="text-xl font-bold text-gray-800">{user.academicInfo.gwa}</p>
+  </div>
+  <button
+    onClick={() => setShowGradeModal(true)}
+    className="bg-[#8A1A1C] text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-[#5C1213] transition"
+  >
+    Add Grade
+  </button>
+{showGradeModal && (
+  <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 className="text-lg font-semibold text-gray-800">Add Grades</h3>
+        <button
+          onClick={() => {
+            setRows([]);
+            setSelectedSemester('');
+            setShowGradeModal(false);
+          }}
+          className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+        >
+          &times;
+        </button>
+      </div>
+
+        <form
+          className="px-6 py-5 space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!rows.length || !selectedSemester) return;
+
+            // 1. show toast
+            setShowSuccess(true);
+
+            // 2. after 2 s, hide toast + close modal + reset state
+            setTimeout(() => {
+              setPendingGrades(prev => [
+                ...prev,
+                { semester: selectedSemester, lastUpdated: new Date().toISOString(), grades: rows },
+              ]);
+              setRows([]);
+              setSelectedSemester('');
+              setShowSuccess(false);
+              setShowGradeModal(false);
+            }, 2000);
+          }}
+        >
+        {/* Semester selector */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Semester</label>
+          <select
+            required
+            value={selectedSemester}
+            onChange={(e) => setSelectedSemester(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8A1A1C]"
+          >
+            <option value="">— Select —</option>
+            <option value="1st Sem AY 2024-2025">1st Sem AY 2024-2025</option>
+            <option value="2nd Sem AY 2024-2025">2nd Sem AY 2024-2025</option>
+            <option value="3rd Sem AY 2024-2025">3rd Sem AY 2024-2025</option>
+            <option value="4th Sem AY 2024-2025">4th Sem AY 2024-2025</option>
+          </select>
         </div>
+
+        {/* Dynamic rows */}
+        {rows.map((row, idx) => (
+          <div key={row.id} className="flex items-end gap-3">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+              <input
+                type="text"
+                required
+                value={row.subject}
+                onChange={(e) =>
+                  setRows(rows.map(r => (r.id === row.id ? { ...r, subject: e.target.value } : r)))
+                }
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8A1A1C]"
+                placeholder="e.g. Data Structures"
+              />
+            </div>
+            <div className="w-28">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Grade</label>
+              <input
+                type="number"
+                step="0.01"
+                min="1"
+                max="5"
+                required
+                value={row.grade}
+                onChange={(e) =>
+                  setRows(rows.map(r => (r.id === row.id ? { ...r, grade: e.target.value } : r)))
+                }
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-[#8A1A1C]"
+                placeholder="1.75"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => setRows(rows.filter(r => r.id !== row.id))}
+              className="text-red-500 hover:text-red-700 text-xl leading-none"
+            >
+              &times;
+            </button>
+          </div>
+        ))}
+
+        {/* Add another row */}
+        <button
+          type="button"
+          onClick={() => setRows([...rows, { id: Date.now(), subject: '', grade: '' }])}
+          className="w-full border-2 border-dashed border-gray-300 text-gray-600 rounded-lg py-2 text-sm font-medium hover:bg-gray-50 transition"
+        >
+          + Add subject
+        </button>
+
+        {/* Review notice */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
+          <span className="font-semibold">Heads-up:</span> All grades will be reviewed by BPI before becoming official.
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-end space-x-3">
+          <button
+            type="button"
+            onClick={() => {
+              setRows([]);
+              setSelectedSemester('');
+              setShowGradeModal(false);
+            }}
+            className="px-4 py-2 text-sm font-medium bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={!rows.length || !selectedSemester}
+            className="px-5 py-2 text-sm font-medium bg-[#8A1A1C] text-white rounded-lg hover:bg-[#5C1213] transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+{showSuccess && (
+  <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[60]">
+    <div className="bg-white rounded-xl px-6 py-4 text-center shadow-2xl">
+      <svg className="w-10 h-10 text-emerald-600 mx-auto mb-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+      <p className="text-emerald-800 font-semibold">✅ Grades submitted!</p>
+      <p className="text-sm text-emerald-700 mt-1">They will be reviewed by BPI shortly.</p>
+    </div>
+  </div>
+)}
+
+    </div>
+  </div>
+)}
+
+</div>
+
         <div className="p-3 bg-gray-50 rounded-xl">
           <span className="text-xs sm:text-sm text-gray-600 block mb-1">Expected Graduation</span>
           <p className="font-medium text-gray-800">{formatDateLong(user.academicInfo.expectedGraduation)}</p>

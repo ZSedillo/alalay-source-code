@@ -127,12 +127,14 @@ function Feed() {
           profileImage: null,
         },
       },
-      description: "Looking for support for my final year project on AI-powered healthcare solutions. Any guidance or funding would be greatly appreciated! 🏥💡",
+      description:
+      "I’m a 4th-year BPI scholar & need ₱25 000 to finish my AI-learning thesis for Grade-5 math. Your help covers cloud credits, data sets, and thesis printing. Every peso brings me closer to graduation! 🎓💡 #FundMyThesis #BPIAlalay #ScholarJourney",
       visibility: "public",
       createdAt: "2025-01-20T12:45:00.000Z",
       updatedAt: "2025-01-20T14:20:00.000Z",
       images: [],
-      tags: ["funding", "healthcare", "ai", "project"],
+      tags: ["FundMyThesis", "BPIAlalay", "ScholarJourney", "GraduationFund"],
+      fundingTitle: "AI-Thesis Cloud Credits",
       fundingGoal: 25000,
       isFundingEnabled: true,
       isActive: true,
@@ -144,14 +146,11 @@ function Feed() {
             _id: "sponsor1",
             fullName: "HealthTech Foundation",
             profileImage: null,
-            isAnonymous: false
+            isAnonymous: false,
           },
-          text: "This sounds like a promising project! We'd love to support healthcare innovation.",
-          donation: {
-            amount: 10000,
-            isAnonymous: false
-          },
-          createdAt: "2025-01-20T15:00:00.000Z"
+          text: "This sounds like a promising project! We'd love to support STEM education.",
+          donation: { amount: 10000, isAnonymous: false },
+          createdAt: "2025-01-20T15:00:00.000Z",
         },
         {
           _id: "c6",
@@ -159,25 +158,22 @@ function Feed() {
             _id: "user7",
             fullName: "Anonymous",
             profileImage: null,
-            isAnonymous: true
+            isAnonymous: true,
           },
-          text: "Healthcare AI is the future. Best of luck!",
-          donation: {
-            amount: 3000,
-            isAnonymous: true
-          },
-          createdAt: "2025-01-20T16:30:00.000Z"
-        }
+          text: "Keep it up, Juan! The future of Filipino STEM is bright.",
+          donation: { amount: 3000, isAnonymous: true },
+          createdAt: "2025-01-20T16:30:00.000Z",
+        },
       ],
       fundings: [
         {
           sponsor: "sponsor1",
           amount: 5000,
           message: "Great project idea! Keep it up!",
-          createdAt: "2025-01-20T14:20:00.000Z"
-        }
+          createdAt: "2025-01-20T14:20:00.000Z",
+        },
       ],
-      totalDonations: 18000, // Sum of all donations received
+      totalDonations: 18000,
     },
     {
       _id: "p3",
@@ -243,6 +239,7 @@ function Feed() {
       updatedAt: "2025-01-20T12:45:00.000Z",
       images: [],
       tags: ["funding", "AI", "education"],
+      fundingTitle: "AI for Education Project",
       fundingGoal: 20000,
       isFundingEnabled: true,
       isActive: true,
@@ -303,6 +300,7 @@ function Feed() {
       updatedAt: "2025-01-18T14:00:00.000Z",
       images: [],
       tags: ["thesis", "printing", "support"],
+      fundingTitle: "Thesis Printing Fund",
       fundingGoal: 8000,
       isFundingEnabled: true,
       isActive: true,
@@ -352,6 +350,7 @@ function Feed() {
         }
       ],
       tags: ["internship", "career", "learning"],
+      fundingTitle: "Internship Allowance",
       fundingGoal: 12000,
       isFundingEnabled: true,
       isActive: true,
@@ -942,12 +941,14 @@ function Feed() {
                 />
               </div>
             ) : post.isFundingEnabled ? (
-              <div className="mx-6 mb-4 h-32 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-xl flex items-center justify-center text-emerald-700">
+              <div className="mx-6 mb-4 h-32 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-xl flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-2xl mb-2">💰</div>
-                  <div className="font-medium">Funding Goal: {formatCurrency(post.fundingGoal)}</div>
-                  <div className="text-sm text-emerald-600">
-                    {formatCurrency(post.fundings.reduce((sum, funding) => sum + funding.amount, 0))} raised
+                  <div className="text-2xl font-bold text-emerald-700 tracking-tight">
+                    {post.fundingTitle || "Support My Goal"}
+                  </div>
+                  <div className="text-sm text-emerald-600 mt-1">
+                    Goal: {formatCurrency(post.fundingGoal)} ·
+                    {formatCurrency(post.fundings.reduce((sum, f) => sum + f.amount, 7000))} raised
                   </div>
                 </div>
               </div>

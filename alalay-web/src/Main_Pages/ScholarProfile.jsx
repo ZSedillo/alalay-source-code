@@ -15,7 +15,15 @@ function ScholarProfile() {
   const [scholarProfile, setScholarProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error] = useState(null);
+  const [showGradeModal, setShowGradeModal] = useState(false);
+  const [semester] = useState("2nd Sem AY 2024-2025");
 
+const grades = [
+   { subject: 'Data Structures', grade: 1.25 },
+   { subject: 'Algorithms',       grade: 1.50 },
+   { subject: 'Web Programming',  grade: 1.75 },
+   { subject: 'Calculus 3',       grade: 2.00 },
+];
   // Dummy scholars list with more complete data
 const sampleScholars = [
   {
@@ -226,6 +234,7 @@ const sampleScholars = [
       createdAt: "2025-01-20T12:45:00.000Z",
       images: [],
       tags: ["funding", "AI", "education"],
+      fundingTitle: "AI for Education Project",
       fundingGoal: 20000,
       isFundingEnabled: true,
       isActive: true,
@@ -281,6 +290,7 @@ const sampleScholars = [
       images: [],
       tags: ["thesis", "printing", "support"],
       fundingGoal: 8000,
+      fundingTitle: "Thesis Printing and Binding",
       isFundingEnabled: true,
       isActive: true,
       likes: ["user5", "user6"],
@@ -323,6 +333,7 @@ const sampleScholars = [
         }
       ],
       tags: ["internship", "career", "learning"],
+      fundingTitle: "Internship Allowance",
       fundingGoal: 12000,
       isFundingEnabled: true,
       isActive: true,
@@ -735,17 +746,19 @@ useEffect(() => {
                 className="w-full h-200 object-cover"
               />
             </div>
-          ) : post.isFundingEnabled ? (
-            <div className="mx-4 sm:mx-6 mb-4 h-32 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-xl flex items-center justify-center text-emerald-700">
-              <div className="text-center">
-                <div className="text-2xl mb-2">💰</div>
-                <div className="font-medium">Funding Goal: {formatCurrency(post.fundingGoal)}</div>
-                <div className="text-sm text-emerald-600">
-                  {formatCurrency(post.totalDonations || 0)} raised
+            ) : post.isFundingEnabled ? (
+              <div className="mx-6 mb-4 h-32 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-xl flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-emerald-700 tracking-tight">
+                    {post.fundingTitle || "Support My Goal"}
+                  </div>
+                  <div className="text-sm text-emerald-600 mt-1">
+                    Goal: {formatCurrency(post.fundingGoal)} ·
+                    {formatCurrency(post.fundings.reduce((sum, f) => sum + f.amount, 2500))} raised
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
           {/* Action Bar */}
           <div className="p-4 sm:p-6 pt-4 border-t border-gray-50">
             <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-4">
@@ -962,10 +975,78 @@ useEffect(() => {
           <span className="text-xs sm:text-sm text-gray-600 block mb-1">University</span>
           <p className="font-medium text-gray-800">{scholarProfile.university}</p>
         </div>
-        <div className="p-3 bg-gray-50 rounded-xl">
-          <span className="text-xs sm:text-sm text-gray-600 block mb-1">GWA</span>
-          <p className="font-medium text-gray-800">{scholarProfile.gwa}</p>
-        </div>
+
+
+<div className="p-3 bg-gray-50 rounded-xl flex items-center justify-between">
+  <div>
+    <span className="text-xs sm:text-sm text-gray-600 block mb-1">GWA</span>
+    <p className="text-xl font-bold text-gray-800">{scholarProfile.gwa}</p>
+  </div>
+  <button
+    onClick={() => setShowGradeModal(true)}
+    className="bg-[#8A1A1C] text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-[#5C1213] transition"
+  >
+    View Grade
+  </button>
+</div>
+{showGradeModal && (
+  <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-auto overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 className="text-lg font-semibold text-gray-800">Grade Report</h3>
+        <button
+          onClick={() => setShowGradeModal(false)}
+          className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+        >
+          &times;
+        </button>
+      </div>
+
+      {/* Semester + Verified bubble */}
+      <div className="px-6 pt-4 flex items-center gap-3">
+        <span className="text-sm font-medium text-gray-700">2nd Sem AY 2024-2025</span>
+        <span className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-semibold">
+          ✓ Grades verified
+        </span>
+      </div>
+
+      {/* Last-updated */}
+      <div className="px-6 pb-4 text-xs text-gray-500">
+        Last updated:{" "}
+        {new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
+      </div>
+
+      {/* Grades list */}
+      <ul className="px-6 pb-4 space-y-3 max-h-80 overflow-y-auto">
+        {grades.map(({ subject, grade }) => (
+          <li
+            key={subject}
+            className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0"
+          >
+            <span className="text-sm text-gray-800">{subject}</span>
+            <span className="font-semibold text-sm text-[#8A1A1C]">{grade}</span>
+          </li>
+        ))}
+      </ul>
+
+      {/* Footer */}
+      <div className="px-6 py-4 bg-gray-50">
+        <button
+          onClick={() => setShowGradeModal(false)}
+          className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium py-2 rounded-lg transition"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+       
       </div>
     </div>
   );
