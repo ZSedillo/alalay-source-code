@@ -76,7 +76,7 @@ function LoginPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D5B527] focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
                 placeholder="Enter your username"
-                required
+                // required
               />
             </div>
           </div>
@@ -97,7 +97,7 @@ function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-11 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D5B527] focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
                 placeholder="Enter your password"
-                required
+                // required
               />
               <button
                 type="button"
@@ -133,12 +133,16 @@ function LoginPage() {
           <div className="space-y-4 pt-2">
             <button
               type="submit"
-              disabled={isLoading || !username.trim() || !password.trim()}
-              className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 transform ${
-                isLoading || !username.trim() || !password.trim()
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#D5B527] hover:bg-[#bfa021] text-white hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0'
-              }`}
+              //disabled={isLoading || !username.trim() || !password.trim()}
+              // className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 transform ${
+              //   isLoading || !username.trim() || !password.trim()
+              //     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              //     : 'bg-[#D5B527] hover:bg-[#bfa021] text-white hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0'
+              // }`}
+
+              //Temp className code
+              className="w-full py-3 rounded-xl font-semibold transition-all duration-200 transform bg-[#D5B527] hover:bg-[#bfa021] text-white hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
+
             >
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
