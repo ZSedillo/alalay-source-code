@@ -179,7 +179,7 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
       {/* Blurred backdrop */}
       <div 
         className="absolute inset-0 backdrop-blur-md bg-black/30"
@@ -187,16 +187,16 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
       />
       
       {/* Modal container */}
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden border border-gray-200">
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl h-[85vh] sm:h-[90vh] flex flex-col border border-gray-200 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-red-50 to-rose-50 border-b border-red-100">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center">
-              <FaHeart className="text-white text-lg" />
+        <div className="flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6 bg-gradient-to-r from-red-50 to-rose-50 border-b border-red-100 flex-shrink-0 rounded-t-2xl">
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-[#8A1A1C] to-[#5C1213] rounded-full flex items-center justify-center">
+              <FaHeart className="text-white text-base sm:text-lg" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Support {scholarName}</h2>
-              <p className="text-sm text-gray-600 mt-1">Make a difference in their educational journey</p>
+              <h2 className="text-lg sm:text-2xl font-bold text-gray-900">Support {scholarName}</h2>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Make a difference in their educational journey</p>
             </div>
           </div>
           <button
@@ -204,15 +204,15 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
             className="p-2 hover:bg-red-100 rounded-xl transition-all duration-200 group"
             disabled={isSubmitting}
           >
-            <FaTimes className="text-gray-500 group-hover:text-red-600 w-5 h-5" />
+            <FaTimes className="text-gray-500 group-hover:text-red-600 w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
 
         {/* Scrollable content */}
-        <div className="overflow-y-auto max-h-[calc(95vh-88px)]">
+        <div className="flex-1 overflow-y-auto">
           {/* Scholar Info and Progress */}
           {fundingGoal && (
-            <div className="px-8 py-6 bg-white border-b border-gray-50">
+            <div className="px-4 sm:px-8 py-4 sm:py-6 bg-white border-b border-gray-50">
               <div className="bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-sm font-medium text-gray-700">Funding Progress</span>
@@ -239,7 +239,7 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
           )}
 
           {/* Form */}
-          <div className="px-8 py-6 space-y-8">
+          <div className="px-4 sm:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8">
             {/* Donation Amount */}
             <div className="space-y-4">
               <label className="block text-sm font-semibold text-gray-900">
@@ -291,7 +291,7 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
                   onChange={handleInputChange}
                   placeholder="Enter custom amount"
                   min="100"
-                  className={`w-full pl-8 pr-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-[#D5B527] focus:border-[#D5B527] transition-all duration-200 text-lg font-medium ${
+                  className={`w-full pl-8 pr-4 py-3 sm:py-4 border-2 rounded-xl focus:ring-2 focus:ring-[#D5B527] focus:border-[#D5B527] transition-all duration-200 text-base sm:text-lg font-medium ${
                     errors.amount ? 'border-red-300 bg-red-50' : 'border-red-200 hover:border-red-300'
                   }`}
                   disabled={isSubmitting}
@@ -326,7 +326,7 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
                     className="w-5 h-5 text-[#D5B527] border-2 border-red-300 rounded focus:ring-[#D5B527] focus:ring-2"
                     disabled={isSubmitting}
                   />
-                  <label htmlFor="anonymous" className="flex items-center space-x-3 text-base font-medium text-gray-900 cursor-pointer">
+                  <label htmlFor="anonymous" className="flex items-center space-x-3 text-sm sm:text-base font-medium text-gray-900 cursor-pointer">
                     <FaEyeSlash className="text-gray-600 w-4 h-4" />
                     <span>Make this donation anonymous</span>
                   </label>
@@ -364,7 +364,7 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
               </label>
               <div className="grid grid-cols-1 gap-3">
                 {/* BPI Bank - Primary Payment Method */}
-                <label className="flex items-center space-x-3 p-4 border-2 border-[#8B1538] bg-gradient-to-r from-[#8B1538]/5 to-[#8B1538]/10 rounded-xl cursor-pointer hover:border-[#8B1538]/70 transition-all duration-200 relative">
+                <label className="flex items-center space-x-3 p-3 sm:p-4 border-2 border-[#8B1538] bg-gradient-to-r from-[#8B1538]/5 to-[#8B1538]/10 rounded-xl cursor-pointer hover:border-[#8B1538]/70 transition-all duration-200 relative">
                   <input
                     type="radio"
                     name="paymentMethod"
@@ -374,18 +374,18 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
                     className="w-4 h-4 text-[#8B1538] border-[#8B1538] focus:ring-[#8B1538]"
                     disabled={isSubmitting}
                   />
-                  <FaUniversity className="text-[#8B1538] w-5 h-5" />
-                  <div className="flex-1">
-                    <div className="font-semibold text-gray-900 flex items-center space-x-2">
-                      <span>BPI Bank Transfer</span>
+                  <FaUniversity className="text-[#8B1538] w-4 h-4 sm:w-5 sm:h-5" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-gray-900 flex items-center flex-wrap gap-2">
+                      <span className="text-sm sm:text-base">BPI Bank Transfer</span>
                       <span className="px-2 py-1 bg-[#8B1538] text-white text-xs rounded-full font-medium">RECOMMENDED</span>
                     </div>
-                    <div className="text-sm text-gray-600">Primary payment method - Fast and secure bank transfer</div>
+                    <div className="text-xs sm:text-sm text-gray-600">Primary payment method - Fast and secure bank transfer</div>
                   </div>
                 </label>
                 
                 {/* Other Payment Methods */}
-                <label className="flex items-center space-x-3 p-4 border-2 border-red-200 rounded-xl cursor-pointer hover:border-[#D5B527] transition-all duration-200">
+                <label className="flex items-center space-x-3 p-3 sm:p-4 border-2 border-red-200 rounded-xl cursor-pointer hover:border-[#D5B527] transition-all duration-200">
                   <input
                     type="radio"
                     name="paymentMethod"
@@ -395,14 +395,14 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
                     className="w-4 h-4 text-[#D5B527] border-red-300 focus:ring-[#D5B527]"
                     disabled={isSubmitting}
                   />
-                  <FaDollarSign className="text-green-600 w-5 h-5" />
+                  <FaDollarSign className="text-green-600 w-4 h-4 sm:w-5 sm:h-5" />
                   <div>
-                    <div className="font-medium text-gray-900">Credit/Debit Card</div>
-                    <div className="text-sm text-gray-600">Secure payment via Stripe</div>
+                    <div className="font-medium text-gray-900 text-sm sm:text-base">Credit/Debit Card</div>
+                    <div className="text-xs sm:text-sm text-gray-600">Secure payment via Stripe</div>
                   </div>
                 </label>
                 
-                <label className="flex items-center space-x-3 p-4 border-2 border-red-200 rounded-xl cursor-pointer hover:border-[#D5B527] transition-all duration-200">
+                <label className="flex items-center space-x-3 p-3 sm:p-4 border-2 border-red-200 rounded-xl cursor-pointer hover:border-[#D5B527] transition-all duration-200">
                   <input
                     type="radio"
                     name="paymentMethod"
@@ -412,16 +412,16 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
                     className="w-4 h-4 text-[#D5B527] border-red-300 focus:ring-[#D5B527]"
                     disabled={isSubmitting}
                   />
-                  <div className="w-5 h-5 bg-blue-600 rounded flex items-center justify-center">
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 bg-blue-600 rounded flex items-center justify-center">
                     <span className="text-white text-xs font-bold">G</span>
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900">GCash</div>
-                    <div className="text-sm text-gray-600">Pay using your GCash account</div>
+                    <div className="font-medium text-gray-900 text-sm sm:text-base">GCash</div>
+                    <div className="text-xs sm:text-sm text-gray-600">Pay using your GCash account</div>
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-4 border-2 border-red-200 rounded-xl cursor-pointer hover:border-[#D5B527] transition-all duration-200">
+                <label className="flex items-center space-x-3 p-3 sm:p-4 border-2 border-red-200 rounded-xl cursor-pointer hover:border-[#D5B527] transition-all duration-200">
                   <input
                     type="radio"
                     name="paymentMethod"
@@ -431,16 +431,16 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
                     className="w-4 h-4 text-[#D5B527] border-red-300 focus:ring-[#D5B527]"
                     disabled={isSubmitting}
                   />
-                  <div className="w-5 h-5 bg-green-500 rounded flex items-center justify-center">
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 bg-green-500 rounded flex items-center justify-center">
                     <span className="text-white text-xs font-bold">P</span>
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900">PayMaya</div>
-                    <div className="text-sm text-gray-600">Pay using your Maya account</div>
+                    <div className="font-medium text-gray-900 text-sm sm:text-base">PayMaya</div>
+                    <div className="text-xs sm:text-sm text-gray-600">Pay using your Maya account</div>
                   </div>
                 </label>
 
-                <label className="flex items-center space-x-3 p-4 border-2 border-red-200 rounded-xl cursor-pointer hover:border-[#D5B527] transition-all duration-200">
+                <label className="flex items-center space-x-3 p-3 sm:p-4 border-2 border-red-200 rounded-xl cursor-pointer hover:border-[#D5B527] transition-all duration-200">
                   <input
                     type="radio"
                     name="paymentMethod"
@@ -450,10 +450,10 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
                     className="w-4 h-4 text-[#D5B527] border-red-300 focus:ring-[#D5B527]"
                     disabled={isSubmitting}
                   />
-                  <FaUniversity className="text-gray-600 w-5 h-5" />
+                  <FaUniversity className="text-gray-600 w-4 h-4 sm:w-5 sm:h-5" />
                   <div>
-                    <div className="font-medium text-gray-900">Other Philippine Banks</div>
-                    <div className="text-sm text-gray-600">BDO, Metrobank, Unionbank, and others</div>
+                    <div className="font-medium text-gray-900 text-sm sm:text-base">Other Philippine Banks</div>
+                    <div className="text-xs sm:text-sm text-gray-600">BDO, Metrobank, Unionbank, and others</div>
                   </div>
                 </label>
               </div>
@@ -463,10 +463,10 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
             {formData.paymentMethod === 'bpi' && (
               <div className="bg-gradient-to-r from-[#8B1538]/10 to-[#8B1538]/5 border border-[#8B1538]/20 rounded-xl p-4">
                 <div className="flex items-start space-x-3">
-                  <FaUniversity className="text-[#8B1538] w-5 h-5 mt-0.5" />
+                  <FaUniversity className="text-[#8B1538] w-4 h-4 sm:w-5 sm:h-5 mt-0.5" />
                   <div>
-                    <div className="text-[#8B1538] font-semibold text-sm">BPI Bank Transfer</div>
-                    <div className="text-gray-700 text-sm mt-1">
+                    <div className="text-[#8B1538] font-semibold text-xs sm:text-sm">BPI Bank Transfer</div>
+                    <div className="text-gray-700 text-xs sm:text-sm mt-1">
                       After clicking "Donate", you'll be redirected to BPI's secure online banking system to complete your donation. 
                       The transaction will be processed instantly and you'll receive an immediate confirmation.
                     </div>
@@ -478,10 +478,10 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
             {/* Security Notice */}
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
               <div className="flex items-start space-x-3">
-                <FaShieldAlt className="text-green-600 w-5 h-5 mt-0.5" />
+                <FaShieldAlt className="text-green-600 w-4 h-4 sm:w-5 sm:h-5 mt-0.5" />
                 <div>
-                  <div className="text-green-900 font-medium text-sm">Secure Donation</div>
-                  <div className="text-green-800 text-sm mt-1">
+                  <div className="text-green-900 font-medium text-xs sm:text-sm">Secure Donation</div>
+                  <div className="text-green-800 text-xs sm:text-sm mt-1">
                     Your payment information is encrypted and secure. You'll receive a receipt via email after your donation is processed.
                   </div>
                 </div>
@@ -500,40 +500,40 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
               </div>
             )}
           </div>
+        </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-red-50 to-rose-50 border-t border-red-100">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200 hover:bg-red-100 rounded-xl"
-              disabled={isSubmitting}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              onClick={handleSubmit}
-              disabled={isSubmitting || !formData.amount || parseFloat(formData.amount) <= 0}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl ${
-                isSubmitting || !formData.amount || parseFloat(formData.amount) <= 0
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-[#D5B527] to-[#E6C547] hover:from-[#bfa021] hover:to-[#D5B527] text-white'
-              }`}
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                  <span>Processing...</span>
-                </>
-              ) : (
-                <>
-                  <FaHeart className="w-4 h-4" />
-                  <span>Donate {formData.amount ? formatCurrency(formData.amount) : ''}</span>
-                </>
-              )}
-            </button>
-          </div>
+        {/* Action Buttons */}
+        <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6 bg-gradient-to-r from-red-50 to-rose-50 border-t border-red-100">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 sm:px-6 py-2 sm:py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200 hover:bg-red-100 rounded-xl text-sm sm:text-base"
+            disabled={isSubmitting}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            disabled={isSubmitting || !formData.amount || parseFloat(formData.amount) <= 0}
+            className={`px-4 sm:px-8 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl text-sm sm:text-base ${
+              isSubmitting || !formData.amount || parseFloat(formData.amount) <= 0
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-gradient-to-r from-[#D5B527] to-[#E6C547] hover:from-[#bfa021] hover:to-[#D5B527] text-white'
+            }`}
+          >
+            {isSubmitting ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-2 border-white border-t-transparent"></div>
+                <span>Processing...</span>
+              </>
+            ) : (
+              <>
+                <FaHeart className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>Donate {formData.amount ? formatCurrency(formData.amount) : ''}</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     </div>
