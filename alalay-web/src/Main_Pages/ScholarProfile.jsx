@@ -5,6 +5,8 @@ import Sidebar from "../_components/Sidebar";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import DonationModal from "../_components/DonationModal";
+import InternImage from "../assets/images/internship.jpeg";
+import BootcampImage from "../assets/images/bootcamp.jpeg";
 
 function ScholarProfile() {
   const { scholarId } = useParams();
@@ -184,7 +186,7 @@ const sampleScholars = [
       createdAt: "2025-01-22T08:15:00.000Z",
       images: [
         {
-          url: "https://via.placeholder.com/600x300.png?text=Bootcamp+Journey"
+          url: BootcampImage
         }
       ],
       tags: ["coding", "bootcamp", "react"],
@@ -317,7 +319,7 @@ const sampleScholars = [
       createdAt: "2025-01-15T10:00:00.000Z",
       images: [
         {
-          url: "https://via.placeholder.com/600x300.png?text=Internship+Highlights"
+          url: InternImage
         }
       ],
       tags: ["internship", "career", "learning"],
@@ -730,7 +732,7 @@ useEffect(() => {
               <img
                 src={post.images[0].url}
                 alt="Post content"
-                className="w-full h-60 sm:h-80 object-cover"
+                className="w-full h-200 object-cover"
               />
             </div>
           ) : post.isFundingEnabled ? (

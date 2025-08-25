@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { FaHeart, FaComment, FaShare, FaBookmark, FaEllipsisV, FaEdit, FaCalendarAlt, FaMapMarkerAlt, FaPlus } from "react-icons/fa";
 import Sidebar from "../_components/Sidebar";
 import NewPostModal from "../_components/NewPostModal";
+import BooksImage from "../assets/images/CS_Books.jpeg";
+import AcadsReportImage from "../assets/images/AcadsReport.jpeg";
 
 function Profile() {
   const navigate = useNavigate();
@@ -120,7 +122,7 @@ function Profile() {
       "description": "Excited to start the new semester! Just received my new books thanks to my sponsor. Ready to dive deep into Machine Learning algorithms! 📚🤖 #ComputerScience #MachineLearning",
       "images": [
         {
-          "url": "https://via.placeholder.com/600x300.png?text=Machine+Learning+Books"
+          "url": BooksImage
         }
       ],
       "fundingGoal": null,
@@ -222,7 +224,7 @@ function Profile() {
       "description": "Grateful for all the support I've received this academic year. Here's my progress report and achievements so far! 🎓✨",
       "images": [
         {
-          "url": "https://via.placeholder.com/600x400.png?text=Academic+Progress+Report"
+          "url": AcadsReportImage
         }
       ],
       "fundingGoal": null,
@@ -763,7 +765,7 @@ function Profile() {
               <img
                 src={post.images[0].url}
                 alt="Post"
-                className="w-full h-60 sm:h-80 object-cover"
+                className="w-full h-200 object-cover"
               />
             </div>
           ) : post.isFundingEnabled ? (

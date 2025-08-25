@@ -4,6 +4,11 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../_components/Sidebar";
 import NewPostModal from "../_components/NewPostModal";
 import DonationModal from "../_components/DonationModal";
+import BooksImage from "../assets/images/CS_Books.jpeg";
+import InternImage from "../assets/images/internship.jpeg";
+import STEMImage from "../assets/images/STEM.jpeg";
+import BootcampImage from "../assets/images/bootcamp.jpeg";
+import ndPlaceImage from "../assets/images/2ndPlace.jpeg";
 
 function Feed() {
   const navigate = useNavigate();
@@ -52,7 +57,7 @@ function Feed() {
       updatedAt: "2025-01-22T08:15:00.000Z",
       images: [
         {
-          url: "https://via.placeholder.com/600x300.png?text=Machine+Learning+Books"
+          url: BooksImage
         }
       ],
       tags: ["study", "machinelearning", "semester"],
@@ -191,7 +196,7 @@ function Feed() {
       updatedAt: "2025-01-19T09:30:00.000Z",
       images: [
         {
-          url: "https://via.placeholder.com/600x400.png?text=Scholarship+Program+2025"
+          url: STEMImage
         }
       ],
       tags: ["scholarship", "stem", "opportunity"],
@@ -343,7 +348,7 @@ function Feed() {
       updatedAt: "2025-01-15T10:00:00.000Z",
       images: [
         {
-          url: "https://via.placeholder.com/600x300.png?text=Internship+Highlights"
+          url: InternImage
         }
       ],
       tags: ["internship", "career", "learning"],
@@ -407,7 +412,7 @@ function Feed() {
       updatedAt: "2025-01-10T09:00:00.000Z",
       images: [
         {
-          url: "https://via.placeholder.com/600x300.png?text=Science+Fair+Award"
+          url: ndPlaceImage
         }
       ],
       tags: ["science", "award", "fair"],
@@ -498,7 +503,7 @@ function Feed() {
       updatedAt: "2025-01-05T15:00:00.000Z",
       images: [
         {
-          url: "https://via.placeholder.com/600x300.png?text=Coding+Bootcamp"
+          url: BootcampImage
         }
       ],
       tags: ["coding", "bootcamp", "react"],
@@ -933,7 +938,7 @@ function Feed() {
                 <img
                   src={post.images[0].url}
                   alt="Post content"
-                  className="w-full h-80 object-cover"
+                  className="w-full h-200 object-cover"
                 />
               </div>
             ) : post.isFundingEnabled ? (
