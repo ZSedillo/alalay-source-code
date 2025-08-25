@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaHeart, FaComment, FaShare, FaBookmark, FaEllipsisV, FaEdit, FaCalendarAlt, FaMapMarkerAlt, FaPlus } from "react-icons/fa";
 import Sidebar from "../_components/Sidebar";
 import NewPostModal from "../_components/NewPostModal";
-import BooksImage from "../assets/images/CS_Books.jpeg";
+import BooksImage from "../assets/images/CSbooks.jpeg";
 import AcadsReportImage from "../assets/images/AcadsReport.jpeg";
 
 function Profile() {

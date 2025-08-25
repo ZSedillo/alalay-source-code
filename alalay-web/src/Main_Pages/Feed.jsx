@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../_components/Sidebar";
 import NewPostModal from "../_components/NewPostModal";
 import DonationModal from "../_components/DonationModal";
-import BooksImage from "../assets/images/CS_Books.jpeg";
+import BooksImage from "../assets/images/CSbooks.jpeg";
 import InternImage from "../assets/images/internship.jpeg";
 import STEMImage from "../assets/images/STEM.jpeg";
 import BootcampImage from "../assets/images/bootcamp.jpeg";
