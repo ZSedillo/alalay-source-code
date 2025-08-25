@@ -39,7 +39,7 @@ function Feed() {
     {
       _id: "p1",
       author: {
-        _id: "689889e827f976dd2c673d4c",
+        _id: "2",
         fullName: "Maria Santos",
         username: "maria_santos",
         userType: "student",
