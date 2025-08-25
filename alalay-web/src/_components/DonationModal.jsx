@@ -247,26 +247,28 @@ function DonationModal({ isOpen, onClose, scholarName, scholarId, fundingGoal, c
               </label>
               
               {/* Quick Amount Buttons */}
-              <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4">
                 {quickAmounts.map((amount) => (
                   <button
                     key={amount}
                     type="button"
                     onClick={() => handleQuickAmount(amount)}
-                    className={`py-3 px-4 rounded-xl border-2 font-medium transition-all duration-200 ${
+                    className={`py-2.5 sm:py-3 px-1 sm:px-4 rounded-xl border-2 font-medium transition-all duration-200 text-xs sm:text-sm ${
                       formData.amount === amount.toString()
                         ? 'border-[#D5B527] bg-[#D5B527] text-white'
                         : 'border-red-200 text-gray-700 hover:border-[#D5B527] hover:bg-red-50'
                     }`}
                     disabled={isSubmitting}
                   >
-                    {formatCurrency(amount)}
+                    <span className="block truncate">
+                      ₱{amount.toLocaleString('en-PH')}
+                    </span>
                   </button>
                 ))}
                 <button
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, amount: "" }))}
-                  className={`py-3 px-4 rounded-xl border-2 font-medium transition-all duration-200 ${
+                  className={`py-2.5 sm:py-3 px-1 sm:px-4 rounded-xl border-2 font-medium transition-all duration-200 text-xs sm:text-sm ${
                     !quickAmounts.includes(parseInt(formData.amount)) && formData.amount
                       ? 'border-[#D5B527] bg-[#D5B527] text-white'
                       : 'border-red-200 text-gray-700 hover:border-[#D5B527] hover:bg-red-50'

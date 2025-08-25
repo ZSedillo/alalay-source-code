@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, User, Mail, Phone, MapPin, Calendar, Upload, X, Camera, FileText, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, User, Mail, Phone, MapPin, Calendar, Upload, X, Camera, FileText, CheckCircle, CreditCard, Building, Lock, AlertCircle } from "lucide-react";
 
 function Signup() {
   const navigate = useNavigate();
@@ -22,11 +22,19 @@ function Signup() {
     yearLevel: "",
     gpa: "",
     bio: "",
-    profileImage: null
+    profileImage: null,
+    // BPI Account fields
+    bpiAccountNumber: "",
+    bpiAccountName: "",
+    bpiAccountType: "",
+    bpiPin: "",
+    confirmBpiPin: ""
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showBpiPin, setShowBpiPin] = useState(false);
+  const [showConfirmBpiPin, setShowConfirmBpiPin] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [completionPercentage, setCompletionPercentage] = useState(0);
@@ -40,8 +48,10 @@ function Signup() {
   const [isVerifying, setIsVerifying] = useState({
     idDocument: false,
     studentId: false,
-    faceVerification: false
+    faceVerification: false,
+    bpiAccount: false
   });
+  const [bpiAccountVerified, setBpiAccountVerified] = useState(false);
   const countdownRef = useRef();
 
   // Calculate completion percentage based on filled fields
@@ -76,9 +86,16 @@ function Signup() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
-    // Only allow numbers for phone number field
-    if (name === 'phoneNumber') {
+    // Only allow numbers for phone number and BPI account number fields
+    if (name === 'phoneNumber' || name === 'bpiAccountNumber') {
       const numbersOnly = value.replace(/[^0-9]/g, '');
+      setFormData(prev => ({
+        ...prev,
+        [name]: numbersOnly
+      }));
+    } else if (name === 'bpiPin' || name === 'confirmBpiPin') {
+      // Limit PIN to 6 digits
+      const numbersOnly = value.replace(/[^0-9]/g, '').slice(0, 6);
       setFormData(prev => ({
         ...prev,
         [name]: numbersOnly
@@ -141,13 +158,19 @@ function Signup() {
       if (!formData.yearLevel) newErrors.yearLevel = "Year level is required";
     }
 
+    if (step === 4) {
+      if (!formData.bpiAccountNumber.trim()) newErrors.bpiAccountNumber = "BPI Account Number is required";
+      else if (formData.bpiAccountNumber.length < 10) newErrors.bpiAccountNumber = "Account number must be at least 10 digits";
+      if (!formData.bpiAccountName.trim()) newErrors.bpiAccountName = "Account holder name is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, 5));
+      setCurrentStep(prev => Math.min(prev + 1, 6));
     }
   };
 
@@ -171,6 +194,35 @@ function Signup() {
         [documentType]: false
       }));
     }, 2000); // Simulate 2 second verification process
+  };
+
+  const simulateBpiVerification = () => {
+    if (!formData.bpiAccountNumber || !formData.bpiAccountName || !formData.bpiAccountType || !formData.bpiPin) {
+      setErrors(prev => ({
+        ...prev,
+        bpiVerification: "Please fill in all BPI account details first"
+      }));
+      return;
+    }
+
+    setIsVerifying(prev => ({
+      ...prev,
+      bpiAccount: true
+    }));
+
+    // Clear any previous errors
+    setErrors(prev => ({
+      ...prev,
+      bpiVerification: ""
+    }));
+
+    setTimeout(() => {
+      setBpiAccountVerified(true);
+      setIsVerifying(prev => ({
+        ...prev,
+        bpiAccount: false
+      }));
+    }, 3000); // Simulate 3 second verification process
   };
 
   const handleSubmit = (e) => {
@@ -199,7 +251,7 @@ function Signup() {
       case 1:
         return (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Account Information</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center mb-6">Account Information</h2>
             
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">
@@ -290,9 +342,9 @@ function Signup() {
       case 2:
         return (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Personal Information</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center mb-6">Personal Information</h2>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">First Name <span className="text-red-500">*</span></label>
                 <input
@@ -374,7 +426,7 @@ function Signup() {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">City</label>
                 <input
@@ -417,7 +469,7 @@ function Signup() {
       case 3:
         return (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Academic Information</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center mb-6">Academic Information</h2>
             
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">School/University <span className="text-red-500">*</span></label>
@@ -449,7 +501,7 @@ function Signup() {
               {errors.course && <p className="text-red-500 text-sm mt-1">{errors.course}</p>}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">Year Level <span className="text-red-500">*</span></label>
                 <select
@@ -504,7 +556,79 @@ function Signup() {
       case 4:
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">AI Document Verification</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center mb-6">
+              Link Your BPI Account
+            </h2>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
+              <div className="flex items-start">
+                <Building className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-blue-800 text-sm font-medium mb-1">
+                    Secure Account Linking
+                  </p>
+                  <p className="text-blue-700 text-xs">
+                    Link your BPI account to receive scholarship funds directly.
+                    Your banking information is encrypted and secure.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {/* Account Number */}
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  <CreditCard className="inline w-4 h-4 mr-1" />
+                  BPI Account Number <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="bpiAccountNumber"
+                  value={formData.bpiAccountNumber}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D5B527] ${
+                    errors.bpiAccountNumber ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="e.g. 1234567890"
+                  maxLength="16"
+                />
+                {errors.bpiAccountNumber && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.bpiAccountNumber}
+                  </p>
+                )}
+              </div>
+
+              {/* Account Holder Name */}
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  Account Holder Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="bpiAccountName"
+                  value={formData.bpiAccountName}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D5B527] ${
+                    errors.bpiAccountName ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Full name as shown on your account"
+                />
+                {errors.bpiAccountName && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.bpiAccountName}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center mb-6">AI Document Verification</h2>
             
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
               <p className="text-blue-800 text-sm">
@@ -636,10 +760,10 @@ function Signup() {
           </div>
         );
 
-      case 5:
+      case 6:
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Profile Picture & Review</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center mb-6">Profile Picture & Review</h2>
             
             <div className="text-center">
               <div className="relative inline-block">
@@ -648,7 +772,7 @@ function Signup() {
                     <img
                       src={URL.createObjectURL(formData.profileImage)}
                       alt="Profile preview"
-                      className="w-32 h-32 rounded-full object-cover border-4 border-[#D5B527]"
+                      className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-[#D5B527]"
                     />
                     <button
                       type="button"
@@ -659,14 +783,14 @@ function Signup() {
                     </button>
                   </div>
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-gray-200 border-4 border-dashed border-gray-300 flex items-center justify-center">
-                    <Upload className="text-gray-400" size={32} />
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gray-200 border-4 border-dashed border-gray-300 flex items-center justify-center">
+                    <Upload className="text-gray-400" size={24} />
                   </div>
                 )}
               </div>
               
               <div className="mt-4">
-                <label className="bg-[#D5B527] hover:bg-[#bfa021] text-white px-4 py-2 rounded-lg cursor-pointer transition">
+                <label className="bg-[#D5B527] hover:bg-[#bfa021] text-white px-4 py-2 rounded-lg cursor-pointer transition text-sm">
                   {formData.profileImage ? 'Change Photo' : 'Upload Photo'}
                   <input
                     type="file"
@@ -679,21 +803,40 @@ function Signup() {
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-gray-800 mb-3">Review Your Information:</h3>
-              <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Name:</span> {formData.firstName} {formData.lastName}</p>
-                <p><span className="font-medium">Email:</span> {formData.email}</p>
-                <p><span className="font-medium">Username:</span> {formData.username}</p>
-                <p><span className="font-medium">School:</span> {formData.school}</p>
-                <p><span className="font-medium">Course:</span> {formData.course}</p>
-                <p><span className="font-medium">Year:</span> {formData.yearLevel}</p>
+              <h3 className="font-semibold text-gray-800 mb-3 text-sm sm:text-base">Review Your Information:</h3>
+              <div className="space-y-2 text-xs sm:text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <p><span className="font-medium">Name:</span> {formData.firstName} {formData.lastName}</p>
+                  <p><span className="font-medium">Email:</span> {formData.email}</p>
+                  <p><span className="font-medium">Username:</span> {formData.username}</p>
+                  <p><span className="font-medium">Phone:</span> {formData.phoneNumber}</p>
+                  <p><span className="font-medium">School:</span> {formData.school}</p>
+                  <p><span className="font-medium">Course:</span> {formData.course}</p>
+                  <p><span className="font-medium">Year:</span> {formData.yearLevel}</p>
+                  <p><span className="font-medium">BPI Account:</span> ****{formData.bpiAccountNumber.slice(-4)}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <div className="flex items-start">
+                <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-green-800 text-sm font-medium mb-1">Verification Status</p>
+                  <div className="text-green-700 text-xs space-y-1">
+                    <p>✓ BPI Account Linked and Verified</p>
+                    <p>✓ Identity Documents Verified</p>
+                    <p>✓ Academic Information Complete</p>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <p className="text-blue-800 text-sm">
+              <p className="text-blue-800 text-xs sm:text-sm">
                 By creating an account, you agree to our Terms of Service and Privacy Policy. 
                 Your information will be used to connect you with potential sponsors and manage your scholarship applications.
+                Your BPI account information is encrypted and secure.
               </p>
             </div>
           </div>
@@ -724,13 +867,13 @@ function Signup() {
         {/* Progress bar */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-2 gap-1">
-            <span className="text-xs sm:text-sm font-medium text-gray-600">Step {currentStep} of 5</span>
+            <span className="text-xs sm:text-sm font-medium text-gray-600">Step {currentStep} of 6</span>
             <span className="text-xs sm:text-sm text-gray-500">{completionPercentage}% Complete</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
               className="bg-[#D5B527] h-2 rounded-full transition-all duration-300"
-              style={{ width: `${completionPercentage}%` }}
+              style={{ width: `${(currentStep / 6) * 100}%` }}
             />
           </div>
         </div>
@@ -740,50 +883,36 @@ function Signup() {
             {renderStepContent()}
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-between mt-8 gap-2">
-            {currentStep > 1 && (
-              <button
-                type="button"
-                onClick={handlePrev}
-                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm sm:text-base"
-              >
-                Previous
-              </button>
-            )}
-            
-            <div className="ml-auto">
-              {currentStep < 4 ? (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="px-8 py-3 bg-[#D5B527] hover:bg-[#bfa021] text-white rounded-lg font-medium transition text-sm sm:text-base"
-                >
-                  Next
-                </button>
-              ) : currentStep === 4 ? (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  disabled={!Object.values(verificationStatus).every(status => status === true)}
-                  className={`px-8 py-3 rounded-lg font-medium transition text-sm sm:text-base ${
-                    Object.values(verificationStatus).every(status => status === true)
-                      ? 'bg-[#D5B527] hover:bg-[#bfa021] text-white'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
-                >
-                  Next
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  onClick={() => setShowSuccessModal(true)}
-                  className="px-8 py-3 bg-gradient-to-r from-[#8A1A1C] to-[#5C1213] text-white rounded-lg font-medium hover:opacity-90 transition text-sm sm:text-base"
-                >
-                  Create Account
-                </button>
-              )}
-            </div>
-          </div>
+<div className="flex flex-col sm:flex-row justify-between mt-8 gap-2">
+  {currentStep > 1 && (
+    <button
+      type="button"
+      onClick={handlePrev}
+      className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm sm:text-base"
+    >
+      Previous
+    </button>
+  )}
+
+  <button
+    type="button"
+    onClick={
+      currentStep === 6
+        ? () => setShowSuccessModal(true)
+        : currentStep === 5
+        ? () => Object.values(verificationStatus).every(v => v) && handleNext()
+        : handleNext
+    }
+    disabled={currentStep === 5 && !Object.values(verificationStatus).every(v => v)}
+    className={`px-8 py-3 rounded-lg font-medium transition text-sm sm:text-base ${
+      currentStep === 6
+        ? "bg-gradient-to-r from-[#8A1A1C] to-[#5C1213] text-white hover:opacity-90"
+        : "bg-[#D5B527] hover:bg-[#bfa021] text-white"
+    }`}
+  >
+    {currentStep === 6 ? "Create Account" : "Next"}
+  </button>
+</div>
         </form>
 
         <div className="mt-6 text-center">
@@ -801,13 +930,13 @@ function Signup() {
         {/* Success Modal */}
         {showSuccessModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
             style={{
               background: "rgba(0,0,0,0.45)",
               backdropFilter: "blur(1.5px)"
             }}
           >
-            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center relative">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-w-sm w-full text-center relative">
               <div className="flex flex-col items-center">
                 <div className="mb-4">
                   <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
@@ -815,14 +944,14 @@ function Signup() {
                     <path d="M18 29l7 7 13-13" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-[#8A1A1C] mb-2">Account Created!</h2>
-                <p className="text-gray-700 mb-4">Your account was successfully created.<br />You can now sign in and start your journey.</p>
-                <p className="text-gray-500 text-sm mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#8A1A1C] mb-2">Account Created!</h2>
+                <p className="text-gray-700 mb-4 text-sm sm:text-base">Your account was successfully created.<br />You can now sign in and start your journey.</p>
+                <p className="text-gray-500 text-xs sm:text-sm mb-6">
                   Redirecting to sign in in <span className="font-semibold text-[#D5B527]">{modalCountdown}</span> seconds...
                 </p>
                 <button
                   onClick={handleModalSignIn}
-                  className="w-full bg-gradient-to-r from-[#8A1A1C] to-[#5C1213] text-white py-2 rounded-lg font-semibold hover:opacity-90 transition"
+                  className="w-full bg-gradient-to-r from-[#8A1A1C] to-[#5C1213] text-white py-2 rounded-lg font-semibold hover:opacity-90 transition text-sm sm:text-base"
                 >
                   Sign In Now
                 </button>
